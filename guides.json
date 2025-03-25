@@ -451,7 +451,7 @@
         },
         {
           "stage": "Giai đoạn 4",
-          "tip": "Lên cấp 8 và tung xúc xắc để có Vi và 6 Enforcer. Nếu bạn có huy hiệu, hãy chơi 6 enforcer và hoàn thiện các đặc điểm của bạn thay vì 8 enforcer. Khi ổn định, hãy chọn 9 cho Cait và 5/6 chi phí."
+          "tip": "Lên cấp 8 và tung xúc xắc để có Vi và 6 Enforcer. Nếu bạn có huy hiệu, hãy chơi 6 enforcer và hoàn thiện các đặc điểm của bạn thay vì 8 enforcer. Khi đã ổn định, hãy chọn 9 cho Cait và 5/6 chi phí."
         }
       ],
       "title": "Operation: Find Jinx",
@@ -1318,7 +1318,7 @@
       "tips": [
         {
           "stage": "Giai đoạn 2",
-          "tip": "Chơi chuỗi thua với 3 Chem Baron. Luôn luôn lấy mất các đơn vị Chem Baron khỏi vòng quay."
+          "tip": "Chơi chuỗi thua với 3 Chem Baron. Luôn luôn lấy các đơn vị Chem Baron bị mất tích."
         },
         {
           "stage": "Giai đoạn 3",
@@ -2191,7 +2191,7 @@
         },
         {
           "stage": "Giai đoạn 3",
-          "tip": "Nâng cấp lên 4 Pit Fighter nếu bạn chưa nâng cấp. Tăng lên 6 để nâng cấp nếu cần, nếu không hãy tích lũy để nâng cấp lên Fast 8."
+          "tip": "Nâng cấp lên 4 Pit Fighter nếu bạn chưa nâng cấp. Nâng cấp lên 6 để nâng cấp nếu cần, nếu không hãy tích lũy để nâng cấp lên Fast 8."
         },
         {
           "stage": "Giai đoạn 4",
@@ -2274,7 +2274,7 @@
           "id": "39dveaig1ya2ph8"
         }
       ],
-      "augmentsTip": "Luôn chơi 6 Sorcerer và thêm vào tiền tuyến nếu bạn có thêm biểu tượng. Nếu tiền tuyến mạnh, bạn có thể chơi Swain 2 / Sorc Elise 2 làm gánh đội hình sau. Ưu tiên Anomaly: Tank > Carry.",
+      "augmentsTip": "Luôn chơi 6 Sorcerer và thêm vào tuyến đầu nếu bạn có thêm biểu tượng. Nếu tuyến đầu mạnh, bạn có thể chơi Swain 2 / Sorc Elise 2 làm gánh đội hình sau. Ưu tiên Anomaly: Tank > Carry.",
       "carousel": [
         {
           "apiName": "TFT_Item_SpearOfShojin",
@@ -3115,7 +3115,7 @@
         },
         {
           "stage": "Giai đoạn 4",
-          "tip": "Lên cấp 8, tung xúc xắc cho Heimer và Corki. Điểm mạnh của đội hình này là có một bảng đấu giá rẻ + nâng cấp + vật phẩm có thể lên cấp 9. Luôn chơi Jayce và sử dụng Hextech Forge cho tuyến đầu. Kết hợp với Rumble 2."
+          "tip": "Lên cấp 8, tung xúc xắc cho Heimer và Corki. Điểm mạnh của đội hình này là có một bảng đấu giá rẻ + nâng cấp + vật phẩm có thể lên cấp 9. Luôn chơi Jayce và sử dụng Hextech Forge cho tuyến đầu. Lên cấp với Rumble 2."
         }
       ],
       "title": "Academy Sentinel",
@@ -3518,7 +3518,7 @@
         },
         {
           "stage": "Giai đoạn 3",
-          "tip": "Lên cấp 6 và lăn xuống để nâng cấp tiền tuyến Watcher và Tristana 2. Tăng Econ. Bạn sẽ thắng hầu hết các trận đấu ở Giai đoạn 3."
+          "tip": "Lên cấp 6 và lăn xuống để nâng cấp tiền tuyến Watcher và Tristana 2. Tăng lại Econ. Bạn sẽ thắng hầu hết các trận đấu ở Giai đoạn 3."
         },
         {
           "stage": "Giai đoạn 4",
@@ -3809,7 +3809,7 @@
           "id": "qtahcilkp9rdkxy"
         }
       ],
-      "augmentsTip": "Biến thể Steb Hero Augment của 8 Enforcers. Đặt Maddie ở phía đối diện với các carry. Đặt Vi ở phía trước các đơn vị địch quan trọng. Ưu tiên Anamoly: Steb 4* (Ultimate Hero)",
+      "augmentsTip": "Biến thể Steb Hero Augment của 8 Enforcers. Đặt Maddie ở phía đối diện với carry. Đặt Vi ở phía trước các đơn vị địch quan trọng. Ưu tiên Anamoly: Steb 4* (Ultimate Hero)",
       "carousel": [
         {
           "apiName": "TFT_Item_Bloodthirster",
@@ -4357,11 +4357,11 @@
         },
         {
           "stage": "Giai đoạn 3",
-          "tip": "Nếu bạn có 5+ Trundle ở cấp độ 3-1, hãy tăng cấp độ để có Trundle 3 trong khi thu thập Bruisers và Gangplank. Streak Stage 3 và econ trở lại."
+          "tip": "Nếu bạn có 5+ Trundle ở cấp độ 3-1, hãy tăng cấp độ xuống để có Trundle 3 trong khi thu thập Bruisers và Gangplank. Streak Stage 3 và econ trở lại."
         },
         {
           "stage": "Giai đoạn 4",
-          "tip": "Kết thúc Trundle 3 và đẩy cấp để có 6 Bruiser. Tuyến sau linh hoạt, nhưng về cuối game bạn nên chơi với giá khoảng 6."
+          "tip": "Kết thúc Trundle 3 và đẩy cấp để có 6 Bruiser. Tuyến sau linh hoạt, nhưng về cuối game bạn muốn chơi với giá khoảng 6."
         }
       ],
       "title": "R U Trolling?",
@@ -4840,7 +4840,7 @@
           "id": "wkq7yovfophdu0h"
         }
       ],
-      "augmentsTip": "Ưu tiên vật phẩm hồi máu gấp đôi cho Vander. Biểu tượng gia đình linh hoạt, nhưng không cần thiết so với Người theo dõi. Ưu tiên bất thường: Vander",
+      "augmentsTip": "Ưu tiên vật phẩm hồi máu gấp đôi cho Vander. Biểu tượng gia đình linh hoạt, nhưng không cần thiết so với Người theo dõi. Ưu tiên dị thường: Vander",
       "carousel": [
         {
           "apiName": "TFT_Item_UnstableConcoction",
@@ -4988,7 +4988,7 @@
         },
         {
           "stage": "Giai đoạn 4",
-          "tip": "Cấp độ cho 6 Watcher và các đơn vị hỗ trợ như Ekko, Scar và Garen. Bạn có thể gặp khó khăn khi có quá nhiều đơn vị cận chiến nên hãy cẩn thận không nên quá đông."
+          "tip": "Cấp độ cho 6 Watcher và các đơn vị hỗ trợ như Ekko, Scar và Garen. Bạn có thể gặp khó khăn khi có quá nhiều đơn vị cận chiến nên hãy cẩn thận không để quá đông."
         }
       ],
       "title": "Gloves Off",
@@ -5443,7 +5443,7 @@
           "id": "fsrvr5jtcywpkvm"
         }
       ],
-      "augmentsTip": "Phần thưởng thử nghiệm: Biểu tượng > Mundo > Twitch > Urgot. Cuối game hãy tìm Warwick, 5 chi phí và Viktor. Bạn có thể giảm từ 5 Thử nghiệm ở Cấp độ 5+ để nâng cấp 5 chi phí. Ưu tiên dị thường: Mundo > Twitch",
+      "augmentsTip": "Phần thưởng thử nghiệm: Biểu tượng > Mundo > Twitch > Urgot. Cuối game hãy tìm Warwick, 5 chi phí và Viktor. Bạn có thể giảm từ 5 Thử nghiệm ở Giai đoạn 5+ để nâng cấp 5 chi phí. Ưu tiên Anomaly: Mundo > Twitch",
       "carousel": [
         {
           "apiName": "TFT_Item_GuinsoosRageblade",
@@ -5601,7 +5601,7 @@
         },
         {
           "stage": "Giai đoạn 4",
-          "tip": "Lên cấp 8 và tung cho Twitch và 5 Experiment. Bạn ổn định khi đạt Mundo 2 và Twitch 2. Flex một AD duo carry khác (Corki, Vi, Ambessa, v.v.). Khi ổn định, tung 9 với 5 chi phí."
+          "tip": "Lên cấp 8 và tung cho Twitch và 5 Experiment. Bạn ổn định khi đạt Mundo 2 và Twitch 2. Flex một AD duo carry khác (Corki, Vi, Ambessa, v.v.). Khi ổn định, hãy tung 9 với 5 chi phí."
         }
       ],
       "title": "Experiment Twitch Flex",
@@ -5816,7 +5816,7 @@
       "tips": [
         {
           "stage": "Giai đoạn 2",
-          "tip": "Chơi từ đầu Automata với vật phẩm Bow / Rod. Chọn vật phẩm tăng cường mạnh cho nhịp độ hoặc vật phẩm tăng cường kinh tế để tung lại."
+          "tip": "Chơi từ đầu Automata với vật phẩm Bow / Rod. Lấy vật phẩm tăng cường mạnh cho nhịp độ hoặc vật phẩm tăng cường kinh tế để tung lại."
         },
         {
           "stage": "Giai đoạn 3",
@@ -6346,7 +6346,7 @@
           "id": "jv2gkwrn4ax5pf6"
         }
       ],
-      "augmentsTip": "Smeech là carry chính lý tưởng với cặp đôi Ekko, nhưng bạn có thể linh hoạt tùy thuộc vào người bạn đánh + Emblem. Người giữ Emblem tốt nhất là Rumble. Garen và Sentinels là những vị trí linh hoạt. Ưu tiên Anomaly: Smeech > Ekko",
+      "augmentsTip": "Smeech là tướng chủ lực lý tưởng với bộ đôi Ekko, nhưng bạn có thể linh hoạt tùy thuộc vào tướng bạn đánh + Emblem. Người giữ Emblem tốt nhất là Rumble. Garen và Sentinels là những vị trí linh hoạt. Ưu tiên Anomaly: Smeech > Ekko",
       "carousel": [
         {
           "apiName": "TFT_Item_UnstableConcoction",
@@ -6700,11 +6700,11 @@
         },
         {
           "stage": "Giai đoạn 3",
-          "tip": "Lên cấp 6 và ổn định xung quanh Black Rose làm tiền tuyến của bạn. Nhắm đến sự kết hợp giữa Visionaries hoặc Sorcerors được nâng cấp làm sát thương tuyến sau."
+          "tip": "Lên cấp 6 và ổn định xung quanh Black Rose làm tiền tuyến của bạn. Nhắm đến sự kết hợp giữa Visionaries hoặc Sorcerors được nâng cấp làm sát thương ở tuyến sau."
         },
         {
           "stage": "Giai đoạn 4",
-          "tip": "Nhanh 8 và tìm Black Rose, Garen và Elise. Chơi Jayce cận chiến nếu bạn cần thêm tiền tuyến. AP còn lại cho Leblanc, AD còn lại cho Jayce."
+          "tip": "Nhanh 8 và tìm Black Rose, Garen và Elise. Chơi Jayce cận chiến nếu bạn cần thêm tiền tuyến. AP còn lại trên Leblanc, AD còn lại trên Jayce."
         }
       ],
       "title": "Black Widow",
@@ -7000,7 +7000,7 @@
           "id": "tyik28kr44tmzmw"
         }
       ],
-      "augmentsTip": "Core: Twitch, Mundo, Nunu, Elise, Morgana. Caps cao nhất với Caitlyn 2 và Leblanc 2 itemized. Đặt Sion và Elise về phía carry của đối phương. Ưu tiên Anomaly: Mundo > Twitch",
+      "augmentsTip": "Core: Twitch, Mundo, Nunu, Elise, Morgana. Caps cao nhất với Caitlyn 2 và Leblanc 2 itemized. Vị trí Sion và Elise hướng về phía carry của đối phương. Ưu tiên Anomaly: Mundo > Twitch",
       "carousel": [
         {
           "apiName": "TFT_Item_GuinsoosRageblade",
@@ -7358,7 +7358,7 @@
         },
         {
           "stage": "Giai đoạn 3",
-          "tip": "Lên cấp 6 và lăn xuống để nâng cấp tiền tuyến Sentinel và Tristana 2. Tăng lại kinh tế. Hoàn thành 3 vật phẩm Tristana."
+          "tip": "Lên cấp 6 và lăn xuống để nâng cấp tiền tuyến Sentinel và Tristana 2. Tăng lại kinh tế. Hoàn thành 3 món đồ Tristana."
         },
         {
           "stage": "Giai đoạn 4",
@@ -7570,7 +7570,7 @@
         },
         {
           "stage": "Giai đoạn 3",
-          "tip": "Lên cấp 6 và tung Ziggs 2 + Scrap và nâng cấp tiền tuyến. Nếu bạn có nhiều bản sao Ziggs, bạn có thể tung chậm ở cấp 6 nếu không thì tăng kinh tế lên cấp 7."
+          "tip": "Lên cấp 6 và tung Ziggs 2 + Scrap và nâng cấp tiền tuyến. Nếu bạn có nhiều bản sao Ziggs, bạn có thể tung chậm ở cấp 6 nếu không thì tăng kinh tế ở cấp 7."
         },
         {
           "stage": "Giai đoạn 4",
@@ -7788,7 +7788,7 @@
       "tips": [
         {
           "stage": "Giai đoạn 2",
-          "tip": "Chơi xung quanh các đơn vị được nâng cấp không có sự phối hợp. Tấn công các vật phẩm có nhịp độ mạnh như Sunfire, Shred hoặc các vật phẩm tăng theo tốc độ tấn công."
+          "tip": "Chơi xung quanh các đơn vị được nâng cấp không có sự phối hợp. Đập các vật phẩm có nhịp độ mạnh như Sunfire, Shred hoặc các vật phẩm tăng theo tốc độ tấn công."
         },
         {
           "stage": "Giai đoạn 3",
@@ -7868,7 +7868,7 @@
           "id": "8c97az3nl4biqa1"
         }
       ],
-      "augmentsTip": "Chơi biến thể Form Swapper này của Emissary khi bạn mang Gangplank và tấn công Jayce sớm bằng trang bị AD. Trundle có thể được thay thế bằng tiền tuyến mạnh hơn / 6 chi phí. Ưu tiên Anomaly: AD Carry > Garen > Ambessa.",
+      "augmentsTip": "Chơi biến thể Form Swapper này của Emissary khi bạn đang mang Gangplank và tấn công Jayce sớm bằng các trang bị AD. Trundle có thể được thay thế bằng tiền tuyến mạnh hơn / 6 chi phí. Ưu tiên Anomaly: AD Carry > Garen > Ambessa.",
       "carousel": [
         {
           "apiName": "TFT_Item_InfinityEdge",
@@ -8234,7 +8234,7 @@
         },
         {
           "stage": "Giai đoạn 3",
-          "tip": "Chỉ chơi được với Conqueror Emblem. Lên cấp và duy trì một bảng mạnh xung quanh Conquerors. Luôn chơi 6 Conqueror nếu bạn đánh sớm. Nếu cần, hãy tung xúc xắc để nâng cấp bất cứ khi nào bạn giữ 3+ cặp quan trọng."
+          "tip": "Chỉ chơi được với Biểu tượng Chinh phục. Nâng cấp và duy trì một bảng mạnh xung quanh Conquerors. Luôn chơi 6 Conqueror nếu bạn đánh sớm. Nếu cần, hãy tung xúc xắc để nâng cấp bất cứ khi nào bạn giữ 3+ cặp quan trọng."
         },
         {
           "stage": "Giai đoạn 4",
@@ -9570,7 +9570,7 @@
           "id": "qtahcilkp9rdkxy"
         }
       ],
-      "augmentsTip": "Biến thể Steb Hero Augment của 6 Bruiser. Chơi biến thể này khi bạn không thể đánh trúng biểu tượng Enforcer. Nếu bạn đang tụt hậu và không đủ khả năng tăng cấp với 5 chi phí, hãy cân nhắc việc đuổi theo Renni hoặc Nunu 3* làm tank phụ. Ưu tiên Anomaly: Steb 4* (Ultimate Hero)",
+      "augmentsTip": "Biến thể Steb Hero Augment của 6 Bruiser. Chơi biến thể này khi bạn không thể đánh trúng biểu tượng Enforcer. Nếu bạn đang tụt lại phía sau và không đủ khả năng tăng cấp với 5 chi phí, hãy cân nhắc việc đuổi theo Renni hoặc Nunu 3* làm tank phụ. Ưu tiên Anomaly: Steb 4* (Ultimate Hero)",
       "carousel": [
         {
           "apiName": "TFT_Item_Bloodthirster",
@@ -10180,7 +10180,7 @@
           "id": "hp8qq1562dqopt7"
         }
       ],
-      "augmentsTip": "Mục tiêu lý tưởng là 300 cash out, nhưng bạn có thể cân nhắc 100 cash out nếu bạn đang winstreaking. Nếu bạn không thể có được Renni 3, hãy cân nhắc tank chính Rell 3. Ưu tiên bất thường: Tank > Heimer",
+      "augmentsTip": "Mục tiêu lý tưởng là 300 cash out, nhưng bạn có thể cân nhắc 100 cash out nếu bạn đang thắng liên tiếp. Nếu bạn không thể có được Renni 3, hãy cân nhắc tank chính Rell 3. Ưu tiên bất thường: Tank > Heimer",
       "carousel": [
         {
           "apiName": "TFT_Item_BlueBuff",
@@ -10316,7 +10316,7 @@
         },
         {
           "stage": "Giai đoạn 4",
-          "tip": "Lên cấp 8 và tìm Heimer càng sớm càng tốt để có 6 Visionary. Rút tiền và lý tưởng nhất là tung Renni 3 và Heimer 2 ở cấp 8. Nếu xa Renni 3, hãy tung 9 cho Nami/6 chi phí và Malzahar."
+          "tip": "Lên cấp 8 và tìm Heimer càng sớm càng tốt để có 6 Visionary. Rút tiền và lý tưởng nhất là tung Renni 3 và Heimer 2 ở 8. Nếu xa Renni 3, hãy tung 9 cho Nami/6 chi phí và Malzahar."
         }
       ],
       "title": "Chem Baron Visionaries",
@@ -11032,7 +11032,7 @@
           "id": "kecuvqdtyt86tw4"
         }
       ],
-      "augmentsTip": "Biến thể thử nghiệm của 6 Sorceror tập trung vào Mundo tank và Zyra carry. Mạnh mẽ với các phép tăng cường như Moonlight để đảm bảo nâng cấp Zyra. Giữa trận, nếu tuyến trước của bạn mạnh, bạn có thể chơi Swain 2 backline carry cho đến khi bạn chạm trán Leblanc. Ưu tiên Anomaly: Tank > Carry.",
+      "augmentsTip": "Biến thể thử nghiệm của 6 Sorceror tập trung vào Mundo tank và Zyra carry. Mạnh mẽ với các phép tăng cường như Moonlight để đảm bảo nâng cấp Zyra. Giữa trận, nếu tiền tuyến của bạn mạnh, bạn có thể chơi Swain 2 backline carry cho đến khi bạn chạm trán Leblanc. Ưu tiên Anomaly: Tank > Carry.",
       "carousel": [
         {
           "apiName": "TFT_Item_SpearOfShojin",
@@ -11411,7 +11411,7 @@
         },
         {
           "stage": "Giai đoạn 4",
-          "tip": "Lên cấp 8, tung xúc xắc để lấy Ezreal, Corki và 4 Sentinel. Đẩy cấp 9 khi bạn ổn định ở cấp 8. Nếu bạn giàu, bạn có thể giữ thêm Ezreal để cuối cùng đạt 3*."
+          "tip": "Lên cấp 8, tung xúc xắc để lấy Ezreal, Corki và 4 Sentinel. Lên cấp 9 khi bạn ổn định ở cấp 8. Nếu bạn giàu, bạn có thể giữ thêm Ezreal để cuối cùng đạt 3*."
         }
       ],
       "title": "Hurricane Ezreal",
