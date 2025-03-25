@@ -2191,7 +2191,7 @@
         },
         {
           "stage": "Giai đoạn 3",
-          "tip": "Nâng cấp lên 4 Pit Fighter nếu bạn chưa nâng cấp. Nâng cấp lên 6 để nâng cấp nếu cần, nếu không hãy tích lũy để nâng cấp lên Fast 8."
+          "tip": "Nâng cấp lên 4 Pit Fighter nếu bạn chưa nâng cấp. Tăng lên 6 để nâng cấp nếu cần, nếu không hãy tích lũy để nâng cấp lên Fast 8."
         },
         {
           "stage": "Giai đoạn 4",
@@ -2274,7 +2274,7 @@
           "id": "39dveaig1ya2ph8"
         }
       ],
-      "augmentsTip": "Luôn chơi 6 Sorcerer và thêm vào tuyến đầu nếu bạn có thêm biểu tượng. Nếu tuyến đầu mạnh, bạn có thể chơi Swain 2 / Sorc Elise 2 làm gánh đội hình sau. Ưu tiên Anomaly: Tank > Carry.",
+      "augmentsTip": "Luôn chơi 6 Sorcerer và thêm vào tiền tuyến nếu bạn có thêm biểu tượng. Nếu tiền tuyến mạnh, bạn có thể chơi Swain 2 / Sorc Elise 2 làm gánh đội hình sau. Ưu tiên Anomaly: Tank > Carry.",
       "carousel": [
         {
           "apiName": "TFT_Item_SpearOfShojin",
@@ -3518,7 +3518,7 @@
         },
         {
           "stage": "Giai đoạn 3",
-          "tip": "Lên cấp 6 và lăn xuống để nâng cấp tiền tuyến Watcher và Tristana 2. Tăng Econ. Bạn sẽ thắng hầu hết các trận đấu ở Giai đoạn 3."
+          "tip": "Lên cấp 6 và lăn xuống để nâng cấp tiền tuyến Watcher và Tristana 2. Tăng lại Econ. Bạn sẽ thắng hầu hết các trận đấu ở Giai đoạn 3."
         },
         {
           "stage": "Giai đoạn 4",
@@ -4984,7 +4984,7 @@
         },
         {
           "stage": "Giai đoạn 3",
-          "tip": "Lăn chậm ở cấp 6 trên 50g để có 3* Vander, Powder và Violet. Thu thập các Watcher khác. Nếu bạn còn AP, hãy chơi các vật phẩm trên Powder"
+          "tip": "Lăn chậm ở cấp độ 6 trên 50g để có 3* Vander, Powder và Violet. Thu thập các Watcher khác. Nếu bạn còn AP, hãy chơi các vật phẩm trên Powder"
         },
         {
           "stage": "Giai đoạn 4",
