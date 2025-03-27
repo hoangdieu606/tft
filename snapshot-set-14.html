@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Đổi USD</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link
+        href="https://fonts.googleapis.com/css?family=Dancing+Script:wght@700&amp;family=Roboto:wght@400;900&amp;display=swap"
+        rel="stylesheet">
+
+    <style>
+        .gradient-icon {
+            font-size: 20px;
+            background: linear-gradient(90deg, #657FFF, #906EFF);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            display: inline-block;
+        }
+
+        .convert-style svg,
+        .snapshot-filter svg {
+            position: absolute;
+            right: 5px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .snapshot-filter {
+            position: relative;
+            height: 50px;
+        }
+
+        .snapshot-filter svg {
+            left: 10px;
+            right: unset;
+        }
+
+
+        body.active-select-C .snapshot-conversion-home>div:last-child {
+            display: block;
+        }
+
+        .snapshot-filter input {
+            width: 100%;
+            height: 100%;
+            padding: 5px 15px 5px 45px;
+            font-size: 16px;
+            text-align: center;
+        }
+
+        /* snapshots-list  ❤❤❤ */
+        .snapshots-list {
+            position: relative;
+            margin-bottom: 30px;
+            border-radius: var(--border-radius);
+            overflow: auto;
+            background-color: #fff;
+            box-shadow: var(--box-shadow);
+
+        }
+
+        .snapshots-table {
+            text-align: center;
+            width: 100%;
+            color: #434343;
+        }
+
+        .snapshots-table {
+            border-collapse: collapse;
+        }
+
+        .snapshots-table thead tr {
+            background: var(--primary-bg-color);
+            height: 50px;
+        }
+
+        .snapshots-table thead th {
+            color: var(--text-color-second);
+        }
+
+        .snapshots-table thead th span {
+            display: block;
+        }
+
+        .snapshots-table thead th span:last-child {
+            font-size: 11px;
+            font-weight: 400;
+        }
+
+
+        .snapshots-table td {
+            min-width: 60px;
+            padding: 5px;
+        }
+
+        td:first-child {
+            font-size: 40px;
+            font-weight: 900;
+            color: transparent;
+            -webkit-text-stroke: 1px var(--primary-color);
+        }
+
+        .snapshots-table td:nth-child(2) {
+            text-align: left;
+            padding-left: 10px;
+        }
+
+        tr.top-10-snapshots td:nth-child(2) {
+            font-weight: 700;
+            line-height: 16px;
+            background: var(--primary-bg-color);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .snapshots-table tbody tr:hover {
+            background: var(--primary-bg-color);
+            color: var(--text-color-second);
+        }
+
+        .snapshots-table tbody tr.top-10-snapshots:hover td:nth-child(2) {
+            -webkit-text-fill-color: unset;
+        }
+
+        .snapshots-table tbody tr:nth-child(even) {
+            background-color: var(--gray-color);
+            height: 40px;
+        }
+
+        .snapshots-table tbody tr:nth-child(odd) {
+            height: 40px;
+        }
+
+        .snapshots-table tbody tr td:nth-child(3) {
+            font-weight: 700;
+        }
+
+        .btn-all-list {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 50px;
+            font-size: 18px;
+            text-transform: uppercase;
+            color: var(--text-color-second);
+            background: var(--primary-bg-color);
+            cursor: pointer;
+        }
+
+        /* flags-circle  ❤❤❤ */
+        .flags-circle {
+            display: flex;
+            padding: 30px;
+            background-color: var(--white-color);
+        }
+
+        .flags-circle span.fi {
+            width: 100%;
+            height: auto;
+            margin-right: 0;
+            border-radius: 50%;
+            overflow: hidden;
+        }
+    </style>
+    <script src="global.js"></script>
+    <script src="global-defer.js" defer></script>
+</head>
+
+<body>
+    <div class="post-item">
+        <script>
+            !(function () {
+                const querySelector = document.querySelector.bind(document);
+                const querySelectorAll = document.querySelectorAll.bind(document);
+                const btnAllList = querySelector(".btn-all-list");
+
+
+
+                const JSON_URL = `https://cdn.jsdelivr.net/gh/hoangdieu606/tft@main/snapshot-set13-vn.json?nocache=${Date.now()}`;
+                const CACHE_KEY = "snapshot";
+                const CACHE_TIME_KEY = "snapshotTimestamp";
+                const CACHE_DURATION = 10 * 60 * 1000; // 10 phút
+
+                async function fetchExchangeRates() {
+                    try {
+                        const now = Date.now();
+                        const cachedData = localStorage.getItem(CACHE_KEY);
+                        const cachedTimestamp = localStorage.getItem(CACHE_TIME_KEY);
+
+                        // Nếu có cache và còn hạn => dùng cache, tránh gọi API liên tục
+                        if (cachedData && cachedTimestamp && (now - cachedTimestamp < CACHE_DURATION)) {
+                            console.log("📦 Dùng dữ liệu từ cache");
+                            // renderHQD(JSON.parse(cachedData));
+                            return;
+                        }
+                        const response = await fetch(JSON_URL);
+                        if (!response.ok) throw new Error("Không thể lấy dữ liệu từ API!");
+
+                        const data = await response.json();
+                        console.log(data)
+                        renderSnapshotsList(data)
+                        // localStorage.setItem(CACHE_KEY, JSON.stringify(newData)); // Lưu cache
+                        localStorage.setItem(CACHE_TIME_KEY, now); // Lưu timestamp
+
+                        // renderHQD(newData);
+                    } catch (error) {
+                        console.error("Lỗi:", error);
+                    }
+                }
+                fetchExchangeRates();
+
+                // ***❤❤❤❤❤❤❤❤❤❤❤❤❤❤❤❤❤❤❤***
+
+                function renderSnapshotsList(data) {
+                    querySelector(".snapshots-table").innerHTML = `
+            <thead>
+                    <tr>
+                    ${Object.keys(data[0]).map(value => `<th>${value}</th>`).join('')}    
+                    </tr>
+                  </thead>
+                  <tbody>
+                    ${data.map((obj, index) => `<tr ${index < 10 ? 'class="top-10-snapshots"' : index > 19 ? 'style="display:none"' : ''}>${Object.values(obj).map(value => `<td>${value}</td>`).join('')
+                        }</tr>`).join('')}
+                  </tbody>
+            `
+                    // ***❤❤❤❤❤❤❤❤❤❤❤❤❤❤❤❤❤❤❤***
+
+                    // Xử lý sự kiện khi click vào ô lọc 1
+                    const TrTableAll = querySelectorAll(".snapshots-table tbody tr")
+                    querySelector("input[name='filter']").addEventListener("input", function () {
+                        const searchTerm = normalizeText(this.value);
+                        const text = btnAllList.innerText
+                        TrTableAll.forEach(item => {
+                            item.style.display = normalizeText(item.innerText).includes(searchTerm) ? "table-row" : "none";
+                        });
+
+                        btnAllList.style.display = searchTerm === "" ? "flex" : "none"
+                        if (searchTerm === "" && text === "XEM TẤT CẢ") {
+                            TrTableAll.forEach((_, index) => {
+                                if (index > 19) {
+                                    TrTableAll[index].style.display = "none";
+                                }
+
+                            });
+                        }
+                    });
+
+                    // 
+                    btnAllList.addEventListener("click", function () {
+                        const text = btnAllList.innerText
+                        TrTableAll.forEach((item, index) => {
+                            if (index > 19) {
+                                item.style.display = text === "XEM TẤT CẢ" ? "table-row" : "none";
+                            }
+                        })
+                        btnAllList.innerText = text === "XEM TẤT CẢ" ? "RÚT GỌN" : "XEM TẤT CẢ"
+
+
+                    })
+
+                }
+
+
+                // ***❤❤❤❤❤❤❤❤❤❤❤❤❤❤❤❤❤❤❤***
+                // Hàm chuẩn hóa văn bản (chữ thường, tách dấu, bỏ dấu, đ --> d, bỏ tất cả khoảng trắng)
+                function normalizeText(text) {
+                    return text.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[\u0111]/g, "d").replaceAll(" ", "");
+                }
+                // uniqueArray
+                function uniqueArray(arr) {
+                    return Array.from(new Set(arr));
+                }
+                // setLocalStorage
+                function setLocalStorage(key, value) {
+                    try {
+                        localStorage.setItem(key, JSON.stringify(value));
+                    } catch (error) {
+                        console.error("Error saving to Local Storage:", error);
+                    }
+                }
+                // getLocalStorage
+                function getLocalStorage(key) {
+                    const storedValue = localStorage.getItem(key);
+                    return storedValue ? JSON.parse(storedValue) : null;
+                }
+
+                function formatInputNumber(input) {
+                    let inputValue = input.value;
+
+                    // Loại bỏ mọi ký tự không phải là số và dấu thập phân
+                    let numericValue = inputValue.replace(/[^\d.]/g, "");
+
+                    // Phân tách phần nguyên và phần thập phân
+                    let [integerPart, decimalPart] = numericValue.split(".");
+
+                    // Định dạng số với dấu phân cách phần nghìn và dấu thập phân
+                    if (integerPart) {
+                        integerPart = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                    }
+
+                    // Gán giá trị đã định dạng vào trường nhập liệu
+                    input.value =
+                        decimalPart !== undefined ? integerPart + "." + decimalPart : integerPart;
+                }
+
+                function getCurrentDate() {
+                    const currentDate = new Date();
+
+                    // Lấy ngày, tháng, năm
+                    const day = ("0" + currentDate.getDate()).slice(-2);
+                    const month = ("0" + (currentDate.getMonth() + 1)).slice(-2); // Tháng bắt đầu từ 0, cần cộng thêm 1
+                    const year = currentDate.getFullYear();
+
+                    // Định dạng lại thành "dd-mm-yyyy"
+                    const formattedDate = day + "-" + month + "-" + year;
+
+                    return formattedDate;
+                }
+            })();
+
+        </script>
+    </div>
+</body>
+
+</html>

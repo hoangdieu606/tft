@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fetch API Example</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        pre {
+            background-color: #f4f4f4;
+            padding: 10px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+
+<body>
+    <p>const data=</p>
+    <pre id="output">Loading...</pre>
+
+    <script>
+        /* champions url ảnh */
+        // icon = titleIcon: https://raw.communitydragon.org/latest/game/assets/characters/tft13_zeri/hud/tft13_zeri_square.tft_set13.png
+        // skillIcon = ability.icon: https://raw.communitydragon.org/latest/game/assets/characters/tft13_zeri/hud/icons2d/zeri_p.tft_set13.png
+        // ***bgIcon = icon: https://raw.communitydragon.org/latest/game/assets/characters/tft13_zeri/skins/base/images/tft13_zeri.tft_set13.png
+
+        /* origins url ảnh: icon = icon */
+        /* augments url ảnh: icon = icon */
+        /* items url ảnh: icon = icon */
+
+
+        // "https://tft-api.op.gg/api/v1/meta/champions?hl=vi_VN&version=13.7"
+        // https://tft-api.op.gg/api/v1/meta/traits?hl=vi_VN&version=13.7
+        // https://tft-api.op.gg/api/v1/meta/augments?hl=vi_VN&version=13.7
+        // https://tft-api.op.gg/api/v1/meta/items?hl=vi_VN&version=13.7
+
+        // "https://tft-api.op.gg/api/v3/vn/summoners/cEQa6SL1aAleH_8F_aAQtR3sWhuktWf23hUe5yDEPIHh7hoBKqyIh7FjN0Jw6HnYV2ew7VcuzsDivg/matches"
+        // https://tft-api.op.gg/api/v1/statistics/champions/items/recommend?limit=6
+        // https://tft-api.op.gg/api/v1/vn/rankings/rank?page=1
+
+        // https://tft.dakgg.io/api/v1/spectate-matches/vn2
+        // https://tft.dakgg.io/api/v1/data/augments?hl=vi&season=set13
+        // https://api2.metatft.com/tft-stat-api/augments_tiers
+        // https://hocvientft.hoquocdieu.workers.dev/?refresh=1&t=199999956
+        async function getData() {
+            try {
+                const response = await fetch(
+                    "https://hocvientft.hoquocdieu.workers.dev/?refresh=1&t=199999956"
+                ); // API mẫu
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                const data = await response.json();
+                const data2 = JSON.stringify(data, null, 2)
+                console.log(data)
+
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            }
+        }
+        //         fetch('https://hocvientft.hoquocdieu.workers.dev/')
+        //   .then(response => response.json())
+        //   .then(data => {
+        //     console.log(data); // Dữ liệu đã parse, không cần JSON.stringify lại
+        //     document.getElementById('render-target').innerHTML = data.champions.withRevival[0].descSkill;
+        //   });
+
+        // Gọi hàm khi trang tải xong
+        document.addEventListener("DOMContentLoaded", getData);
+
+
+    </script>
+</body>
+
+</html>

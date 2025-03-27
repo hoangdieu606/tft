@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Render TFT Data</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="champions.css">
+
+    <script src="global.js"></script>
+    <script src="global-defer.js" defer></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400..700&family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+</head>
+
+<body>
+    <!-- MENU start-->
+    <div class="nav">
+        <ul class="nav-list">
+            <li><a href="champions.html">
+                    <span><i class="fa-solid fa-house"></i></span>
+                    <span>Home</span></a></li>
+            <li><a href="traits.html">
+                    <span><i class="fa-solid fa-book-tanakh"></i></span>
+                    <span>SET 14</span></a></li>
+            <li><a href="augments.html">
+                    <span><i class="fa-solid fa-fire"></i></span>
+                    <span>Comp</span></a></li>
+            <li><a href="items-list.html">
+                    <span><i class="fa-solid fa-medal"></i></span>
+                    <span>Giải Đấu</span></a></li>
+            <li>
+                <div>
+                    <span><i class="fa-solid fa-bars"></i></span>
+                    <span>Menu</span>
+                </div>
+            </li>
+        </ul>
+        <div class="menu-list">
+            <ul>
+                <li><i class="fa-solid fa-circle"></i><a href="#">Comp</a></li>
+                <li><i class="fa-solid fa-circle"></i><a href="">Tier S</a></li>
+                <li><i class="fa-solid fa-circle"></i><a href="">Reroll</a></li>
+                <li><i class="fa-solid fa-circle"></i><a href="">Fast 8</a></li>
+                <li><i class="fa-solid fa-circle"></i><a href="">Chuỗi thua</a></li>
+                <li><i class="fa-solid fa-circle"></i><a href="">Exodia</a></li>
+            </ul>
+            <ul>
+                <li><i class="fa-solid fa-circle"></i><a href="">SET 14</a></li>
+                <li><i class="fa-solid fa-circle"></i><a href="">Tướng</a></li>
+                <li><i class="fa-solid fa-circle"></i><a href="">Tộc hệ</a></li>
+                <li><i class="fa-solid fa-circle"></i><a href="">Trang bị</a></li>
+                <li><i class="fa-solid fa-circle"></i><a href="">Lõi</a></li>
+            </ul>
+            <ul>
+                <li><i class="fa-solid fa-circle"></i><a href="">GIẢI ĐẤU</a></li>
+                <li><i class="fa-solid fa-circle"></i><a href="">Xem Điểm Snapshot Ladder Rank Việt Nam Set 14</a></li>
+                <li><i class="fa-solid fa-circle"></i><a href="">Xem Điểm Cup Point APAC Set 14</a></li>
+                <li><i class="fa-solid fa-circle"></i><a href="">5 Giải Đấu Lớn Trong Set 14</a></li>
+                <li><i class="fa-solid fa-circle"></i><a href="">Tài liệu chi tiết về các giải đấu</a></li>
+                <li><i class="fa-solid fa-circle"></i><a href="">Lịch thi đấu</a></li>
+            </ul>
+        </div>
+    </div>
+    <!-- MENU end-->
+    <div class="post-item">
+        <div id="champions-menu"><a href="champions.html">60 Tướng</a><a href="traits.html">Tộc
+                Hệ</a><a href="augments.html">Nâng Cấp</a><a href="items.html">Trang Bị</a></div>
+        <div id="champ-container">
+            <div class="menu-btn-filter-category">
+                <button class="btn-category-0"><span>All</span></button>
+                <button class="btn-category-1"><span>1&nbsp;&nbsp;</span><img
+                        src="https://cdn.jsdelivr.net/gh/hoangdieu606/tft@main/images/gold.png"
+                        alt="icon-gold"></button>
+                <button class="btn-category-2"><span>2&nbsp;&nbsp;</span><img
+                        src="https://cdn.jsdelivr.net/gh/hoangdieu606/tft@main/images/gold.png"
+                        alt="icon-gold"></button>
+                <button class="btn-category-3"><span>3&nbsp;&nbsp;</span><img
+                        src="https://cdn.jsdelivr.net/gh/hoangdieu606/tft@main/images/gold.png"
+                        alt="icon-gold"></button>
+                <button class="btn-category-4"><span>4&nbsp;&nbsp;</span><img
+                        src="https://cdn.jsdelivr.net/gh/hoangdieu606/tft@main/images/gold.png"
+                        alt="icon-gold"></button>
+                <button class="btn-category-5"><span>5&nbsp;&nbsp;</span><img
+                        src="https://cdn.jsdelivr.net/gh/hoangdieu606/tft@main/images/gold.png"
+                        alt="icon-gold"></button>
+                <button class="btn-category-6"><span>6&nbsp;&nbsp;</span><img
+                        src="https://cdn.jsdelivr.net/gh/hoangdieu606/tft@main/images/gold.png"
+                        alt="icon-gold"></button>
+                <button class="btn-category-7"><span>0&nbsp;&nbsp;</span><img
+                        src="https://cdn.jsdelivr.net/gh/hoangdieu606/tft@main/images/gold.png"
+                        alt="icon-gold"></button>
+
+
+            </div>
+            <div class="champions-list"></div>
+
+        </div>
+
+        <script>
+            function renderData(mainChampions) {
+                let previousCategory = null;
+                const arrCategory = {
+                    1: "Tướng 1 Vàng",
+                    2: "Tướng 2 Vàng",
+                    3: "Tướng 3 Vàng",
+                    4: "Tướng 4 Vàng",
+                    5: "Tướng 5 Vàng",
+                    6: "Tướng 6 Vàng",
+                    general: "Khác"
+                }
+
+                document.querySelector(".champions-list").innerHTML = mainChampions.map(({ name, cost, icon, traits, skillIcon, skillDesc, skillName, mana }) => {
+
+                    let categoryHeader = "";
+                    if (cost !== previousCategory) {
+                        categoryHeader = `<div class="category-group champ-cost-${cost}">${arrCategory[cost]|| arrCategory.general}</div>`;
+                        previousCategory = cost;
+                    }
+
+                    return `${categoryHeader}
+                            <div class="champ-card champ-cost-${cost}">
+                                <div class="champ-header">
+                                    <div>
+                                        <h3>${name}</h3>
+                                        <span>${cost}<img src="https://cdn.jsdelivr.net/gh/hoangdieu606/tft@main/images/gold.png" alt="icon-gold"></span>
+                                    </div>
+                                    <div>
+                                        <img src="${convertURL(icon)}" alt="${name}">
+                                        <div class="traits">${traits.map(obj => `<span class="trait"><img src="${convertURL(obj.icon)}" style="width: 18px; height: 18px;">${obj.name}</span>`).join("")}</div>
+                                    </div>
+                                </div>
+                                <div class="skill">
+                                        <div class="skill-name">
+                                            <div><img src="${convertURL(skillIcon || icon)}" alt="${skillName}"></div>
+                                            <div><h4>${skillName}</h4><p><img src="https://cdn.jsdelivr.net/gh/hoangdieu606/tft@main/images/Mana.png">${mana}</p></div>
+                                        </div>
+                                        <div class="skill-desc"><p>${skillDesc}</p></div>
+                                </div>
+                            </div>
+                            `
+                }).join("")
+
+            }
+
+        </script>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <ul>
+            <li>Hocvientft không được Riot Games xác nhận và không phản ánh quan điểm hay ý kiến của Riot Games hoặc bất
+                kỳ
+                cá nhân/tổ chức nào tham gia vào việc phát triển, sản xuất hoặc quản lý League of Legends. League of
+                Legends
+                và Riot Games là thương hiệu hoặc nhãn hiệu đã đăng ký của © Riot Games, Inc.
+
+            </li>
+            <li>Contact Email: <a href="mailto:hoquocdieu@gmail.com">hoquocdieu@gmail.com</a></li>
+        </ul>
+    </footer>
+
+</body>
+
+</html>

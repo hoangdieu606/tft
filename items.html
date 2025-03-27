@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="items.css">
+    <script src="global.js"></script>
+    <script src="global-defer.js" defer></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400..700&family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+</head>
+
+
+<body>
+    <!-- MENU start-->
+    <div class="nav">
+        <ul class="nav-list">
+            <li><a href="champions.html">
+                    <span><i class="fa-solid fa-house"></i></span>
+                    <span>Home</span></a></li>
+            <li><a href="traits.html">
+                    <span><i class="fa-solid fa-book-tanakh"></i></span>
+                    <span>SET 14</span></a></li>
+            <li><a href="augments.html">
+                    <span><i class="fa-solid fa-fire"></i></span>
+                    <span>Comp</span></a></li>
+            <li><a href="items-list.html">
+                    <span><i class="fa-solid fa-medal"></i></span>
+                    <span>Giải Đấu</span></a></li>
+            <li>
+                <div>
+                    <span><i class="fa-solid fa-bars"></i></span>
+                    <span>Menu</span>
+                </div>
+            </li>
+        </ul>
+        <div class="menu-list">
+            <ul>
+                <li><i class="fa-solid fa-circle"></i><a href="#">Comp</a></li>
+                <li><i class="fa-solid fa-circle"></i><a href="">Tier S</a></li>
+                <li><i class="fa-solid fa-circle"></i><a href="">Reroll</a></li>
+                <li><i class="fa-solid fa-circle"></i><a href="">Fast 8</a></li>
+                <li><i class="fa-solid fa-circle"></i><a href="">Chuỗi thua</a></li>
+                <li><i class="fa-solid fa-circle"></i><a href="">Exodia</a></li>
+            </ul>
+            <ul>
+                <li><i class="fa-solid fa-circle"></i><a href="">SET 14</a></li>
+                <li><i class="fa-solid fa-circle"></i><a href="">Tướng</a></li>
+                <li><i class="fa-solid fa-circle"></i><a href="">Tộc hệ</a></li>
+                <li><i class="fa-solid fa-circle"></i><a href="">Trang bị</a></li>
+                <li><i class="fa-solid fa-circle"></i><a href="">Lõi</a></li>
+            </ul>
+            <ul>
+                <li><i class="fa-solid fa-circle"></i><a href="">GIẢI ĐẤU</a></li>
+                <li><i class="fa-solid fa-circle"></i><a href="">Xem Điểm Snapshot Ladder Rank Việt Nam Set 14</a></li>
+                <li><i class="fa-solid fa-circle"></i><a href="">Xem Điểm Cup Point APAC Set 14</a></li>
+                <li><i class="fa-solid fa-circle"></i><a href="">5 Giải Đấu Lớn Trong Set 14</a></li>
+                <li><i class="fa-solid fa-circle"></i><a href="">Tài liệu chi tiết về các giải đấu</a></li>
+                <li><i class="fa-solid fa-circle"></i><a href="">Lịch thi đấu</a></li>
+            </ul>
+        </div>
+    </div>
+    <!-- MENU end-->
+    <div class="post-item">
+        <div id="champions-menu"><a href="champions.html">60 Tướng</a><a href="traits.html">Tộc
+                Hệ</a><a href="augments.html">Nâng Cấp</a><a href="items.html">Trang Bị</a></div>
+        <div id="items-container">
+            <div class="menu-btn-filter-category">
+                <button class="btn-category-0">All</button>
+                <button class="btn-category-1">Thường</button>
+                <button class="btn-category-2">Ánh Sáng</button>
+                <button class="btn-category-3">Tạo Tác</button>
+                <button class="btn-category-4">Hỗ Trợ</button>
+                <button class="btn-category-5">Ấn</button>
+                <button class="btn-category-6">Synergy</button>
+                <button class="btn-category-7">Component</button>
+            </div>
+            <div class="items-list"></div>
+        </div>
+        <script>
+
+            // Hàm render với Lazy Render, Observer và Cache
+            function renderItems(mainItems) {
+                const apiNameIcon = apiNameAndIcon(mainItems)
+                let previousCategory = null;
+                const arrCategory = {
+                    core: "Trang Bị Thường",
+                    radiant: "Trang Bị Ánh Sáng",
+                    artifact: "Trang Bị Tạo Tác",
+                    support: "Trang Bị Hỗ Trợ",
+                    emblem: "Ấn",
+                    synergy: "Trang Bị Khác",
+                    component: "Mảnh Trang Bị"
+                }
+
+                document.querySelector(".items-list").innerHTML = mainItems.map(({ name, icon, category, effects, desc, tier, apiName, composition }) => {
+
+                    const iconComp = composition?.length ? `<span class="item-composition"><span><img src="${convertURL(apiNameIcon[composition[0]])}"></span><span>+</span><span><img src="${convertURL(apiNameIcon[composition[1]])}"></span></span>` : "";
+
+                    let categoryHeader = "";
+                    if (category !== previousCategory) {
+                        categoryHeader = `<div class="category-group item-${category}">${arrCategory[category]}</div>`;
+                        previousCategory = category;
+                    }
+
+                    return `${categoryHeader}
+                        <div class="items-item item-${category} tier-${tier}">
+                           <div class="item-icon">
+                             <img src="${convertURL(icon)}" alt="${name}" data-api-name="${apiName}">
+                             <span>${tier}</span>
+                             ${iconComp}
+                            </div>
+                            <div class="item-content">
+                                <div class="item-title">
+                                    <div><h3>${name}</h3></div>
+                                     <span>${generateStatsHTML(effects)}</span>
+                                </div>
+                                <p>${desc}</p>
+                             </div>
+                        </div>
+                `
+                }).join('')
+
+            }
+        </script>
+    </div>
+</body>
+
+</html>
