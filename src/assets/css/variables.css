@@ -1,0 +1,141 @@
+/* root style.css */
+:root {
+    /* Biến Chủ Đề */
+    --primary-bg-color: linear-gradient(90deg, #657FFF, #906EFF);
+    --primary-bg-color-2: linear-gradient(94deg, #7d59ea 0.83%, #0093ff 79.97%);
+    --second-bg-color: #f5f5f5;
+    --background-color: #39587f;
+    --post-outer-color: #fff;
+    --text-color: #050505;
+    --text-color-second: #f1f1f1;
+    --primary-color: #906EFF;
+    --secondary-color: beige;
+    --accent-color: #28a745;
+    --white-color: #fff;
+    --link-color: var(--primary-color);
+    --link-hover-color: var(--accent-color);
+    --border-color: var(--primary-color);
+    --pin-color: none;
+    --pin-stroke-color: var(--primary-color);
+    --decimal-color: var(--primary-color);
+    --gray-color: #f8f9fa;
+    --navy-color: #356854;
+    --table-border-color: rgba(0, 0, 0, 0.08);
+    --table-even-color: #eaf0f8;
+    --table-odd-color: #f1f4fa;
+    --table-th-color: #006a6a;
+    --body-text-color: #fff;
+    --body-background-color: #0b141e;
+  
+    --menu-list-filter-color: #fff;
+
+    /* Màu nền chung của nút filter các loại khi active: nút lọc tướng 5 tiền, nút lọc lõi kim cương, ... */
+    --btn-bg-color-active: #CCCFE2;
+
+
+    /* theme chatGPT */
+    --cerise-color: #df3079;
+    --gossamer-color: #00a67d;
+    --white-color: #fff;
+    --summer-sky-color: #2e95d3;
+    --gamboge-color: #e9950c;
+    --alizarin-color: #f22c3d;
+
+    /* Biến Kích Thước */
+    --font-size: 16px;
+    --line-height: 1.5;
+    --padding: 15px;
+    --margin: 10px;
+
+    /* Biến Đổ Bóng */
+    --box-shadow: 0 1px 6px rgba(32, 33, 36, 0.28);
+    --box-shadow-hover: 0 2px 12px rgba(32, 33, 36, 0.56);
+
+    /* Biến Màu Sắc */
+
+    /* Biến Độ Đục */
+    --border-radius: 5px;
+    --button-radius: 3px;
+
+    /* Biến Độ Độ Che Phủ */
+    --overlay-opacity: 0.7;
+
+    /* Biến Độ Đàn Hồi */
+    --flex-basis: 100%;
+
+    /* nava */
+    --nav-text: #dadada;
+    --alpha-bg: hsla(0, 0%, 100%, 0.1);
+    --nav-ul-padding: 5px 15px;
+    --nav-font-size: 18px;
+    --nav-ul-li-flex-direction: row;
+    --nav-list-color: #fff;
+    --nav-list-filter-color: #fff;
+
+    /* tooltip */
+
+    --tooltip-champ-card-background: #333;
+    --tooltip-champ-card-border-color: #444;
+    --tooltip-tier-S-border-color: #f00;
+    --tooltip-tier-A-border-color: #ffa500;
+    --tooltip-tier-B-border-color: #ffd700;
+    --tooltip-tier-C-border-color: #008000;
+}
+
+/* root tier-list-set-13.css */
+:root {
+    --tw-blur: blur(0);
+    --tw-brightness: brightness(1.5);
+    --tw-contrast: contrast(1.2);
+    --tw-grayscale: grayscale(0);
+    --priority-augs-filter: invert(66%) sepia(91%) saturate(1145%) hue-rotate(79deg) brightness(200%) contrast(94%);
+    --tw-invert: invert(0);
+    --tw-saturate: saturate(2);
+    --tw-sepia: sepia(0);
+    --tw-drop-shadow: drop-shadow(0 0 10px #ff00ff) drop-shadow(0 0 20px #00ffff);
+    --name-display: flex;
+    --border-tier-list:2px solid #184925;
+    --button-color: #16dc4c;
+    --hexagon-background: #2d363b;
+  }
+
+  /* root champions.css */
+  :root {
+    --champion-border-color: #ded7ff;
+    --champion-cost-background: linear-gradient(to right, #444, #888, #bbb, #ddd);
+    --physicaldamage: #f16a50;
+    --scalehealth: #00ad0a;
+    --magicdamage: #00d8b0;
+    --tftbonus: #f0c000;
+    --scalelevel: #f0c000;
+    --spellpassive: #bfa888;
+    --omnivamp: #00d8b0;
+    --truedamage: #ff6369;
+    --tftkeyword: #ff6369;
+
+    --champ-card-background: #1e1e1e;
+    --champ-cost-1-border: #9AA4AF;
+    --champ-cost-2-border: #00AE0A;
+    --champ-cost-3-border: #0093FF;
+    --champ-cost-4-border: #E537A2;
+    --champ-cost-5-border: #EB9C00;
+    --champ-cost-6-border: #ded7ff;
+
+    --champ-cost-1-background: linear-gradient(162.51deg, #6b7280 23.73%, #d1d5db 61.57%, #9ca3af 99.42%);
+    --champ-cost-2-background: linear-gradient(162.51deg, #14cf11 23.73%, #93f592 61.57%, #03b900 99.42%);
+    --champ-cost-3-background: linear-gradient(162.51deg, #1e40af 23.73%, #93c5fd 61.57%, #3b82f6 99.42%);
+    --champ-cost-4-background: linear-gradient(162.51deg, #6b21a8 23.73%, #d8b4fe 61.57%, #a855f7 99.42%);
+    --champ-cost-5-background: linear-gradient(162.51deg, #ea610c 23.73%, #ffc195 61.57%, #bf6423 99.42%);
+    --champ-cost-6-background: linear-gradient(162.51deg, #4c55db 23.73%, #43a5d7 61.57%, #a761df 99.42%);
+
+}
+
+/* root traits.css */
+:root {
+    --trait-class-color: #ed7dba;
+    --trait-teamup-color: #77baff;
+    --trait-origin-color: #dafda2;
+}
+
+/* root index.css */
+

@@ -1,0 +1,72 @@
+name: Update TFT Data
+
+on:
+  schedule:
+    - cron: '30 23 * * *' # 23:30 UTC mỗi ngày
+  workflow_dispatch:
+
+jobs:
+  update-data:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Fetch Data from Workers
+        run: |
+          mkdir -p TFT_DATA
+          # Worker 1 (hocvientft)
+          curl -X GET "https://hocvientft.hoquocdieu.workers.dev/?list-files" -o file-list-1.json || echo "[]" > file-list-1.json
+          jq -r '.[] | select(test("^data-"))' file-list-1.json | sort -r | head -n 2 | while read filename; do
+            curl -X GET "https://hocvientft.hoquocdieu.workers.dev/?file=$filename" -o "TFT_DATA/$filename"
+          done
+          # Worker 2 (comp-hocvientft)
+          curl -X GET "https://comp-hocvientft.hoquocdieu.workers.dev/?list-files" -o file-list-2.json || echo "[]" > file-list-2.json
+          jq -r '.[] | select(test("^guides-"))' file-list-2.json | sort -r | head -n 2 | while read filename; do
+            curl -X GET "https://comp-hocvientft.hoquocdieu.workers.dev/?file=$filename" -o "TFT_DATA/$filename"
+          done
+
+      - name: Clean Old Files in TFT_DATA
+        run: |
+          # Giữ lại 2 file data-*.json mới nhất, xóa các file cũ hơn
+          ls -t TFT_DATA/data-*.json 2>/dev/null | tail -n +3 | xargs -I {} rm -v {}
+          # Giữ lại 2 file guides-*.json mới nhất, xóa các file cũ hơn
+          ls -t TFT_DATA/guides-*.json 2>/dev/null | tail -n +3 | xargs -I {} rm -v {}
+
+      - name: Copy Latest Data to public/data
+        run: |
+          # Tạo thư mục public/data nếu chưa có
+          mkdir -p public/data
+          
+          # Xóa các file data-*.json cũ trong public/data, giữ lại data-original.json
+          find public/data -type f -name "data-*.json" ! -name "data-original.json" -exec rm -v {} \;
+          # Xóa các file guides-*.json cũ trong public/data, giữ lại guides-original.json
+          find public/data -type f -name "guides-*.json" ! -name "guides-original.json" -exec rm -v {} \;
+          
+          # Copy file data-*.json mới nhất vào public/data/
+          latest_data=$(ls -t TFT_DATA/data-*.json 2>/dev/null | head -n 1)
+          if [ -n "$latest_data" ]; then
+            cp "$latest_data" public/data/
+            echo "Copied $latest_data to public/data/"
+          else
+            echo "No data-*.json file found in TFT_DATA"
+          fi
+          
+          # Copy file guides-*.json mới nhất vào public/data/
+          latest_guides=$(ls -t TFT_DATA/guides-*.json 2>/dev/null | head -n 1)
+          if [ -n "$latest_guides" ]; then
+            cp "$latest_guides" public/data/
+            echo "Copied $latest_guides to public/data/"
+          else
+            echo "No guides-*.json file found in TFT_DATA"
+          fi
+
+      - name: Commit Changes
+        run: |
+          git config --global user.name "GitHub Action"
+          git config --global user.email "action@github.com"
+          git add TFT_DATA/*
+          git add public/data/*
+          git commit -m "Update TFT data on $(date +'%d-%m-%Y')" || echo "No changes to commit"
+          git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

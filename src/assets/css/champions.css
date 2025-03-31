@@ -1,0 +1,191 @@
+
+.physicaldamage {
+    color: var(--physicaldamage);
+}
+
+.scalehealth {
+    color: var(--scalehealth);
+}
+
+.magicdamage {
+    color: var(--magicdamage);
+}
+
+.tftbonus,
+.scalelevel {
+    color: var(--tftbonus);
+}
+
+.spellpassive,
+.spellactive {
+    color: var(--spellpassive);
+}
+
+.omnivamp,
+.truedamage,
+.tftkeyword {
+    color: var(--truedamage);
+}
+
+.tft-bonus {
+    color: var(--tftbonus);
+    font-weight: bold;
+}
+
+.scale-level {
+    color: var(--scalelevel);
+    font-weight: bold;
+}
+
+
+span.rules {
+    opacity: .5;
+}
+
+.champions-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 50px;
+}
+
+.champ-card {
+    background: var(--champ-card-background);
+    border-radius: 10px;
+    padding: 15px;
+    overflow: hidden;
+    width: 270px;
+    min-height: 440px;
+    line-height: 1.4;
+    flex-direction: column;
+}
+
+.champ-cost-1 {
+    --champion-border-color: var(--champ-cost-1-border);
+    --champion-cost-background: var(--champ-cost-1-background);
+}
+
+.champ-cost-1>div:first-child {
+    --champion-cost-background: var(--champ-cost-1-background);
+}
+
+.champ-cost-2 {
+    --champion-border-color: var(--champ-cost-2-border);
+    --champion-cost-background: var(--champ-cost-2-background);
+}
+
+.champ-cost-3 {
+    --champion-border-color: var(--champ-cost-3-border);
+    --champion-cost-background: var(--champ-cost-3-background);
+
+}
+
+.champ-cost-4 {
+    --champion-border-color: var(--champ-cost-4-border);
+    --champion-cost-background: var(--champ-cost-4-background);
+
+}
+
+.champ-cost-5 {
+    --champion-border-color: var(--champ-cost-5-border);
+    --champion-cost-background: var(--champ-cost-5-background);
+
+}
+
+.champ-cost-6 {
+    --champion-border-color: var(--champ-cost-6-border);
+    --champion-cost-background: var(--champ-cost-6-background);
+}
+
+
+.champ-header>div:first-child {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    margin: -15px -15px 15px;
+    background: var(--champion-cost-background);
+}
+
+.champ-header>div:first-child>span {
+    display: flex;
+    align-items: center;
+    font-size: 18px;
+    font-weight: 600;
+    gap: 5px;
+}
+
+.champ-header>div:first-child>span img {
+    width: 20px;
+    filter: sepia(100%) saturate(492%) hue-rotate(0deg);
+}
+
+.champ-header>div:last-child {
+    display: flex;
+    justify-content: space-between;
+}
+
+.champ-header>div:last-child>img {
+    width: 70px;
+    height: 70px;
+    border-radius: 10px;
+    border: 2px solid var(--champion-border-color);
+    overflow: hidden;
+}
+
+.traits {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.trait {
+    font-size: 14px;
+    display: flex;
+    gap: 5px;
+    align-items: center;
+}
+
+
+.skill-name {
+    display: flex;
+    align-items: center;
+    margin: 15px 0;
+}
+
+.skill-name img {
+    width: 100%;
+    height: auto;
+}
+
+.skill-name div:first-child {
+    margin-right: 15px;
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.skill-name div:last-child>* {
+    line-height: normal;
+    margin: 0;
+    padding: 0;
+}
+
+.skill-name div:last-child p {
+    margin: 4px 0 0;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.skill-name>div:last-child img {
+    width: 20px;
+    height: auto;
+}
+
+.icon-stat {
+    width: 18px;
+    height: 18px;
+    vertical-align: middle;
+}
