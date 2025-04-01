@@ -704,11 +704,11 @@ body.name-active .toggle::before {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
-  background-color: #0f1510;
+  background-color: var(--background-tierlist-group);
   border-radius: 1.5rem;
   padding: 15px;
   position: relative;
-  box-shadow: 15px 12px 20px #061b1266;
+  box-shadow: 15px 12px 20px var(--box-shadow-tierlist-group);
   width: 100%;
   min-height: 132px;
 }

@@ -37,6 +37,9 @@ body {
     max-width: 1024px;
     width: 100%;
     margin: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
 button {
@@ -203,15 +206,27 @@ main#content {
     padding: 22px;
 }
 
+/* COMING SOON */
+.comming-soon {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 70vh;
+    width: 100%;
+    color: #d7d7d7;
+}
+
 /* FOOTER */
 
 footer {
     margin-top: 22px;
-    padding: 15px 15px 120px;
+    padding: 15px;
     font-size: 15px;
-    background: var(--primary-bg-color);
+    background: var(--background-tierlist-group);
     border-radius: var(--border-radius);
     box-shadow: var(--box-shadow);
+    color: #d7d7d7;
 }
 
 footer a,
@@ -505,12 +520,7 @@ button.btn-category-7 {
 
 @media screen and (max-width: 1280px) {
 
-
-
-    /* MENU champions, augments, items, traits */
 }
-
-
 /* MEDIA */
 
 /* 📱 Mobile nhỏ */
@@ -534,22 +544,4 @@ button.btn-category-7 {
         width: 100% !important;
     }
 
-   
 }
-
-/* 📱📱 Mobile lớn */
-@media (min-width: 576px) and (max-width: 767px) {}
-
-/* 📱📱📱 Tablet */
-@media (min-width: 768px) and (max-width: 991px) {}
-
-/* 💻 Laptop nhỏ */
-@media (min-width: 992px) and (max-width: 1199px) {}
-
-/* 💻 Laptop nhỏ */
-@media (min-width: 1280px) and (max-width: 1530px) {
-    
-}
-
-/* 💻💻 Desktop */
-@media (min-width: 1200px) {}

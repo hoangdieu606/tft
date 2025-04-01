@@ -97,6 +97,8 @@
     --border-tier-list:2px solid #184925;
     --button-color: #16dc4c;
     --hexagon-background: #2d363b;
+    --background-tierlist-group: #0f1510;
+    --box-shadow-tierlist-group: #061b1266;
   }
 
   /* root champions.css */

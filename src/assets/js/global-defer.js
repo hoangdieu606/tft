@@ -6,34 +6,43 @@ export let indexer;
 
 
 /* Toggle Button Menu */
+/* Toggle Button Menu */
 (function () {
     const body = document.body;
     const menuToggle = document.querySelector(".nav-list li > div");
     const menuList = document.querySelector(".menu-list");
 
-    if (!menuToggle || !menuList) { return; }
+    if (!menuToggle || !menuList) return;
 
-    menuToggle.addEventListener('click', toggleMenu);
+    menuToggle.addEventListener("click", (e) => {
+        e.stopPropagation(); // Ngăn chặn sự kiện lan ra document
+        toggleMenu();
+    });
+
+    document.addEventListener("click", (e) => {
+        if (!menuList.contains(e.target) && !menuToggle.contains(e.target)) {
+            closeMenu();
+        }
+    });
+
+    menuList.addEventListener("click", (e) => {
+        if (e.target.tagName === "A") closeMenu(); // Chỉ đóng khi click vào link
+    });
 
     function toggleMenu() {
-        menuToggle.classList.toggle('active');
-        body.classList.toggle('active-menu');
-        updateMenuHeight();
+        const isActive = body.classList.toggle("active-menu");
+        menuToggle.classList.toggle("active", isActive);
+        menuList.style.height = isActive ? `${menuList.scrollHeight}px` : "0";
     }
 
-    function updateMenuHeight() {
-        if (body.classList.contains('active-menu')) {
-            menuList.style.height = menuList.scrollHeight + 15 + 'px';
-        } else {
-            menuList.style.height = '0';
-        }
+    function closeMenu() {
+        body.classList.remove("active-menu");
+        menuToggle.classList.remove("active");
+        menuList.style.height = "0";
     }
-
-    menuList.addEventListener('click', () => {
-        menuList.style.height = '0';
-        body.classList.remove("active-menu")
-    })
 })();
+
+
 
 /*  ToolTip START */
 export class TooltipDataIndexer {
