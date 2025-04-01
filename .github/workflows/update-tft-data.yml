@@ -30,6 +30,16 @@ jobs:
             curl -X GET "https://comp-hocvientft.hoquocdieu.workers.dev/?file=$filename" -o "public/data/auto/$filename"
           done
 
+      - name: Validate JSON Files
+        run: |
+          # Kiểm tra các file JSON tải về có hợp lệ không
+          for file in public/data/auto/*.json; do
+            if [ -f "$file" ]; then
+              jq . "$file" > /dev/null || { echo "Invalid JSON in $file"; exit 1; }
+              echo "Validated $file"
+            fi
+          done
+
       - name: Clean Old Files in public/data/auto
         run: |
           # Giữ lại 2 file data-*.json mới nhất, xóa các file cũ hơn
@@ -43,13 +53,32 @@ jobs:
           git config --global user.email "action@github.com"
           # Pull trước khi commit để tránh xung đột
           git pull origin main --rebase
-          # Kiểm tra xem có thay đổi nào để commit không
-          git add public/data/auto/*
-          if git diff --staged --quiet; then
-            echo "No changes to commit"
+          # Kiểm tra xem thư mục public/data/auto có file không
+          if ls public/data/auto/* 2>/dev/null; then
+            git add public/data/auto/*
+            if git diff --staged --quiet; then
+              echo "No changes to commit"
+              exit 0
+            fi
+            git commit -m "Update TFT data on $(date +'%d-%m-%Y')"
+            git push
+          else
+            echo "No files found in public/data/auto to commit"
             exit 0
           fi
-          git commit -m "Update TFT data on $(date +'%d-%m-%Y')"
-          git push
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Notify Discord on Success
+        if: success() # Chỉ chạy nếu các bước trước đó thành công
+        run: |
+          # Lấy tên file data-*.json mới nhất
+          latest_data=$(ls -t public/data/auto/data-*.json 2>/dev/null | head -n 1 | xargs basename)
+          # Lấy tên file guides-*.json mới nhất
+          latest_guides=$(ls -t public/data/auto/guides-*.json 2>/dev/null | head -n 1 | xargs basename)
+          # Gửi thông báo qua Discord
+          curl -X POST -H "Content-Type: application/json" \
+            -d "{\"content\": \"TFT Data updated successfully on $(date +'%d-%m-%Y')!\\n- Data: $latest_data\\n- Guides: $latest_guides\"}" \
+            ${{ secrets.DISCORD_WEBHOOK_URL }}
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
