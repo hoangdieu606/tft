@@ -48,11 +48,18 @@ jobs:
 
       - name: Validate JSON Files
         run: |
-          # Kiểm tra các file JSON tải về có hợp lệ không
+          # Kiểm tra các file JSON tải về có hợp lệ không và không chứa lỗi
           for file in public/data/auto/*.json; do
             if [ -f "$file" ]; then
+              # Kiểm tra cú pháp JSON
               jq . "$file" > /dev/null || { echo "Invalid JSON in $file"; exit 1; }
-              echo "Validated $file"
+              # Kiểm tra xem file có chứa lỗi không (ví dụ: {"error": "File not found"})
+              if jq -e '.error' "$file" > /dev/null; then
+                echo "File $file contains an error, removing..."
+                rm "$file"
+              else
+                echo "Validated $file"
+              fi
             fi
           done
 
