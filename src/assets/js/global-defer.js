@@ -192,36 +192,45 @@ export function renderTooltipContent(data) {
 }
 
 export function showTooltip(event) {
-    const tooltip = document.createElement('div');
-    tooltip.className = 'tooltip';
+    // Kiểm tra xem tooltip đã tồn tại chưa khi nhấp
+    const existingTooltip = document.querySelector('.tooltip');
+    if (event.type === 'click' && existingTooltip) {
+        existingTooltip.remove();
+        return; // Ẩn tooltip nếu nhấp lần nữa (toggle)
+    }
 
-    const apiName = event.target.dataset.apiName;
-    const data = indexer.getTooltipData(apiName);
-    if (!data) { return; }
+    // Nếu không phải nhấp hoặc chưa có tooltip, tạo mới
+    if (!existingTooltip) {
+        const tooltip = document.createElement('div');
+        tooltip.className = 'tooltip';
 
-    tooltip.innerHTML = renderTooltipContent(data);
-    document.body.appendChild(tooltip);
+        const apiName = event.target.dataset.apiName;
+        const data = indexer.getTooltipData(apiName);
+        if (!data) { return; }
 
-    const isTouchEvent = event.touches?.length > 0;
-    const x = isTouchEvent ? event.touches[0].clientX : event.clientX;
-    const y = isTouchEvent ? event.touches[0].clientY : event.clientY;
+        tooltip.innerHTML = renderTooltipContent(data);
+        document.body.appendChild(tooltip);
 
-    let left = x + 10;
-    let top = y + 10;
+        const x = event.clientX || (event.touches && event.touches[0].clientX);
+        const y = event.clientY || (event.touches && event.touches[0].clientY);
 
-    const tooltipWidth = tooltip.offsetWidth;
-    const tooltipHeight = tooltip.offsetHeight;
-    const viewportWidth = window.innerWidth;
-    const viewportHeight = window.innerHeight;
+        let left = x + 10;
+        let top = y + 10;
 
-    if (left + tooltipWidth > viewportWidth) { left = x - tooltipWidth - 10; }
-    if (top + tooltipHeight > viewportHeight) { top = y - tooltipHeight - 10; }
+        const tooltipWidth = tooltip.offsetWidth;
+        const tooltipHeight = tooltip.offsetHeight;
+        const viewportWidth = window.innerWidth;
+        const viewportHeight = window.innerHeight;
 
-    left = Math.max(10, Math.min(left, viewportWidth - tooltipWidth - 10));
-    top = Math.max(10, Math.min(top, viewportHeight - tooltipHeight - 10));
+        if (left + tooltipWidth > viewportWidth) { left = x - tooltipWidth - 10; }
+        if (top + tooltipHeight > viewportHeight) { top = y - tooltipHeight - 10; }
 
-    tooltip.style.left = `${left}px`;
-    tooltip.style.top = `${top}px`;
+        left = Math.max(10, Math.min(left, viewportWidth - tooltipWidth - 10));
+        top = Math.max(10, Math.min(top, viewportHeight - tooltipHeight - 10));
+
+        tooltip.style.left = `${left}px`;
+        tooltip.style.top = `${top}px`;
+    }
 }
 
 export function hideTooltip() {
@@ -231,12 +240,37 @@ export function hideTooltip() {
 
 export function setupTooltips() {
     const icons = document.querySelectorAll('[data-api-name]');
+    
+    // Kiểm tra thiết bị có hỗ trợ cảm ứng không (mobile)
+    const isMobile = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+
     icons.forEach(icon => {
-        icon.addEventListener('mouseover', showTooltip);
-        icon.addEventListener('mouseout', hideTooltip);
-        icon.addEventListener('touchstart', showTooltip, { passive: true });
-        icon.addEventListener('touchend', hideTooltip);
+        if (isMobile) {
+            // Trên mobile: chỉ dùng click để toggle tooltip
+            icon.addEventListener('click', (event) => {
+                event.preventDefault(); // Ngăn hành vi mặc định nếu cần
+                showTooltip(event);
+            });
+        } else {
+            // Trên desktop: hover và click đều hoạt động
+            icon.addEventListener('mouseover', showTooltip);
+            icon.addEventListener('mouseout', hideTooltip);
+            icon.addEventListener('click', (event) => {
+                event.preventDefault(); // Ngăn hành vi mặc định nếu cần
+                showTooltip(event);
+            });
+        }
     });
+
+    // Ẩn tooltip khi nhấp ra ngoài (chỉ áp dụng cho mobile)
+    if (isMobile) {
+        document.addEventListener('click', (event) => {
+            const tooltip = document.querySelector('.tooltip');
+            if (tooltip && !event.target.matches('[data-api-name]')) {
+                hideTooltip();
+            }
+        });
+    }
 }
 
 

@@ -136,7 +136,6 @@ div.post-comp {
   height: 100%;
   background-color: var(--tier-text-color);
   clip-path: polygon(25% 5%, 75% 5%, 100% 50%, 75% 95%, 25% 95%, 0% 50%);
-  -o-object-fit: cover;
   object-fit: cover;
   background-size: cover;
   margin: auto;
