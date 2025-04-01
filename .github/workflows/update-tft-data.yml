@@ -68,17 +68,3 @@ jobs:
           fi
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Notify Discord on Success
-        if: success() # Chỉ chạy nếu các bước trước đó thành công
-        run: |
-          # Lấy tên file data-*.json mới nhất
-          latest_data=$(ls -t public/data/auto/data-*.json 2>/dev/null | head -n 1 | xargs basename)
-          # Lấy tên file guides-*.json mới nhất
-          latest_guides=$(ls -t public/data/auto/guides-*.json 2>/dev/null | head -n 1 | xargs basename)
-          # Gửi thông báo qua Discord
-          curl -X POST -H "Content-Type: application/json" \
-            -d "{\"content\": \"TFT Data updated successfully on $(date +'%d-%m-%Y')!\\n- Data: $latest_data\\n- Guides: $latest_guides\"}" \
-            ${{ secrets.DISCORD_WEBHOOK_URL }}
-        env:
-          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
