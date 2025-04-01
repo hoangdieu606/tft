@@ -92,17 +92,17 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Lấy dữ liệu chính (data)
     try {
       // 1. Thử lấy file data-dd-mm-yyyy.json
-      data = await fetchWithTimeout(`/data/data-${todayStr}.json`);
+      data = await fetchWithTimeout(`/data/auto/data-${todayStr}.json`);
       dataSource = `data-${todayStr}`;
     } catch {
       try {
         // 2. Thử lấy file data-(dd-1)-mm-yyyy.json
-        data = await fetchWithTimeout(`/data/data-${yesterdayStr}.json`);
+        data = await fetchWithTimeout(`/data/auto/data-${yesterdayStr}.json`);
         dataSource = `data-${yesterdayStr}`;
       } catch {
         try {
           // 3. Thử lấy file data-original.json
-          data = await fetchWithTimeout(`/data/data-original.json`);
+          data = await fetchWithTimeout(`/data/manual/data-original.json`);
           dataSource = 'data-original';
         } catch {
           // 4. Thử lấy từ localStorage
@@ -119,17 +119,17 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Lấy dữ liệu guides (guidesData)
     try {
       // 1. Thử lấy file guides-dd-mm-yyyy.json
-      guidesData = await fetchWithTimeout(`/data/guides-${todayStr}.json`);
+      guidesData = await fetchWithTimeout(`/data/auto/guides-${todayStr}.json`);
       guidesDataSource = `guides-${todayStr}`;
     } catch {
       try {
         // 2. Thử lấy file guides-(dd-1)-mm-yyyy.json
-        guidesData = await fetchWithTimeout(`/data/guides-${yesterdayStr}.json`);
+        guidesData = await fetchWithTimeout(`/data/auto/guides-${yesterdayStr}.json`);
         guidesDataSource = `guides-${yesterdayStr}`;
       } catch {
         try {
           // 3. Thử lấy file guides-original.json
-          guidesData = await fetchWithTimeout(`/data/guides-original.json`);
+          guidesData = await fetchWithTimeout(`/data/manual/guides-original.json`);
           guidesDataSource = 'guides-original';
         } catch {
           // 4. Thử lấy từ localStorage

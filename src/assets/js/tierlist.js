@@ -164,7 +164,6 @@ export function tierList(guidesData, champAndIconCost, itemAndIcon, augsAndIcon)
       option.addEventListener('click', (e) => {
         e.stopPropagation(); // Ngăn sự kiện click lan ra document
         const selectedStyle = option.dataset.style;
-        console.log(selectedStyle);
         // Cập nhật UI
         styleOptions.forEach(opt => opt.classList.remove('active'));
         option.classList.add('active');
