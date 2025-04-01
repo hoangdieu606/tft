@@ -1,0 +1,23 @@
+[33m3e854c2[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m HEAD@{0}: rebase (abort): returning to refs/heads/main
+[33m3e854c2[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m HEAD@{1}: rebase (abort): returning to refs/heads/main
+[33mf7fb678[m HEAD@{2}: commit: � message
+[33m3e854c2[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m HEAD@{3}: checkout: moving from 87172f21c3b201440abb062361b9176243661828 to main
+[33m87172f2[m HEAD@{4}: commit: Cập nhật GitHub Actions workflow
+[33mb4122d7[m HEAD@{5}: pull --rebase origin main (start): checkout b4122d717632f47df45c6c3a655de70df5a23454
+[33m3e854c2[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m HEAD@{6}: commit: � message
+[33m884cbb9[m HEAD@{7}: commit: � message
+[33mae00536[m HEAD@{8}: commit: � message
+[33me40cb7a[m HEAD@{9}: commit (merge): � message
+[33me8086b9[m HEAD@{10}: commit: message
+[33m6abde86[m HEAD@{11}: commit: 🔄 message
+[33mac3af70[m HEAD@{12}: commit: 🔄 message
+[33m0ec9027[m HEAD@{13}: commit: 🔄 message
+[33m5241ac7[m HEAD@{14}: commit: 🔄 message
+[33mc2b1e68[m HEAD@{15}: commit (merge): 🔄 message
+[33m3d54717[m HEAD@{16}: pull origin main: Merge made by the 'ort' strategy.
+[33meb517f6[m HEAD@{17}: commit: 🔄 message
+[33m1ca143a[m HEAD@{18}: commit: 🔄 message
+[33mc2c765b[m HEAD@{19}: commit: 🔄 message
+[33m69df88b[m HEAD@{20}: commit: � message
+[33m11e01c1[m HEAD@{21}: Branch: renamed refs/heads/master to refs/heads/main
+[33m11e01c1[m HEAD@{23}: commit (initial): � global and global defer
