@@ -1,6 +1,7 @@
 /* convert URL */
 export function convertURL(assetPath) {
-    const baseUrl = "https://raw.communitydragon.org/15.6/game/";
+    return assetPath;
+    const baseUrl = "https://raw.communitydragon.org/latest/game/";
 
     if (assetPath) {
         const convertedPath = assetPath

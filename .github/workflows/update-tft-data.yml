@@ -74,9 +74,24 @@ jobs:
         run: |
           git config --global user.name "GitHub Action"
           git config --global user.email "action@github.com"
-          # Pull trước khi commit để tránh xung đột
-          git pull origin main --rebase
-          # Kiểm tra xem thư mục public/data/auto có file không
+
+          # Kiểm tra trạng thái repository và xử lý các thay đổi chưa commit
+          if [ -n "$(git status --porcelain)" ]; then
+            echo "Unstaged changes detected, stashing them..."
+            git add .
+            git stash
+          fi
+
+          # Pull với rebase để cập nhật từ remote
+          git pull origin main --rebase || { echo "Pull failed"; exit 1; }
+
+          # Nếu có stash, áp dụng lại
+          if git stash list | grep -q "stash"; then
+            echo "Applying stashed changes..."
+            git stash pop || { echo "Stash pop failed, resolving conflicts may be needed"; exit 1; }
+          fi
+
+          # Kiểm tra và commit các file mới
           if ls public/data/auto/* 2>/dev/null; then
             git add public/data/auto/*
             if git diff --staged --quiet; then

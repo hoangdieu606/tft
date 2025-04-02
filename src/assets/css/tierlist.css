@@ -1044,5 +1044,5 @@ body.name-active .toggle::before {
 
 .tierlist-items .tier-group,
 .tierlist-augments .tier-group {
-  justify-content: center;
+  justify-content: space-evenly;
 }

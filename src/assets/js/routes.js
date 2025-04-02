@@ -27,11 +27,9 @@ export async function loadPage(page, { data = {}, guidesData = {} } = {}) {
 
       if (storedData) {
         data = JSON.parse(storedData);
-        console.log("✅ Dữ liệu lấy từ localStorage:");
       }
       if (storedGuidesData) {
         guidesData = JSON.parse(storedGuidesData);
-        console.log("✅ GuidesData lấy từ localStorage:");
       }
     }
 
