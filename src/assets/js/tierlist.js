@@ -2,7 +2,7 @@ import { convertURL, apiNameAndIcon } from '/src/assets/js/global.js';
 import { setupTooltips, setupStyleMenu } from '/src/assets/js/global-defer.js';
 
 
-export function renderComp(data, guidesData) {
+export function renderComp(data, guidesData, hexIndexData) {
   const tierCompContainer = document.querySelector(".tier-comp-container");
   if (!tierCompContainer) return;
   
@@ -44,7 +44,7 @@ export function renderComp(data, guidesData) {
 
     tierContainer.classList.remove("hide-post-comp");
     clickedLink.classList.add("active");
-    renderPostComp(guidesData.guides[index], champAndIconCost, itemAndIcon, augsAndIcon, postCompTag);
+    renderPostComp(guidesData.guides[index], champAndIconCost, itemAndIcon, augsAndIcon, postCompTag, hexIndexData);
 
     requestAnimationFrame(() => {
       scrollToPost(tierContainer, postCompTag);
@@ -54,7 +54,7 @@ export function renderComp(data, guidesData) {
   }
 
   // Xử lý hash URL ngay sau khi render xong
-  handleHashURL(data, guidesData);
+  handleHashURL(data, guidesData, hexIndexData);
 
   // Xử lý sự kiện loadPage khi nhấn vào link
   setupStyleMenu('.style-btn.champ-link', '.style-menu.champ-link', '.style-menu.champ-link a');
@@ -77,12 +77,12 @@ export function scrollToPost(tierContainer, postCompTag) {
   }
 }
 
-export function tierList(guidesData, champAndIconCost, itemAndIcon, augsAndIcon) {
+export function tierList(guidesData, champAndIconCost, itemAndIcon, augsAndIcon, hexIndexData) {
   const tierContainer = document.querySelector(".tier-comp-container");
+
   // guidesData
   const tierGroups = guidesData.reduce((acc, { mainChampion, mainItem, mainAugment, tier, title, style }, index) => {
     if (!champAndIconCost[mainChampion.apiName]) return acc;
-    
     const iconChamp = convertURL(champAndIconCost[mainChampion.apiName][0]);
     const costChamp = champAndIconCost[mainChampion.apiName][1];
     const hashtag = toHashtag(title);
@@ -209,10 +209,12 @@ export function tierList(guidesData, champAndIconCost, itemAndIcon, augsAndIcon)
   }
 }
 
-export function renderPostComp(guideData, champAndIconCost, itemAndIcon, augsAndIcon, postCompTag) {
+export function renderPostComp(guideData, champAndIconCost, itemAndIcon, augsAndIcon, postCompTag, hexIndexData) {
   if (!postCompTag || !guideData) return;
   
   const { mainChampion, mainItem, mainAugment, tier, title, style, augments, augmentTypes, augmentsTip, finalComp, earlyComp, carousel, tips, altBuilds } = guideData;
+
+  const teamCode = generateTeamCode(hexIndexData, finalComp);
   
   const valueTypes = {
     "ECON": "Kinh Tế",
@@ -295,8 +297,24 @@ export function renderPostComp(guideData, champAndIconCost, itemAndIcon, augsAnd
       </div>
       <div class="right-one">
         <div class="comp-buttons">
-          <button class="comp-copy-link" title="Copy link"><i class="fa-solid fa-link"></i></button>
-          <button class="comp-close" title="Close post"><i class="fa-solid fa-xmark"></i></button>
+          <div class="copy-menu">
+            <button class="comp-copy-link" title="Copy">
+            <i class="fa-solid fa-ellipsis"></i>
+            </button>
+            <div class="copy-dropdown">
+            <button class="copy-option" data-action="teamCode">
+            <i class="fa-solid fa-copy"></i>
+                <span>Copy TeamCode</span>
+              </button>
+              <button class="copy-option" data-action="link">
+                <i class="fa-solid fa-link"></i>
+                <span>Copy Link</span>
+              </button>
+            </div>
+          </div>
+          <button class="comp-close" title="Close post">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
         </div>
         <div class="comp-augs-list">
           <div class="title-comp">Những Lõi Mạnh</div>
@@ -395,7 +413,9 @@ export function renderPostComp(guideData, champAndIconCost, itemAndIcon, augsAnd
   createBoard(finalComp, champAndIconCost, itemAndIcon, postCompTag);
   
   const closeButton = postCompTag.querySelector("button.comp-close");
-  const copyButton = postCompTag.querySelector("button.comp-copy-link");
+  const copyMenu = postCompTag.querySelector('.copy-menu');
+  const copyButton = copyMenu.querySelector('.comp-copy-link');
+  const copyOptions = copyMenu.querySelectorAll('.copy-option');
   
   if (closeButton) {
     closeButton.onclick = () => {
@@ -406,19 +426,41 @@ export function renderPostComp(guideData, champAndIconCost, itemAndIcon, augsAnd
     };
   }
 
-  if (copyButton) {
-    copyButton.onclick = async () => {
-      try {
-        await navigator.clipboard.writeText(window.location.href);
-        copyButton.innerHTML = '<i class="fa-solid fa-check"></i>';
-        setTimeout(() => {
-          copyButton.innerHTML = '<i class="fa-solid fa-link"></i>';
-        }, 2000);
-      } catch (err) {
-        console.error('Không thể copy link:', err);
+  copyButton.addEventListener('click', (e) => {
+    e.stopPropagation();
+    copyMenu.classList.toggle('active');
+  });
+
+  document.addEventListener('click', (e) => {
+    if (!copyMenu.contains(e.target)) {
+      copyMenu.classList.remove('active');
+    }
+  });
+
+  copyOptions.forEach(option => {
+    option.addEventListener('click', async (e) => {
+      e.stopPropagation();
+      const action = option.dataset.action;
+      
+      if (action === 'teamCode') {
+        try {
+          await navigator.clipboard.writeText(teamCode);
+          showTooltip('Đã sao chép', copyButton);
+        } catch (err) {
+          console.error('Không thể copy teamCode:', err);
+        }
+      } else if (action === 'link') {
+        try {
+          await navigator.clipboard.writeText(window.location.href);
+          showTooltip('Đã sao chép', copyButton);
+        } catch (err) {
+          console.error('Không thể copy link:', err);
+        }
       }
-    };
-  }
+      
+      copyMenu.classList.remove('active');
+    });
+  });
 
   setupToggle(postCompTag);
   setupTooltips();
@@ -582,8 +624,7 @@ function toHashtag(str) {
     .trim().replace(/\s+/g, '-');
 }
 
-function handleHashURL(data, guidesData) {
-
+function handleHashURL(data, guidesData, hexIndexData) {
   if (!data || !guidesData || !guidesData.guides) return;
   
   const hash = window.location.hash;
@@ -616,10 +657,49 @@ function handleHashURL(data, guidesData) {
   const augsAndIcon = apiNameAndIcon(data.augments.mainAugs);
   const champAndIconCost = Object.fromEntries(data.champions.mainChampions.map(obj => [obj.apiName, [obj.icon, obj.cost, obj.name, obj.traits]]));
   
-  renderPostComp(guidesData.guides[index], champAndIconCost, itemAndIcon, augsAndIcon, postCompTag);
+  renderPostComp(guidesData.guides[index], champAndIconCost, itemAndIcon, augsAndIcon, postCompTag, hexIndexData);
 
   requestAnimationFrame(() => {
     scrollToPost(tierContainer, postCompTag);
   });
 }
 
+function generateTeamCode(champHexIndex, finalComp) {
+  // Chuyển chuỗi thành mảng để thao tác hiệu quả hơn
+  let teamCodeArray = "02000000000000000000000000000000TFTSet14".split('');
+  
+  // Tạo Map để tra cứu hexIndex
+  const lookupMap = new Map(champHexIndex.map(champ => [champ.apiName, champ.hexIndex]));
+  
+  // Vị trí bắt đầu từ index 2
+  let position = 2;
+  
+  // Thay thế giá trị trong mảng
+  finalComp.forEach(champ => {
+      const hexIndex = lookupMap.get(champ.apiName);
+      if (position + hexIndex.length <= 32) { // Kiểm tra giới hạn
+          for (let i = 0; i < hexIndex.length; i++) {
+              teamCodeArray[position + i] = hexIndex[i];
+          }
+          position += hexIndex.length;
+      }
+  });
+  
+  // Ghép mảng thành chuỗi
+  return teamCodeArray.join('');
+}
+
+// Hàm hiển thị tooltip
+function showTooltip(message, element) {
+  const tooltip = document.createElement('div');
+  tooltip.className = 'copy-tooltip';
+  tooltip.textContent = message;
+  
+  const rect = element.getBoundingClientRect();
+  tooltip.style.left = `${rect.left}px`;
+  tooltip.style.top = `${rect.top - 30}px`;
+  
+  document.body.appendChild(tooltip);
+  
+  // Tooltip sẽ tự động biến mất sau 2s nhờ animation CSS
+}

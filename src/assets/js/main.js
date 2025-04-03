@@ -45,8 +45,10 @@ const formatDate = (date) => {
 const fetchData = async () => {
   let data = null;
   let guidesData = null;
+  let hexIndexData = null;
   let dataSource = '';
   let guidesDataSource = '';
+  let hexIndexDataSource = '';
 
   // Lấy ngày hiện tại và ngày hôm trước
   const today = new Date();
@@ -100,6 +102,14 @@ const fetchData = async () => {
     }
   }
 
+  // Lấy dữ liệu hexIndex
+  try {
+    hexIndexData = await fetchWithTimeout(`/data/manual/hex-index-set14.json`);
+    hexIndexDataSource = `hex-index-set14`;
+  } catch {
+    console.warn('hex-index-set14 fetch failed');
+  }
+
   // Lưu dữ liệu vào localStorage (nếu có)
   try {
     if (data) {
@@ -108,17 +118,20 @@ const fetchData = async () => {
     if (guidesData) {
       localStorage.setItem('guidesData', JSON.stringify(guidesData));
     }
+    if (hexIndexData) {
+      localStorage.setItem('hexIndexData', JSON.stringify(hexIndexData));
+    }
   } catch (e) {
     console.warn('localStorage save failed:', e);
   }
 
-  return { data, guidesData };
+  return { data, guidesData, hexIndexData };
 };
 
 // Hàm xử lý chuyển trang
 async function handleNavigation(page, addToHistory = true) {
-  const { data, guidesData } = await fetchData();
-  loadPage(page, { data, guidesData });
+  const { data, guidesData, hexIndexData } = await fetchData();
+  loadPage(page, { data, guidesData, hexIndexData });
   updateActiveLink(page);
 
   if (addToHistory) {

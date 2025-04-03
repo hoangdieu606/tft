@@ -16,7 +16,7 @@ export const routes = {
 };
 
 // Hàm loadPage để tải nội dung HTML và hiển thị
-export async function loadPage(page, { data = {}, guidesData = {} } = {}) {
+export async function loadPage(page, { data = {}, guidesData = {}, hexIndexData = {} } = {}) {
   let normalizedPage; // Định nghĩa ở ngoài try để tránh ReferenceError
   try {
     // Nếu data hoặc guidesData rỗng, thử lấy từ localStorage
@@ -24,12 +24,16 @@ export async function loadPage(page, { data = {}, guidesData = {} } = {}) {
 
       const storedData = localStorage.getItem("postData");
       const storedGuidesData = localStorage.getItem("guidesData");
+      const storedHexIndexData = localStorage.getItem("hexIndexData");
 
       if (storedData) {
         data = JSON.parse(storedData);
       }
       if (storedGuidesData) {
         guidesData = JSON.parse(storedGuidesData);
+      }
+      if (storedHexIndexData) {
+        hexIndexData = JSON.parse(storedHexIndexData);
       }
     }
 
@@ -38,7 +42,7 @@ export async function loadPage(page, { data = {}, guidesData = {} } = {}) {
 
     if (!url) {
       if (normalizedPage !== "commingsoon") {
-        return loadPage("commingsoon", { data, guidesData });
+        return loadPage("commingsoon", { data, guidesData, hexIndexData });
       } else {
         throw new Error(`Page ${normalizedPage} not found and commingsoon route failed`);
       }
@@ -67,7 +71,7 @@ export async function loadPage(page, { data = {}, guidesData = {} } = {}) {
         renderTraits(data.traits.mainTraits, data.champions.mainChampions);
         break;
       case 'tierlist':
-        renderComp(data, guidesData);
+        renderComp(data, guidesData, hexIndexData);
         break;
       case 'tierlist-augments':
         renderTierlistAugments(data.augments.mainAugs);
@@ -91,7 +95,7 @@ export async function loadPage(page, { data = {}, guidesData = {} } = {}) {
   } catch (error) {
     console.error("🔥 Error loading page:", error);
     if (normalizedPage !== "commingsoon") {
-      return loadPage("commingsoon", { data, guidesData });
+      return loadPage("commingsoon", { data, guidesData, hexIndexData });
     } else {
       document.getElementById("content").innerHTML = "<h1>Error: Unable to load page</h1>";
     }
