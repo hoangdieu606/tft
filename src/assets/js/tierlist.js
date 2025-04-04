@@ -1,28 +1,29 @@
 import { convertURL, apiNameAndIcon } from '/src/assets/js/global.js';
-import { setupTooltips, setupStyleMenu } from '/src/assets/js/global-defer.js';
+import { setupTooltips, setupStyleMenu, apiNameAndData } from '/src/assets/js/global-defer.js';
 
 
 export function renderComp(data, guidesData, hexIndexData) {
   const tierCompContainer = document.querySelector(".tier-comp-container");
   if (!tierCompContainer) return;
-  
+
   const itemAndIcon = apiNameAndIcon(data.items.mainItems);
   const augsAndIcon = apiNameAndIcon(data.augments.mainAugs);
-  const champAndIconCost = Object.fromEntries(data.champions.mainChampions.map(obj => [obj.apiName, [obj.icon, obj.cost, obj.name, obj.traits]]))
+  const augsAndIconTier = apiNameAndData(data.augments.mainAugs, ['icon', 'tier2']);
+  const champAndIconCost = apiNameAndData(data.champions.mainChampions, ['icon', 'cost', 'name', 'traits']);
 
   // tierList
-  tierList(guidesData.guides, champAndIconCost, itemAndIcon, augsAndIcon);
- 
-  
+  tierList(guidesData.guides, champAndIconCost, itemAndIcon, augsAndIconTier);
+
+
   tierCompContainer.removeEventListener("click", handleIconClick);
   tierCompContainer.addEventListener("click", handleIconClick);
 
   function handleIconClick(e) {
     const clickedLink = e.target.closest(".hexagon-tier-champ a");
     if (!clickedLink) return;
-    
+
     e.preventDefault();
-    
+
     const hashtag = clickedLink.hash.substring(1);
     const index = clickedLink.getAttribute("data-index");
     const postCompTag = clickedLink.closest(".comp-list").nextElementSibling;
@@ -66,9 +67,9 @@ export function scrollToPost(tierContainer, postCompTag) {
   const postCompRect = postCompTag.getBoundingClientRect();
   const viewportHeight = window.innerHeight;
   const headerOffset = 60;
-  
+
   const idealScrollPosition = window.pageYOffset + tierRect.top - headerOffset;
-  
+
   if (postCompRect.bottom > viewportHeight || tierRect.top < headerOffset) {
     window.scrollTo({
       top: idealScrollPosition,
@@ -77,7 +78,7 @@ export function scrollToPost(tierContainer, postCompTag) {
   }
 }
 
-export function tierList(guidesData, champAndIconCost, itemAndIcon, augsAndIcon, hexIndexData) {
+export function tierList(guidesData, champAndIconCost, itemAndIcon, augsAndIconTier) {
   const tierContainer = document.querySelector(".tier-comp-container");
 
   // guidesData
@@ -85,30 +86,35 @@ export function tierList(guidesData, champAndIconCost, itemAndIcon, augsAndIcon,
     if (!champAndIconCost[mainChampion.apiName]) return acc;
     const iconChamp = convertURL(champAndIconCost[mainChampion.apiName][0]);
     const costChamp = champAndIconCost[mainChampion.apiName][1];
+    const itemApiName = mainItem ? mainItem.apiName : null;
+    const augsApiName = mainAugment ? mainAugment.apiName : null;
     const hashtag = toHashtag(title);
-    
+    const champName = champAndIconCost[mainChampion.apiName][2];
+
     const html = `
     <div class="tier-list cost-${costChamp}">
+    ${tier === "X" && augsApiName ? `<div class='hero-tier tier-${augsAndIconTier[augsApiName][1] || "S"}'>${augsAndIconTier[augsApiName][1] || "S"}</div>` : ""}
       <div class="hexagon-tier-champ">
-        <a href="${hashtag}" style="background-image: url(${iconChamp})" title="${title}" data-index="${index}" data-style="${style}" data-name="${champAndIconCost[mainChampion.apiName][2]}"></a>
+        <a href="${hashtag}" style="background-image: url(${iconChamp})" title="${title}" data-index="${index}" data-style="${style}" data-name="${champName}"></a>
+        <div class="hexagon-name">${champName}</div>
       </div>
-      ${mainItem && itemAndIcon[mainItem.apiName] ? `<div class="hexagon-item"> 
-        <div class="hexagon-icon" style="background-image: url(${convertURL(itemAndIcon[mainItem.apiName])})" data-api-name="${mainItem.apiName}"></div>
+      ${itemApiName && itemAndIcon[itemApiName] ? `<div class="hexagon-item"> 
+        <div class="hexagon-icon" style="background-image: url(${convertURL(itemAndIcon[itemApiName])})" data-api-name="${itemApiName}"></div>
       </div>` : ""}
-      ${mainAugment && augsAndIcon[mainAugment.apiName] ? `<div class="hexagon-item"> 
-        <div class="hexagon-icon" style="background-image: url(${convertURL(augsAndIcon[mainAugment.apiName])})" data-api-name="${mainAugment.apiName}"></div>
+      ${augsApiName && augsAndIconTier[augsApiName] ? `<div class="hexagon-item"> 
+        <div class="hexagon-icon" style="background-image: url(${convertURL(augsAndIconTier[augsApiName][0])})" data-api-name="${augsApiName}"></div>
       </div>` : ""}
     </div>
     `;
-    
-    switch(tier) {
+
+    switch (tier) {
       case "S": acc.groupS += html; break;
       case "A": acc.groupA += html; break;
       case "B": acc.groupB += html; break;
       case "C": acc.groupC += html; break;
       case "X": acc.groupX += html; break;
     }
-    
+
     return acc;
   }, { groupS: "", groupA: "", groupB: "", groupC: "", groupX: "" });
 
@@ -121,18 +127,27 @@ export function tierList(guidesData, champAndIconCost, itemAndIcon, augsAndIcon,
           <img src="/assets/images/${tier}-Tier-Wide.webp" loading="lazy" alt="${tier} Tier Wide">
           <img src="/assets/images/${tier}-Tier-Texture.webp" loading="lazy" alt="${tier} Tier Texture">
         </div>
-        <div class="tier-group">${groupContent}</div>
+        <div class="tier-group">${tier === "X" ? `<div class="hero-tier-title">Hero Tier</div>` : ""}${groupContent}</div>
       </div>
       <div class="post-comp"></div>
     </div>`;
   }
 
-  tierContainer.innerHTML = 
+  tierContainer.innerHTML =
     createTierTemplate("S", tierGroups.groupS) +
     createTierTemplate("A", tierGroups.groupA) +
     createTierTemplate("B", tierGroups.groupB) +
     createTierTemplate("C", tierGroups.groupC) +
     createTierTemplate("X", tierGroups.groupX);
+
+  // Thêm nút toggle hiện/ẩn tên
+  const toggleContainer = document.createElement("div");
+  toggleContainer.className = "toggle-container tierlist-toggle";
+  toggleContainer.innerHTML = `
+    <span class="toggle-label">Hiện Tên</span>
+    <div class="toggle"></div>
+  `;
+  tierContainer.insertBefore(toggleContainer, tierContainer.firstChild);
 
   // Khởi tạo các phần tử UI
   const tierLists = document.querySelectorAll('.tier-list');
@@ -140,6 +155,30 @@ export function tierList(guidesData, champAndIconCost, itemAndIcon, augsAndIcon,
   const styleBtn = document.querySelector('.style-btn.tierlist-btn');
   const styleMenu = document.querySelector('.style-menu.tierlist-menu');
   const styleOptions = document.querySelectorAll('.tierlist-menu .style-option');
+  const toggle = toggleContainer.querySelector(".toggle");
+  const label = toggleContainer.querySelector(".toggle-label");
+  const body = document.body;
+  const root = document.documentElement;
+
+  // Thiết lập trạng thái hiện/ẩn tên
+  function updateToggleState(isActive) {
+    body.classList.toggle("name-active", isActive);
+    root.style.setProperty('--name-display', isActive ? "flex" : "none");
+    label.textContent = isActive ? "Ẩn Tên" : "Hiện Tên";
+  }
+
+  const savedState = localStorage.getItem("nameDisplay") === "flex";
+  updateToggleState(savedState);
+
+  toggle.addEventListener("click", function () {
+    const isActive = body.classList.toggle("name-active");
+
+    root.style.setProperty('--name-display', isActive ? "flex" : "none");
+
+    label.textContent = isActive ? "Ẩn Tên" : "Hiện Tên";
+
+    localStorage.setItem("nameDisplay", isActive ? "flex" : "none");
+  });
 
   // Xử lý đóng/mở menu phong cách
   if (styleBtn && styleMenu) {
@@ -169,10 +208,10 @@ export function tierList(guidesData, champAndIconCost, itemAndIcon, augsAndIcon,
         option.classList.add('active');
         styleBtn.textContent = selectedStyle;
         styleBtn.appendChild(document.createElement('i')).className = 'fa-solid fa-chevron-down';
-        
+
         // Lọc danh sách theo phong cách
         filterTierLists();
-        
+
         // Đóng menu
         styleBtn.classList.remove('active');
         styleMenu.classList.remove('show');
@@ -191,10 +230,10 @@ export function tierList(guidesData, champAndIconCost, itemAndIcon, augsAndIcon,
 
       const name = link.getAttribute('data-name')?.toLowerCase() || '';
       const style = link.getAttribute('data-style') || '';
-      
+
       const matchesSearch = name.includes(searchText);
       const matchesStyle = selectedStyle === 'Show All' || style === selectedStyle;
-      
+
       if (matchesSearch && matchesStyle) {
         tierList.classList.remove('not-match');
       } else {
@@ -208,14 +247,14 @@ export function tierList(guidesData, champAndIconCost, itemAndIcon, augsAndIcon,
     searchInput.addEventListener('input', filterTierLists);
   }
 }
-
+// augsAndIcon
 export function renderPostComp(guideData, champAndIconCost, itemAndIcon, augsAndIcon, postCompTag, hexIndexData) {
   if (!postCompTag || !guideData) return;
-  
+
   const { mainChampion, mainItem, mainAugment, tier, title, style, augments, augmentTypes, augmentsTip, finalComp, earlyComp, carousel, tips, altBuilds } = guideData;
 
   const teamCode = generateTeamCode(hexIndexData, finalComp);
-  
+
   const valueTypes = {
     "ECON": "Kinh Tế",
     "ECON-URL": "/assets/images/econ.png",
@@ -228,17 +267,17 @@ export function renderPostComp(guideData, champAndIconCost, itemAndIcon, augsAnd
     "HERO": "Anh hùng",
     "HERO-URL": "/assets/images/hero.png",
   };
-  
+
   const finalEmblem = [];
-  
+
   if (!champAndIconCost[mainChampion.apiName]) {
     postCompTag.innerHTML = '<div class="error">Không tìm thấy dữ liệu tướng</div>';
     return;
   }
-  
+
   const finalCompHTML = finalComp.map(({ apiName, items, stars }) => {
     if (!champAndIconCost[apiName]) return '';
-    
+
     if (champAndIconCost[apiName][3]) {
       finalEmblem.push(...champAndIconCost[apiName][3]);
     }
@@ -251,12 +290,12 @@ export function renderPostComp(guideData, champAndIconCost, itemAndIcon, augsAnd
     }
 
     const itemsHTML = (items || []).map(item => {
-      if (item.includes("Emblem")) { 
+      if (item.includes("Emblem")) {
         finalEmblem.push({ "apiName": "Emblem" });
       }
       return `<span><img src="${convertURL(itemAndIcon[item])}" width="24" height="24" data-api-name="${item}"></span>`;
     }).join('');
-    
+
     return `
       <div class="hexagon-icon champ-cost-${champAndIconCost[apiName][1]}">
         ${starHTML}
@@ -345,8 +384,8 @@ export function renderPostComp(guideData, champAndIconCost, itemAndIcon, augsAnd
       <div class="title-comp">Đội hình đầu trận</div>
       <div class="early-comp">
         ${earlyComp.map(({ apiName, items }) => {
-          if (!champAndIconCost[apiName]) return '';
-          return `
+    if (!champAndIconCost[apiName]) return '';
+    return `
             <div class="hexagon-icon champ-cost-${champAndIconCost[apiName][1]}">
               <div class="hexagon-champ">
                 <img src="${convertURL(champAndIconCost[apiName][0])}" width="58" height="58" data-api-name="${apiName}">
@@ -357,30 +396,30 @@ export function renderPostComp(guideData, champAndIconCost, itemAndIcon, augsAnd
               <div class="hexagon-name">${champAndIconCost[apiName][2]}</div>
             </div>
           `;
-        }).join("")}
+  }).join("")}
       </div>
     </div>
     <div class="row-comp">
       <div class="title-comp">Ưu tiên mảnh trang bị</div>
       <div class="item-priority">
         ${carousel.map(({ apiName }) => {
-          if (!itemAndIcon[apiName]) return '';
-          return `
+    if (!itemAndIcon[apiName]) return '';
+    return `
             <div class="hexagon-icon">
               <div class="hexagon-champ">
                 <img src="${convertURL(itemAndIcon[apiName])}" width="58" height="58" data-api-name="${apiName}">
               </div>
             </div>
           `;
-        }).join("")}
+  }).join("")}
       </div>
     </div>
     <div class="row-comp">
       <div class="title-comp">Tạo tác nếu có</div>
       <div class="alt-comp">
         ${altBuilds.map(({ apiName, items }) => {
-          if (!champAndIconCost[apiName]) return '';
-          return `
+    if (!champAndIconCost[apiName]) return '';
+    return `
             <div class="hexagon-icon champ-cost-${champAndIconCost[apiName][1]}">
               <div class="hexagon-champ">
                 <img src="${convertURL(champAndIconCost[apiName][0])}" width="80" height="80" data-api-name="${apiName}">
@@ -391,7 +430,7 @@ export function renderPostComp(guideData, champAndIconCost, itemAndIcon, augsAnd
               <div class="hexagon-name">${champAndIconCost[apiName][2]}</div>
             </div>
           `;
-        }).join("")}
+  }).join("")}
       </div>
     </div>
     <div class="row-comp">
@@ -411,12 +450,12 @@ export function renderPostComp(guideData, champAndIconCost, itemAndIcon, augsAnd
   `;
 
   createBoard(finalComp, champAndIconCost, itemAndIcon, postCompTag);
-  
+
   const closeButton = postCompTag.querySelector("button.comp-close");
   const copyMenu = postCompTag.querySelector('.copy-menu');
   const copyButton = copyMenu.querySelector('.comp-copy-link');
   const copyOptions = copyMenu.querySelectorAll('.copy-option');
-  
+
   if (closeButton) {
     closeButton.onclick = () => {
       const tierContainer = postCompTag.closest('.tier-container');
@@ -441,7 +480,7 @@ export function renderPostComp(guideData, champAndIconCost, itemAndIcon, augsAnd
     option.addEventListener('click', async (e) => {
       e.stopPropagation();
       const action = option.dataset.action;
-      
+
       if (action === 'teamCode') {
         try {
           await navigator.clipboard.writeText(teamCode);
@@ -457,7 +496,7 @@ export function renderPostComp(guideData, champAndIconCost, itemAndIcon, augsAnd
           console.error('Không thể copy link:', err);
         }
       }
-      
+
       copyMenu.classList.remove('active');
     });
   });
@@ -474,9 +513,9 @@ function createBoard(finalCompData, champAndIconCost, itemAndIcon, postCompTag) 
 
   const rows = 4;
   const cols = 7;
-  
+
   const fragment = document.createDocumentFragment();
-  
+
   for (let row = 0; row < rows; row++) {
     const rowDiv = document.createElement('div');
     rowDiv.className = 'row';
@@ -487,7 +526,7 @@ function createBoard(finalCompData, champAndIconCost, itemAndIcon, postCompTag) 
       hexagon.dataset.index = row * cols + col;
       rowDiv.appendChild(hexagon);
       const nochamp = document.createElement('span')
-      nochamp.className='no-champ'
+      nochamp.className = 'no-champ'
       hexagon.appendChild(nochamp)
     }
 
@@ -503,16 +542,16 @@ function placeChampions(finalCompData, champAndIconCost, itemAndIcon, board) {
   if (!board || !finalCompData) return;
 
   const hexagons = Array.from(board.querySelectorAll('.hexagon'));
-  
+
   finalCompData.forEach(({ apiName, boardIndex, items, stars }) => {
     if (!apiName || !champAndIconCost[apiName]) return;
 
     const hexagon = hexagons.find(hex => hex.dataset.index === boardIndex.toString());
     if (!hexagon) return;
 
-    const itemsHTML = items ? items.map(item => 
+    const itemsHTML = items ? items.map(item =>
       itemAndIcon[item] ? `<span><img src="${convertURL(itemAndIcon[item])}" width="24" height="24" data-api-name="${item}"></span>` : ''
-        ).join('') : '';
+    ).join('') : '';
 
 
     hexagon.className = 'hexagon has-champ';
@@ -534,13 +573,13 @@ function placeChampions(finalCompData, champAndIconCost, itemAndIcon, board) {
 
 function processTraits(traits) {
   if (!Array.isArray(traits) || traits.length === 0) return [];
-  
+
   const traitMap = {};
   const countMap = {};
 
   traits.forEach(trait => {
     if (!trait) return;
-    
+
     const apiName = trait.apiName;
     if (apiName !== "Emblem") {
       countMap[apiName] = (countMap[apiName] || 0) + 1;
@@ -590,7 +629,7 @@ function setupToggle(postCompTag) {
   const toggle = toggleContainer.querySelector(".toggle");
   const label = toggleContainer.querySelector(".toggle-label");
   if (!toggle || !label) return;
-  
+
   const body = document.body;
   const root = document.documentElement;
 
@@ -605,18 +644,18 @@ function setupToggle(postCompTag) {
 
   toggle.addEventListener("click", function () {
     const isActive = body.classList.toggle("name-active");
-    
+
     root.style.setProperty('--name-display', isActive ? "flex" : "none");
-    
+
     label.textContent = isActive ? "Ẩn Tên" : "Hiện Tên";
-    
+
     localStorage.setItem("nameDisplay", isActive ? "flex" : "none");
   });
 }
 
 function toHashtag(str) {
   if (!str) return '#';
-  
+
   return '#' + str
     .normalize("NFD").replace(/[\u0300-\u036f]/g, '')
     .toLowerCase().replace(/đ/g, 'd')
@@ -626,7 +665,7 @@ function toHashtag(str) {
 
 function handleHashURL(data, guidesData, hexIndexData) {
   if (!data || !guidesData || !guidesData.guides) return;
-  
+
   const hash = window.location.hash;
   if (!hash) {
     history.replaceState(null, "", window.location.pathname + window.location.search);
@@ -635,10 +674,10 @@ function handleHashURL(data, guidesData, hexIndexData) {
 
   const targetLink = document.querySelector(`.hexagon-tier-champ a[href="${hash}"]`);
   if (!targetLink) return;
-  
+
   const index = targetLink.getAttribute("data-index");
   if (!guidesData.guides[index]) return;
-  
+
   const tierContainer = targetLink.closest(".tier-container");
   const postCompTag = tierContainer.querySelector(".post-comp");
   if (!postCompTag) return;
@@ -656,7 +695,7 @@ function handleHashURL(data, guidesData, hexIndexData) {
   const itemAndIcon = apiNameAndIcon(data.items.mainItems);
   const augsAndIcon = apiNameAndIcon(data.augments.mainAugs);
   const champAndIconCost = Object.fromEntries(data.champions.mainChampions.map(obj => [obj.apiName, [obj.icon, obj.cost, obj.name, obj.traits]]));
-  
+
   renderPostComp(guidesData.guides[index], champAndIconCost, itemAndIcon, augsAndIcon, postCompTag, hexIndexData);
 
   requestAnimationFrame(() => {
@@ -667,24 +706,24 @@ function handleHashURL(data, guidesData, hexIndexData) {
 function generateTeamCode(champHexIndex, finalComp) {
   // Chuyển chuỗi thành mảng để thao tác hiệu quả hơn
   let teamCodeArray = "02000000000000000000000000000000TFTSet14".split('');
-  
+
   // Tạo Map để tra cứu hexIndex
   const lookupMap = new Map(champHexIndex.map(champ => [champ.apiName, champ.hexIndex]));
-  
+
   // Vị trí bắt đầu từ index 2
   let position = 2;
-  
+
   // Thay thế giá trị trong mảng
   finalComp.forEach(champ => {
-      const hexIndex = lookupMap.get(champ.apiName);
-      if (position + hexIndex.length <= 32) { // Kiểm tra giới hạn
-          for (let i = 0; i < hexIndex.length; i++) {
-              teamCodeArray[position + i] = hexIndex[i];
-          }
-          position += hexIndex.length;
+    const hexIndex = lookupMap.get(champ.apiName);
+    if (position + hexIndex.length <= 32) { // Kiểm tra giới hạn
+      for (let i = 0; i < hexIndex.length; i++) {
+        teamCodeArray[position + i] = hexIndex[i];
       }
+      position += hexIndex.length;
+    }
   });
-  
+
   // Ghép mảng thành chuỗi
   return teamCodeArray.join('');
 }
@@ -694,12 +733,12 @@ function showTooltip(message, element) {
   const tooltip = document.createElement('div');
   tooltip.className = 'copy-tooltip';
   tooltip.textContent = message;
-  
+
   const rect = element.getBoundingClientRect();
   tooltip.style.left = `${rect.left}px`;
   tooltip.style.top = `${rect.top - 30}px`;
-  
+
   document.body.appendChild(tooltip);
-  
+
   // Tooltip sẽ tự động biến mất sau 2s nhờ animation CSS
 }

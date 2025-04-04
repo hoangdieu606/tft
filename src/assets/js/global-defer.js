@@ -348,4 +348,8 @@ export function setIndexer(data) {
     indexer = new TooltipDataIndexer(data);
 }
 
-
+export function apiNameAndData(dataArray, fields) {
+    return Object.fromEntries(
+        dataArray.map(obj => [obj.apiName, fields.map(field => obj[field])])
+    );
+}
