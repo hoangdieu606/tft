@@ -760,6 +760,10 @@ body.name-active .toggle::before {
   transition: transform 0.4s cubic-bezier(0.22, 1.61, 0.36, 1);
   /* filter: drop-shadow(var(--border-color-cost) 0px 0px 10px); */
 }
+.tier-list.more-than-9 {
+  width: 70px;
+  height: 70px;
+}
 
 .tier-list:hover {
   transform: translateY(-5px);

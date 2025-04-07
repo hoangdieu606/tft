@@ -65,10 +65,21 @@ jobs:
 
       - name: Clean Old Files in public/data/auto
         run: |
-          # Giữ lại 2 file data-*.json mới nhất, xóa các file cũ hơn
-          ls -t public/data/auto/data-*.json 2>/dev/null | tail -n +3 | xargs -I {} rm -v {}
-          # Giữ lại 2 file guides-*.json mới nhất, xóa các file cũ hơn
-          ls -t public/data/auto/guides-*.json 2>/dev/null | tail -n +3 | xargs -I {} rm -v {}
+          # Log các file trước khi xóa
+          echo "Files before cleanup:"
+          ls -l public/data/auto/
+
+          # Sắp xếp và giữ lại 2 file data-*.json mới nhất dựa trên tên file (ngày trong tên)
+          echo "Cleaning old data-*.json files..."
+          ls public/data/auto/data-*.json 2>/dev/null | sort -t '-' -k 2 -r | tail -n +3 | xargs -I {} rm -v {}
+          
+          # Sắp xếp và giữ lại 2 file guides-*.json mới nhất dựa trên tên file (ngày trong tên)
+          echo "Cleaning old guides-*.json files..."
+          ls public/data/auto/guides-*.json 2>/dev/null | sort -t '-' -k 2 -r | tail -n +3 | xargs -I {} rm -v {}
+          
+          # Log các file sau khi xóa
+          echo "Files after cleanup:"
+          ls -l public/data/auto/
 
       - name: Commit Changes
         run: |
@@ -91,18 +102,31 @@ jobs:
             git stash pop || { echo "Stash pop failed, resolving conflicts may be needed"; exit 1; }
           fi
 
-          # Kiểm tra và commit các file mới
-          if ls public/data/auto/* 2>/dev/null; then
-            git add public/data/auto/*
-            if git diff --staged --quiet; then
-              echo "No changes to commit"
-              exit 0
-            fi
-            git commit -m "Update TFT data on $(date +'%d-%m-%Y')"
-            git push
-          else
-            echo "No files found in public/data/auto to commit"
+          # Log trạng thái trước khi staged
+          echo "Git status before staging:"
+          git status
+
+          # Staged tất cả các thay đổi, bao gồm việc xóa file
+          echo "Staging all changes, including deletions..."
+          git add -A
+
+          # Log trạng thái sau khi staged
+          echo "Git status after staging:"
+          git status
+
+          # Kiểm tra xem có thay đổi nào để commit không
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
             exit 0
           fi
+
+          # Commit và push
+          echo "Committing changes..."
+          git commit -m "Update TFT data on $(date +'%d-%m-%Y')"
+          git push
+
+          # Log các file còn lại trong thư mục
+          echo "Files remaining in public/data/auto after commit:"
+          ls -l public/data/auto/
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
