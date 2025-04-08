@@ -46,9 +46,6 @@ const fetchData = async () => {
   let data = null;
   let guidesData = null;
   let hexIndexData = null;
-  let dataSource = '';
-  let guidesDataSource = '';
-  let hexIndexDataSource = '';
 
   // Lấy ngày hiện tại và ngày hôm trước
   const today = new Date();
@@ -61,20 +58,16 @@ const fetchData = async () => {
   // Lấy dữ liệu chính (data)
   try {
     data = await fetchWithTimeout(`/data/auto/data-${todayStr}.json`);
-    dataSource = `data-${todayStr}`;
   } catch {
     try {
       data = await fetchWithTimeout(`/data/auto/data-${yesterdayStr}.json`);
-      dataSource = `data-${yesterdayStr}`;
     } catch {
       try {
         data = await fetchWithTimeout(`/data/manual/data-original.json`);
-        dataSource = 'data-original';
       } catch {
         const cachedData = localStorage.getItem('postData');
         if (cachedData) {
           data = JSON.parse(cachedData);
-          dataSource = 'storage';
         }
       }
     }
@@ -83,20 +76,16 @@ const fetchData = async () => {
   // Lấy dữ liệu guides (guidesData)
   try {
     guidesData = await fetchWithTimeout(`/data/auto/guides-${todayStr}.json`);
-    guidesDataSource = `guides-${todayStr}`;
   } catch {
     try {
       guidesData = await fetchWithTimeout(`/data/auto/guides-${yesterdayStr}.json`);
-      guidesDataSource = `guides-${yesterdayStr}`;
     } catch {
       try {
         guidesData = await fetchWithTimeout(`/data/manual/guides-original.json`);
-        guidesDataSource = 'guides-original';
       } catch {
         const cachedGuidesData = localStorage.getItem('guidesData');
         if (cachedGuidesData) {
           guidesData = JSON.parse(cachedGuidesData);
-          guidesDataSource = 'storage';
         }
       }
     }
@@ -105,7 +94,6 @@ const fetchData = async () => {
   // Lấy dữ liệu hexIndex
   try {
     hexIndexData = await fetchWithTimeout(`/data/manual/hex-index-set14.json`);
-    hexIndexDataSource = `hex-index-set14`;
   } catch {
     console.warn('hex-index-set14 fetch failed');
   }

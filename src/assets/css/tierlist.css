@@ -760,10 +760,7 @@ body.name-active .toggle::before {
   transition: transform 0.4s cubic-bezier(0.22, 1.61, 0.36, 1);
   /* filter: drop-shadow(var(--border-color-cost) 0px 0px 10px); */
 }
-.tier-list.more-than-9 {
-  width: 70px;
-  height: 70px;
-}
+
 
 .tier-list:hover {
   transform: translateY(-5px);
@@ -868,6 +865,9 @@ body.name-active .toggle::before {
     font-size: 4px;
     gap: 0;
   }
+  .position-comp .hexagon-items {
+    width: 125%;
+}
 
   .tier-title {
     height: 40px;
@@ -878,12 +878,12 @@ body.name-active .toggle::before {
     padding: 10px;
   }
 
-  .tier-list {
+  .more-than-9 .tier-list {
     width: 70px;
     height: 70px;
   }
 
-  .hexagon-item {
+  .more-than-9 .hexagon-item {
     width: 25%;
     height: 25%;
     top: 55px;
@@ -1155,6 +1155,14 @@ button.copy-option>span {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.comp-main-champ .hero-tier {
+  top: -12px;
+  right: 168px;
+  width: 35px;
+  height: 35px;
+  font-size: 20px;
 }
 
 .comp-tier-X .tier-group {

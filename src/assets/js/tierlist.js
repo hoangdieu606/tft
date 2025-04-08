@@ -7,7 +7,6 @@ export function renderComp(data, guidesData, hexIndexData) {
   if (!tierCompContainer) return;
 
   const itemAndIcon = apiNameAndIcon(data.items.mainItems);
-  const augsAndIcon = apiNameAndIcon(data.augments.mainAugs);
   const augsAndIconTier = apiNameAndData(data.augments.mainAugs, ['icon', 'tier2']);
   const champAndIconCost = apiNameAndData(data.champions.mainChampions, ['icon', 'cost', 'name', 'traits']);
 
@@ -45,7 +44,7 @@ export function renderComp(data, guidesData, hexIndexData) {
 
     tierContainer.classList.remove("hide-post-comp");
     clickedLink.classList.add("active");
-    renderPostComp(guidesData.guides[index], champAndIconCost, itemAndIcon, augsAndIcon, postCompTag, hexIndexData);
+    renderPostComp(guidesData.guides[index], champAndIconCost, itemAndIcon, augsAndIconTier, postCompTag, hexIndexData);
 
     requestAnimationFrame(() => {
       scrollToPost(tierContainer, postCompTag);
@@ -118,19 +117,27 @@ export function tierList(guidesData, champAndIconCost, itemAndIcon, augsAndIconT
     return acc;
   }, { groupS: "", groupA: "", groupB: "", groupC: "", groupX: "" });
 
-  function createTierTemplate(tier, groupContent) {
-    return `
-    <div class="tier-container comp-tier-${tier}">
-      <div class="comp-list">
-        <div class="tier-title">
-          <img src="/assets/images/${tier}-Tier.webp" loading="lazy" alt="${tier} Tier">
-          <img src="/assets/images/${tier}-Tier-Wide.webp" loading="lazy" alt="${tier} Tier Wide">
-          <img src="/assets/images/${tier}-Tier-Texture.webp" loading="lazy" alt="${tier} Tier Texture">
+
+    function createTierTemplate(tier, groupContent) {
+      console.log(groupContent);
+  
+      const regex = /<div[^>]*class=["'][^"']*tier-list[^"']*["'][^>]*>/gi;
+      const tierListCount = (groupContent.match(regex) || []).length;
+  
+      const extraClass = tierListCount > 9 ? " more-than-9" : "";
+  
+      return `
+      <div class="tier-container comp-tier-${tier}${extraClass}">
+        <div class="comp-list">
+          <div class="tier-title">
+            <img src="/assets/images/${tier}-Tier.webp" loading="lazy" alt="${tier} Tier">
+            <img src="/assets/images/${tier}-Tier-Wide.webp" loading="lazy" alt="${tier} Tier Wide">
+            <img src="/assets/images/${tier}-Tier-Texture.webp" loading="lazy" alt="${tier} Tier Texture">
+          </div>
+          <div class="tier-group">${tier === "X" ? `<div class="hero-tier-title">Hero Tier</div>` : ""}${groupContent}</div>
         </div>
-        <div class="tier-group">${tier === "X" ? `<div class="hero-tier-title">Hero Tier</div>` : ""}${groupContent}</div>
-      </div>
-      <div class="post-comp"></div>
-    </div>`;
+        <div class="post-comp"></div>
+      </div>`;
   }
 
   tierContainer.innerHTML =
@@ -247,8 +254,8 @@ export function tierList(guidesData, champAndIconCost, itemAndIcon, augsAndIconT
     searchInput.addEventListener('input', filterTierLists);
   }
 }
-// augsAndIcon
-export function renderPostComp(guideData, champAndIconCost, itemAndIcon, augsAndIcon, postCompTag, hexIndexData) {
+
+export function renderPostComp(guideData, champAndIconCost, itemAndIcon, augsAndIconTier, postCompTag, hexIndexData) {
   if (!postCompTag || !guideData) return;
 
   const { mainChampion, mainItem, mainAugment, tier, title, style, augments, augmentTypes, augmentsTip, finalComp, earlyComp, carousel, tips, altBuilds } = guideData;
@@ -317,12 +324,13 @@ export function renderPostComp(guideData, champAndIconCost, itemAndIcon, augsAnd
       <div class="left-one">
         <div class="comp-shadow"></div>
         <div class="comp-main-champ">
+          ${tier === "X" ? `<div class="hero-tier tier-${augsAndIconTier[mainAugment.apiName][1]}">${augsAndIconTier[mainAugment.apiName][1]}</div>` : ""}
           <div class="comp-champ-tier">${tier}</div>
           <div class="comp-champ-icon">
             <div style="background-image: url(${convertURL(champAndIconCost[mainChampion.apiName][0])})" data-api-name="${mainChampion.apiName}"></div>
           </div>
           ${mainItem && itemAndIcon[mainItem.apiName] ? `<div class="comp-champ-trait"><img src="${convertURL(itemAndIcon[mainItem.apiName])}" data-api-name="${mainItem.apiName}"></div>` : ""}
-          ${mainAugment && augsAndIcon[mainAugment.apiName] ? `<div class="comp-champ-trait"><img src="${convertURL(augsAndIcon[mainAugment.apiName])}" data-api-name="${mainAugment.apiName}"></div>` : ""}
+          ${mainAugment && augsAndIconTier[mainAugment.apiName][0] ? `<div class="comp-champ-trait"><img src="${convertURL(augsAndIconTier[mainAugment.apiName][0])}" data-api-name="${mainAugment.apiName}"></div>` : ""}
         </div>
         <div class="comp-title">
           ${title}
@@ -357,7 +365,7 @@ export function renderPostComp(guideData, champAndIconCost, itemAndIcon, augsAnd
         </div>
         <div class="comp-augs-list">
           <div class="title-comp">Những Lõi Mạnh</div>
-          <div>${augments.map(({ apiName }) => augsAndIcon[apiName] ? `<img src="${convertURL(augsAndIcon[apiName])}" data-api-name="${apiName}">` : '').join("")}</div>
+          <div>${augments.map(({ apiName }) => augsAndIconTier[apiName] ? `<img src="${convertURL(augsAndIconTier[apiName][0])}" data-api-name="${apiName}">` : '').join("")}</div>
         </div>
         <div class="comp-augs-priority">
           <div class="title-comp">Ưu tiên lõi</div>
@@ -693,10 +701,10 @@ function handleHashURL(data, guidesData, hexIndexData) {
   targetLink.classList.add("active");
 
   const itemAndIcon = apiNameAndIcon(data.items.mainItems);
-  const augsAndIcon = apiNameAndIcon(data.augments.mainAugs);
+  const augsAndIconTier = apiNameAndData(data.augments.mainAugs, ['icon', 'tier2']);
   const champAndIconCost = Object.fromEntries(data.champions.mainChampions.map(obj => [obj.apiName, [obj.icon, obj.cost, obj.name, obj.traits]]));
 
-  renderPostComp(guidesData.guides[index], champAndIconCost, itemAndIcon, augsAndIcon, postCompTag, hexIndexData);
+  renderPostComp(guidesData.guides[index], champAndIconCost, itemAndIcon, augsAndIconTier, postCompTag, hexIndexData);
 
   requestAnimationFrame(() => {
     scrollToPost(tierContainer, postCompTag);
