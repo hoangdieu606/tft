@@ -119,7 +119,6 @@ export function tierList(guidesData, champAndIconCost, itemAndIcon, augsAndIconT
 
 
     function createTierTemplate(tier, groupContent) {
-      console.log(groupContent);
   
       const regex = /<div[^>]*class=["'][^"']*tier-list[^"']*["'][^>]*>/gi;
       const tierListCount = (groupContent.match(regex) || []).length;
