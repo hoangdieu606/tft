@@ -167,23 +167,12 @@ export function tierList(guidesData, champAndIconCost, itemAndIcon, augsAndIconT
   const root = document.documentElement;
 
   // Thiết lập trạng thái hiện/ẩn tên
-  function updateToggleState(isActive) {
-    body.classList.toggle("name-active", isActive);
-    root.style.setProperty('--name-display', isActive ? "flex" : "none");
-    label.textContent = isActive ? "Ẩn Tên" : "Hiện Tên";
-  }
-
   const savedState = localStorage.getItem("nameDisplay") === "flex";
-  updateToggleState(savedState);
+  syncNameDisplayState(savedState);
 
   toggle.addEventListener("click", function () {
-    const isActive = body.classList.toggle("name-active");
-
-    root.style.setProperty('--name-display', isActive ? "flex" : "none");
-
-    label.textContent = isActive ? "Ẩn Tên" : "Hiện Tên";
-
-    localStorage.setItem("nameDisplay", isActive ? "flex" : "none");
+    const isActive = body.classList.contains("name-active");
+    syncNameDisplayState(!isActive);
   });
 
   // Xử lý đóng/mở menu phong cách
@@ -640,23 +629,13 @@ function setupToggle(postCompTag) {
   const body = document.body;
   const root = document.documentElement;
 
-  function updateToggleState(isActive) {
-    body.classList.toggle("name-active", isActive);
-    root.style.setProperty('--name-display', isActive ? "flex" : "none");
-    label.textContent = isActive ? "Ẩn Tên" : "Hiện Tên";
-  }
-
+  // Thiết lập trạng thái hiện/ẩn tên
   const savedState = localStorage.getItem("nameDisplay") === "flex";
-  updateToggleState(savedState);
+  syncNameDisplayState(savedState);
 
   toggle.addEventListener("click", function () {
-    const isActive = body.classList.toggle("name-active");
-
-    root.style.setProperty('--name-display', isActive ? "flex" : "none");
-
-    label.textContent = isActive ? "Ẩn Tên" : "Hiện Tên";
-
-    localStorage.setItem("nameDisplay", isActive ? "flex" : "none");
+    const isActive = body.classList.contains("name-active");
+    syncNameDisplayState(!isActive);
   });
 }
 
@@ -748,4 +727,37 @@ function showTooltip(message, element) {
   document.body.appendChild(tooltip);
 
   // Tooltip sẽ tự động biến mất sau 2s nhờ animation CSS
+}
+
+// Thêm hàm chung để đồng bộ trạng thái hiển thị tên
+function syncNameDisplayState(isActive) {
+  const body = document.body;
+  const root = document.documentElement;
+  
+  // Cập nhật class và CSS variable
+  if (isActive) {
+    body.classList.add("name-active");
+  } else {
+    body.classList.remove("name-active");
+  }
+  root.style.setProperty('--name-display', isActive ? "flex" : "none");
+  
+  // Cập nhật tất cả các nút toggle
+  const allToggles = document.querySelectorAll(".toggle");
+  const allLabels = document.querySelectorAll(".toggle-label");
+  
+  allToggles.forEach(toggle => {
+    if (isActive) {
+      toggle.classList.add("active");
+    } else {
+      toggle.classList.remove("active");
+    }
+  });
+  
+  allLabels.forEach(label => {
+    label.textContent = isActive ? "Ẩn Tên" : "Hiện Tên";
+  });
+  
+  // Lưu trạng thái vào localStorage
+  localStorage.setItem("nameDisplay", isActive ? "flex" : "none");
 }
