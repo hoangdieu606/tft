@@ -95,7 +95,6 @@ export function tierList(guidesData, champAndIconCost, itemAndIcon, augsAndIconT
     ${tier === "X" && augsApiName ? `<div class='hero-tier tier-${augsAndIconTier[augsApiName][1] || "S"}'>${augsAndIconTier[augsApiName][1] || "S"}</div>` : ""}
       <div class="hexagon-tier-champ">
         <a href="${hashtag}" style="background-image: url(${iconChamp})" title="${title}" data-index="${index}" data-style="${style}" data-name="${champName}"></a>
-        <div class="hexagon-name">${champName}</div>
       </div>
       ${itemApiName && itemAndIcon[itemApiName] ? `<div class="hexagon-item"> 
         <div class="hexagon-icon" style="background-image: url(${convertURL(itemAndIcon[itemApiName])})" data-api-name="${itemApiName}"></div>
@@ -103,6 +102,7 @@ export function tierList(guidesData, champAndIconCost, itemAndIcon, augsAndIconT
       ${augsApiName && augsAndIconTier[augsApiName] ? `<div class="hexagon-item"> 
         <div class="hexagon-icon" style="background-image: url(${convertURL(augsAndIconTier[augsApiName][0])})" data-api-name="${augsApiName}"></div>
       </div>` : ""}
+      <div class="hexagon-title">${title}</div>
     </div>
     `;
 
