@@ -92,7 +92,7 @@ export function tierList(guidesData, champAndIconCost, itemAndIcon, augsAndIconT
 
     const html = `
     <div class="tier-list cost-${costChamp}">
-    ${tier === "X" && augsApiName ? `<div class='hero-tier tier-${augsAndIconTier[augsApiName][1] || "S"}'>${augsAndIconTier[augsApiName][1] || "S"}</div>` : ""}
+    ${tier === "X" && augsApiName ? `<div class='hero-tier tier-${augsAndIconTier[augsApiName][1] || ""}'>${augsAndIconTier[augsApiName][1] || ""}</div>` : ""}
       <div class="hexagon-tier-champ">
         <a href="${hashtag}" style="background-image: url(${iconChamp})" title="${title}" data-index="${index}" data-style="${style}" data-name="${champName}"></a>
       </div>
@@ -162,9 +162,7 @@ export function tierList(guidesData, champAndIconCost, itemAndIcon, augsAndIconT
   const styleMenu = document.querySelector('.style-menu.tierlist-menu');
   const styleOptions = document.querySelectorAll('.tierlist-menu .style-option');
   const toggle = toggleContainer.querySelector(".toggle");
-  const label = toggleContainer.querySelector(".toggle-label");
   const body = document.body;
-  const root = document.documentElement;
 
   // Thiết lập trạng thái hiện/ẩn tên
   const savedState = localStorage.getItem("nameDisplay") === "flex";
@@ -749,7 +747,7 @@ function showTooltip(message, element) {
 }
 
 // Thêm hàm chung để đồng bộ trạng thái hiển thị tên
-function syncNameDisplayState(isActive) {
+export function syncNameDisplayState(isActive) {
   const body = document.body;
   const root = document.documentElement;
   

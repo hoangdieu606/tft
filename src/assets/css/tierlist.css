@@ -252,7 +252,9 @@ div.post-comp {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 15px;
+  gap: 20px;
+  margin-top: 10px;
+  max-width: calc(4 * 60px + 3 * 20px);
 }
 
 .comp-augs-list>div:last-child img {
@@ -308,6 +310,7 @@ div.post-comp {
   width: 100%;
   position: relative;
   margin-top: 30px;
+  text-align: justify;
 }
 
 .comp-tip span {
@@ -535,10 +538,10 @@ div.post-comp {
   padding: 1rem 1.5rem;
   border: var(--border-tier-list);
   border-radius: 30px;
-  justify-content: center;
   align-items: center;
   gap: 10px;
   font-weight: 600;
+  text-align: justify;
   flex: 1;
 }
 
@@ -781,7 +784,7 @@ body.name-active .toggle::before {
 }
 
 .hexagon-title {
-  display: var(--name-display, none);
+  display: var(--name-display, flex);
   text-align: center;
   justify-content: center;
   font-size: 12px;
@@ -869,9 +872,10 @@ body.name-active .toggle::before {
     gap: 0;
     padding: 0 3px;
   }
+
   .position-comp .hexagon-items {
     width: 125%;
-}
+  }
 
   .tier-title {
     height: 40px;
@@ -1068,17 +1072,20 @@ body.name-active .toggle::before {
 
 .tierlist-items .item-child>span,
 .tierlist-augments .augments-child>span {
+  display: var(--name-display, flex);
   font-size: 10px;
 }
 
 .tierlist-augments .tier-group {
   background-color: #1d1d1d;
   gap: 15px;
-  justify-content: space-evenly;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
 }
 
 .tierlist-items .tier-group {
-  justify-content: space-evenly;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
 }
 
 .comp-tier-X .hexagon-item .hexagon-icon {
@@ -1176,7 +1183,8 @@ button.copy-option>span {
   padding-top: 30px;
 }
 
-.hero-tier-title {
+.hero-tier-title,
+.unranked {
   position: absolute;
   left: 50%;
   transform: translateX(-50%);

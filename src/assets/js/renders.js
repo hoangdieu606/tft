@@ -1,5 +1,6 @@
-import { convertURL, apiNameAndIcon, generateStatsHTML  } from '/src/assets/js/global.js';
-import {  setupStyleMenu } from '/src/assets/js/global-defer.js'
+import { convertURL, apiNameAndIcon, generateStatsHTML } from '/src/assets/js/global.js';
+import { setupStyleMenu } from '/src/assets/js/global-defer.js'
+import { syncNameDisplayState } from '/src/assets/js/tierlist.js'
 
 
 // Render danh sách tướng
@@ -14,7 +15,7 @@ export function renderChampions(mainChampions) {
         3: "Tướng 3 Vàng",
         4: "Tướng 4 Vàng",
         5: "Tướng 5 Vàng",
-        6: "Tướng 6 Vàng",  
+        6: "Tướng 6 Vàng",
         general: ""
     }
 
@@ -134,7 +135,7 @@ export function renderAugments(mainAugs) {
 
         return `${categoryHeader}<div class="aug-item augs-tier-${tier} tier-${tier2}">
              <div class="aug-icon">
-              <img src="${convertURL(icon)}" alt="${name} icon" data-api-name="${apiName}">
+              <img src="${convertURL(icon)}" alt="${name} icon">
               <span>${tier2}</span>
             </div>
             <div class="aug-content">
@@ -144,7 +145,7 @@ export function renderAugments(mainAugs) {
             </div>`}).join('')
 
     setupStyleMenu('.style-btn.champ-link', '.style-menu.champ-link', '.style-menu.champ-link a');
-    setupStyleMenu('.style-btn.champ-btn', '.style-menu.champ-btn', '.style-menu.champ-btn button');    
+    setupStyleMenu('.style-btn.champ-btn', '.style-menu.champ-btn', '.style-menu.champ-btn button');
     filterInput('.augments-list>div', '.search-input.champ-input');
 }
 
@@ -177,7 +178,7 @@ export function renderItems(mainItems) {
         return `${categoryHeader}
             <div class="items-item item-${category} tier-${tier}">
                <div class="item-icon">
-                 <img src="${convertURL(icon)}" alt="${name}" data-api-name="${apiName}">
+                 <img src="${convertURL(icon)}" alt="${name}">
                  <span>${tier}</span>
                  ${iconComp}
                 </div>
@@ -193,16 +194,16 @@ export function renderItems(mainItems) {
     }).join('')
 
     setupStyleMenu('.style-btn.champ-link', '.style-menu.champ-link', '.style-menu.champ-link a');
-    setupStyleMenu('.style-btn.champ-btn', '.style-menu.champ-btn', '.style-menu.champ-btn button');    
+    setupStyleMenu('.style-btn.champ-btn', '.style-menu.champ-btn', '.style-menu.champ-btn button');
     filterInput('.items-list>div', '.search-input.champ-input');
 }
 
-// Render danh sách tướng trong tierlist
+// Render danh sách augments trong tierlist
 export function renderTierlistAugments(mainAugs) {
     const augmentsList = document.querySelector(".tierlist-augments");
     if (!augmentsList) return;
 
-    const tierGroups = mainAugs.reduce((acc, {  name, icon, tier, tier2, apiName  } ) => {
+    const tierGroups = mainAugs.reduce((acc, { name, icon, tier, tier2, apiName }) => {
 
         const html = `
         <div class="augments-child augs-tier-${tier} tier-${tier2}">
@@ -210,20 +211,20 @@ export function renderTierlistAugments(mainAugs) {
                  <span>${name}</span>
         </div>
         `;
-        
-        switch(tier2) {
-          case "S": acc.groupS += html; break;
-          case "A": acc.groupA += html; break;
-          case "B": acc.groupB += html; break;
-          case "C": acc.groupC += html; break;
-          case "Synergy": acc.groupSynergy += html; break;
-          default: acc.groupSynergy += html; break;
+
+        switch (tier2) {
+            case "S": acc.groupS += html; break;
+            case "A": acc.groupA += html; break;
+            case "B": acc.groupB += html; break;
+            case "C": acc.groupC += html; break;
+            /* case "Synergy": acc.groupSynergy += html; break;
+            default: acc.groupSynergy += html; break; */
         }
-        
+
         return acc;
-      }, { groupS: "", groupA: "", groupB: "", groupC: "", groupSynergy: "" });
-    
-      function createTierTemplate(tier, groupContent) {
+    }, { groupS: "", groupA: "", groupB: "", groupC: "", groupSynergy: "" });
+
+    function createTierTemplate(tier, groupContent) {
         return `
         <div class="tier-container comp-tier-${tier}">
           <div class="comp-list">
@@ -236,47 +237,66 @@ export function renderTierlistAugments(mainAugs) {
           </div>
           <div class="post-comp"></div>
         </div>`;
-      }
-    
-      augmentsList.innerHTML = 
+    }
+
+    augmentsList.innerHTML =
         createTierTemplate("S", tierGroups.groupS) +
         createTierTemplate("A", tierGroups.groupA) +
         createTierTemplate("B", tierGroups.groupB) +
-        createTierTemplate("C", tierGroups.groupC) +
-        createTierTemplate("X", tierGroups.groupSynergy);
+        createTierTemplate("C", tierGroups.groupC);
+
+    // Thêm nút toggle hiện/ẩn tên
+    const toggleContainer = document.createElement("div");
+    toggleContainer.className = "toggle-container tierlist-toggle";
+    toggleContainer.innerHTML = `
+    <span class="toggle-label">Hiện Tên</span>
+    <div class="toggle"></div>
+  `;
+    augmentsList.insertBefore(toggleContainer, augmentsList.firstChild);
+
+
+    // Thiết lập trạng thái hiện/ẩn tên
+    const toggle = toggleContainer.querySelector(".toggle");
+    const body = document.body;
+    const savedState = localStorage.getItem("nameDisplay") === "flex";
+    syncNameDisplayState(savedState);
+
+    toggle.addEventListener("click", function () {
+        const isActive = body.classList.contains("name-active");
+        syncNameDisplayState(!isActive);
+    });
 
     setupStyleMenu('.style-btn.champ-link', '.style-menu.champ-link', '.style-menu.champ-link a');
-    setupStyleMenu('.style-btn.champ-btn', '.style-menu.champ-btn', '.style-menu.champ-btn button');    
+    setupStyleMenu('.style-btn.champ-btn', '.style-menu.champ-btn', '.style-menu.champ-btn button');
     filterInput('.tierlist-augments .augments-child', '.search-input.champ-input');
-}   
+}
 
 // Render danh sách trang bị trong tierlist
 export function renderTierlistItems(mainItems) {
     const itemsList = document.querySelector(".tierlist-items");
-    if (!itemsList) return;     
+    if (!itemsList) return;
 
-    const tierGroups = mainItems.reduce((acc, {  name, icon, category, tier, apiName  } ) => {
-
+    const tierGroups = mainItems.reduce((acc, { name, icon, category, tier, apiName }) => {
         const html = `
         <div class="item-child item-${category} tier-${tier}">
                  <img src="${convertURL(icon)}" alt="${name}" data-api-name="${apiName}">
                  <span>${name}</span>
         </div>
         `;
-        
-        switch(tier) {
-          case "S": acc.groupS += html; break;
-          case "A": acc.groupA += html; break;
-          case "B": acc.groupB += html; break;
-          case "C": acc.groupC += html; break;
-          case "Synergy": acc.groupSynergy += html; break;
-          default: acc.groupSynergy += html; break;
+
+        switch (tier) {
+            case "S": acc.groupS += html; break;
+            case "A": acc.groupA += html; break;
+            case "B": acc.groupB += html; break;
+            case "C": acc.groupC += html; break;
+            case "Synergy": acc.groupSynergy += html; break;
+            default: acc.groupSynergy += html; break;
         }
-        
+
         return acc;
-      }, { groupS: "", groupA: "", groupB: "", groupC: "", groupSynergy: "" });
-    
-      function createTierTemplate(tier, groupContent) {
+    }, { groupS: "", groupA: "", groupB: "", groupC: "", groupSynergy: "" });
+
+    function createTierTemplate(tier, groupContent) {
         return `
         <div class="tier-container comp-tier-${tier}">
           <div class="comp-list">
@@ -285,20 +305,44 @@ export function renderTierlistItems(mainItems) {
               <img src="/assets/images/${tier}-Tier-Wide.webp" loading="lazy" alt="${tier} Tier Wide">
               <img src="/assets/images/${tier}-Tier-Texture.webp" loading="lazy" alt="${tier} Tier Texture">
             </div>
-            <div class="tier-group">${groupContent}</div>
+            <div class="tier-group">
+            ${tier === "X" ? "<div class='unranked'>Không Xếp Hạng</div>" : ""}
+            ${groupContent}
+            </div>
           </div>
         </div>`;
-      }
-    
-      itemsList.innerHTML = 
+    }
+
+    itemsList.innerHTML =
         createTierTemplate("S", tierGroups.groupS) +
         createTierTemplate("A", tierGroups.groupA) +
         createTierTemplate("B", tierGroups.groupB) +
         createTierTemplate("C", tierGroups.groupC) +
         createTierTemplate("X", tierGroups.groupSynergy);
 
+    // Thêm nút toggle hiện/ẩn tên
+    const toggleContainer = document.createElement("div");
+    toggleContainer.className = "toggle-container tierlist-toggle";
+    toggleContainer.innerHTML = `
+    <span class="toggle-label">Hiện Tên</span>
+    <div class="toggle"></div>
+  `;
+    itemsList.insertBefore(toggleContainer, itemsList.firstChild);
+
+
+    // Thiết lập trạng thái hiện/ẩn tên
+    const toggle = toggleContainer.querySelector(".toggle");
+    const body = document.body;
+    const savedState = localStorage.getItem("nameDisplay") === "flex";
+    syncNameDisplayState(savedState);
+
+    toggle.addEventListener("click", function () {
+        const isActive = body.classList.contains("name-active");
+        syncNameDisplayState(!isActive);
+    });
+
     setupStyleMenu('.style-btn.champ-link', '.style-menu.champ-link', '.style-menu.champ-link a');
-    setupStyleMenu('.style-btn.champ-btn', '.style-menu.champ-btn', '.style-menu.champ-btn button');    
+    setupStyleMenu('.style-btn.champ-btn', '.style-menu.champ-btn', '.style-menu.champ-btn button');
     filterInput('.tierlist-items .item-child', '.search-input.champ-input');
 }
 

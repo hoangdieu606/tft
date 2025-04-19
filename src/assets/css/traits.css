@@ -99,8 +99,8 @@ ul.champ-list {
 }
 
 .trait-style img {
-    width: 36px;
-    height: 36px;
+    width: 30px;
+    height: 30px;
     filter: brightness(0.1) invert(0);
 }
 
