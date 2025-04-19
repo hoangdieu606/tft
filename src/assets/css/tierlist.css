@@ -580,12 +580,12 @@ div.post-comp {
   top: -6px;
   left: 50%;
   transform: translateX(-50%) skew(-8deg);
-  width: 70%;
   z-index: 22;
   font-weight: 900;
   font-size: 12px;
   gap: 3px;
   color: #000;
+  padding: 0 5px;
 }
 
 .star-champ.three-stars {
@@ -783,6 +783,7 @@ body.name-active .toggle::before {
 .hexagon-title {
   display: var(--name-display, none);
   text-align: center;
+  justify-content: center;
   font-size: 12px;
   margin-top: 10px;
 }
@@ -864,9 +865,9 @@ body.name-active .toggle::before {
 @media (max-width: 575px) {
 
   .position-comp .star-champ {
-    width: 50%;
     font-size: 4px;
     gap: 0;
+    padding: 0 3px;
   }
   .position-comp .hexagon-items {
     width: 125%;

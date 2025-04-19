@@ -286,7 +286,7 @@ export function renderPostComp(guideData, champAndIconCost, itemAndIcon, augsAnd
 
     const itemsHTML = (items || []).map(item => {
       if (item.includes("Emblem")) {
-        finalEmblem.push({ "apiName": "Emblem" });
+        finalEmblem.push({ "apiName": item});
       }
       return `<span><img src="${convertURL(itemAndIcon[item])}" width="24" height="24" data-api-name="${item}"></span>`;
     }).join('');
@@ -568,54 +568,75 @@ function placeChampions(finalCompData, champAndIconCost, itemAndIcon, board) {
 }
 
 function processTraits(traits) {
-  if (!Array.isArray(traits) || traits.length === 0) return [];
+  // Kiểm tra đầu vào: trả về [] nếu không phải mảng hoặc rỗng
+  if (!Array.isArray(traits) || !traits.length) return [];
 
-  const traitMap = {};
-  const countMap = {};
+  const traitMap = {}; // Lưu thông tin trait
+  const countMap = {}; // Đếm số lần xuất hiện
+  const traitNameMap = {}; // Ánh xạ phần cuối apiName (e.g., "Techie" -> "TFT14_Techie")
 
+  // Bước 1: Đếm trait không phải emblem và tạo traitNameMap
   traits.forEach(trait => {
-    if (!trait) return;
+    if (!trait?.apiName || typeof trait.apiName !== 'string') {
+      console.warn(`Trait không hợp lệ: ${JSON.stringify(trait)}`);
+      return;
+    }
 
-    const apiName = trait.apiName;
-    if (apiName !== "Emblem") {
-      countMap[apiName] = (countMap[apiName] || 0) + 1;
-      if (!traitMap[apiName]) {
-        traitMap[apiName] = {
-          apiName: trait.apiName,
-          name: trait.name,
-          icon: trait.icon,
-          minUnits: trait.minUnits
-        };
+    const { apiName } = trait;
+    // Bỏ qua emblem items (chứa "Emblem" và kết thúc bằng "EmblemItem")
+    if (apiName.includes('Emblem') && apiName.endsWith('EmblemItem')) return;
+
+    // Đếm trait và lưu thông tin
+    countMap[apiName] = (countMap[apiName] || 0) + 1;
+    traitMap[apiName] = traitMap[apiName] || {
+      apiName,
+      name: trait.name,
+      icon: trait.icon,
+      minUnits: trait.minUnits
+    };
+
+    // Lưu phần cuối apiName để khớp emblem
+    traitNameMap[apiName.split('_').pop()] = apiName;
+  });
+
+  // Bước 2: Đếm emblem items và ánh xạ tới trait
+  const emblemCounts = {};
+  traits.forEach(trait => {
+    if (!trait?.apiName || typeof trait.apiName !== 'string') return;
+
+    const { apiName } = trait;
+    if (apiName.includes('Emblem') && apiName.endsWith('EmblemItem')) {
+      // Lấy phần trước "Emblem"
+      const match = apiName.match(/(.+)Emblem/);
+      if (!match) {
+        console.warn(`Định dạng emblem không hợp lệ: ${apiName}`);
+        return;
+      }
+
+      // Lấy phần cuối (e.g., "Techie" từ "TFT14_Item_Techie")
+      const traitName = match[1].split('_').pop();
+      const targetTrait = traitNameMap[traitName];
+      if (targetTrait) {
+        emblemCounts[targetTrait] = (emblemCounts[targetTrait] || 0) + 1;
+      } else {
+        console.warn(`Không tìm thấy trait cho emblem: ${apiName}`);
       }
     }
   });
 
-  const emblemCount = traits.filter(trait => trait && trait.apiName === "Emblem").length;
-
-  if (emblemCount > 0) {
-    let maxCount = 0;
-    let maxApiName = null;
-
-    for (const apiName in countMap) {
-      if (countMap[apiName] > maxCount) {
-        maxCount = countMap[apiName];
-        maxApiName = apiName;
-      }
-    }
-
-    if (maxApiName) {
-      countMap[maxApiName] += emblemCount;
-    }
+  // Bước 3: Cộng số emblem vào countMap
+  for (const trait in emblemCounts) {
+    if (countMap[trait]) countMap[trait] += emblemCounts[trait];
   }
 
-  const result = Object.keys(traitMap).map(apiName => {
-    return {
+  // Bước 4: Tạo kết quả, lọc và sắp xếp
+  return Object.keys(traitMap)
+    .map(apiName => ({
       ...traitMap[apiName],
-      maxTraits: countMap[apiName]
-    };
-  });
-
-  return result.filter(trait => trait.maxTraits >= trait.minUnits).sort((a, b) => b.maxTraits - a.maxTraits);
+      maxTraits: countMap[apiName] || 0
+    }))
+    .filter(trait => trait.maxTraits >= trait.minUnits)
+    .sort((a, b) => b.maxTraits - a.maxTraits);
 }
 
 function setupToggle(postCompTag) {
