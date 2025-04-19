@@ -608,14 +608,20 @@ function processTraits(traits) {
     if (apiName.includes('Emblem') && apiName.endsWith('EmblemItem')) {
       // Lấy phần trước "Emblem"
       const match = apiName.match(/(.+)Emblem/);
-      if (!match) {
-        console.warn(`Định dạng emblem không hợp lệ: ${apiName}`);
-        return;
+      let targetTrait;
+
+      if (match) {
+        // Lấy phần cuối (e.g., "Techie" từ "TFT14_Item_Techie")
+        const traitName = match[1].split('_').pop();
+        targetTrait = traitNameMap[traitName];
+      } else {
+        // Nếu regex không khớp, tìm trait có số lượng cao nhất
+        console.warn(`Định dạng emblem không hợp lệ, tìm trait cao nhất: ${apiName}`);
+        targetTrait = Object.keys(countMap).reduce((maxTrait, trait) =>
+          countMap[trait] > (countMap[maxTrait] || 0) ? trait : maxTrait
+        , null);
       }
 
-      // Lấy phần cuối (e.g., "Techie" từ "TFT14_Item_Techie")
-      const traitName = match[1].split('_').pop();
-      const targetTrait = traitNameMap[traitName];
       if (targetTrait) {
         emblemCounts[targetTrait] = (emblemCounts[targetTrait] || 0) + 1;
       } else {
