@@ -567,26 +567,27 @@ function placeChampions(finalCompData, champAndIconCost, itemAndIcon, board) {
   });
 }
 
+/**
+ * Xử lý mảng traits, đếm số lần xuất hiện và xử lý emblem items.
+ * Emblem items được nhận diện bằng "Emblem" trong apiName, phần trước "Emblem"
+ * khớp với một trait. Nếu không ánh xạ được, cộng vào trait có số lượng cao nhất.
+ * Trả về mảng traits đạt minUnits, sắp xếp theo maxTraits giảm dần.
+ * @param {Array} traits - Mảng các trait với apiName, name, icon, minUnits
+ * @returns {Array} - Mảng traits đã lọc và sắp xếp
+ */
 function processTraits(traits) {
-  // Kiểm tra đầu vào: trả về [] nếu không phải mảng hoặc rỗng
   if (!Array.isArray(traits) || !traits.length) return [];
 
-  const traitMap = {}; // Lưu thông tin trait
-  const countMap = {}; // Đếm số lần xuất hiện
-  const traitNameMap = {}; // Ánh xạ phần cuối apiName (e.g., "Techie" -> "TFT14_Techie")
+  const traitMap = {};
+  const countMap = {};
+  const traitNameMap = {};
 
-  // Bước 1: Đếm trait không phải emblem và tạo traitNameMap
   traits.forEach(trait => {
-    if (!trait?.apiName || typeof trait.apiName !== 'string') {
-      console.warn(`Trait không hợp lệ: ${JSON.stringify(trait)}`);
-      return;
-    }
+    if (!trait?.apiName || typeof trait.apiName !== 'string') return;
 
     const { apiName } = trait;
-    // Bỏ qua emblem items (chứa "Emblem" và kết thúc bằng "EmblemItem")
     if (apiName.includes('Emblem') && apiName.endsWith('EmblemItem')) return;
 
-    // Đếm trait và lưu thông tin
     countMap[apiName] = (countMap[apiName] || 0) + 1;
     traitMap[apiName] = traitMap[apiName] || {
       apiName,
@@ -595,28 +596,23 @@ function processTraits(traits) {
       minUnits: trait.minUnits
     };
 
-    // Lưu phần cuối apiName để khớp emblem
     traitNameMap[apiName.split('_').pop()] = apiName;
   });
 
-  // Bước 2: Đếm emblem items và ánh xạ tới trait
   const emblemCounts = {};
   traits.forEach(trait => {
     if (!trait?.apiName || typeof trait.apiName !== 'string') return;
 
     const { apiName } = trait;
     if (apiName.includes('Emblem') && apiName.endsWith('EmblemItem')) {
-      // Lấy phần trước "Emblem"
-      const match = apiName.match(/(.+)Emblem/);
       let targetTrait;
-
+      const match = apiName.match(/(.+)Emblem/);
       if (match) {
-        // Lấy phần cuối (e.g., "Techie" từ "TFT14_Item_Techie")
         const traitName = match[1].split('_').pop();
         targetTrait = traitNameMap[traitName];
-      } else {
-        // Nếu regex không khớp, tìm trait có số lượng cao nhất
-        console.warn(`Định dạng emblem không hợp lệ, tìm trait cao nhất: ${apiName}`);
+      }
+
+      if (!targetTrait) {
         targetTrait = Object.keys(countMap).reduce((maxTrait, trait) =>
           countMap[trait] > (countMap[maxTrait] || 0) ? trait : maxTrait
         , null);
@@ -624,18 +620,14 @@ function processTraits(traits) {
 
       if (targetTrait) {
         emblemCounts[targetTrait] = (emblemCounts[targetTrait] || 0) + 1;
-      } else {
-        console.warn(`Không tìm thấy trait cho emblem: ${apiName}`);
       }
     }
   });
 
-  // Bước 3: Cộng số emblem vào countMap
   for (const trait in emblemCounts) {
     if (countMap[trait]) countMap[trait] += emblemCounts[trait];
   }
 
-  // Bước 4: Tạo kết quả, lọc và sắp xếp
   return Object.keys(traitMap)
     .map(apiName => ({
       ...traitMap[apiName],
