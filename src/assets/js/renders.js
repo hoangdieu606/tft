@@ -252,7 +252,7 @@ export function renderTierlistAugments(mainAugs) {
     // Thiết lập trạng thái hiện/ẩn tên
     const toggle = toggleContainer.querySelector(".toggle");
     const body = document.body;
-    const savedState = localStorage.getItem("nameDisplay") === "flex";
+    const savedState = (localStorage.getItem("nameDisplay") ?? "flex") === "flex";
     syncNameDisplayState(savedState);
 
     toggle.addEventListener("click", function () {
@@ -321,7 +321,7 @@ export function renderTierlistItems(mainItems) {
     // Thiết lập trạng thái hiện/ẩn tên
     const toggle = toggleContainer.querySelector(".toggle");
     const body = document.body;
-    const savedState = localStorage.getItem("nameDisplay") === "flex";
+    const savedState = (localStorage.getItem("nameDisplay") ?? "flex") === "flex";
     syncNameDisplayState(savedState);
 
     toggle.addEventListener("click", function () {

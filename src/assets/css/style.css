@@ -489,16 +489,13 @@ button.btn-category-7 {
     font-family: 'Dancing Script', sans-serif;
     text-align: center;
     margin-bottom: -30px;
+    margin-top: 15px;
 }
 
 .augments-list .category-group,
 .items-list .category-group {
     margin-bottom: 0;
     margin-top: 15px;
-}
-.augments-list>div:first-child,
-.items-list>div:first-child {
-    margin: 0;
 }
 
 /* Media  ❤❤❤ */

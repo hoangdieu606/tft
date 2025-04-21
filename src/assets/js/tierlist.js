@@ -171,7 +171,7 @@ export function tierList(guidesData, champAndIconCost, itemAndIcon, augsAndIconT
   const body = document.body;
 
   // Thiết lập trạng thái hiện/ẩn tên
-  const savedState = localStorage.getItem("nameDisplay") === "flex";
+  const savedState = (localStorage.getItem("nameDisplay") ?? "flex") === "flex";
   syncNameDisplayState(savedState);
 
   toggle.addEventListener("click", function () {
@@ -653,7 +653,7 @@ function setupToggle(postCompTag) {
   const root = document.documentElement;
 
   // Thiết lập trạng thái hiện/ẩn tên
-  const savedState = localStorage.getItem("nameDisplay") === "flex";
+  const savedState = (localStorage.getItem("nameDisplay") ?? "flex") === "flex";
   syncNameDisplayState(savedState);
 
   toggle.addEventListener("click", function () {
@@ -756,7 +756,6 @@ function showTooltip(message, element) {
 export function syncNameDisplayState(isActive) {
   const body = document.body;
   const root = document.documentElement;
-
   // Cập nhật class và CSS variable
   if (isActive) {
     body.classList.add("name-active");
