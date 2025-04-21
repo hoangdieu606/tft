@@ -53,7 +53,7 @@ jobs:
       - name: Tạo script JavaScript
         run: |
           mkdir -p .github/scripts
-          cat << 'EOF' > .github/scripts/download_tft_assets.js
+          cat << 'EOF' > .github/scripts/download_tft_assets.cjs
           const axios = require('axios');
           const fs = require('fs').promises;
           const path = require('path');
@@ -180,11 +180,10 @@ jobs:
             const setNumber = response.data.set;
             const currentVersion = await getCurrentVersion();
 
-            
-             if (newVersion === currentVersion) {
-               console.log('Version không thay đổi, bỏ qua tải assets');
-               return;
-             }
+            if (newVersion === currentVersion) {
+              console.log('Version không thay đổi, bỏ qua tải assets');
+              return;
+            }
 
             console.log(`Phát hiện version: ${newVersion}. Bắt đầu tải assets...`);
             const baseDir = `public/assets/images/set${setNumber}`;
@@ -213,7 +212,7 @@ jobs:
           EOF
 
       - name: Chạy script tải assets
-        run: node .github/scripts/download_tft_assets.js
+        run: node .github/scripts/download_tft_assets.cjs
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -241,6 +240,6 @@ jobs:
             exit 0
           fi
           git commit -m "Update TFT assets for version ${VERSION} on $(date +'%d-%m-%Y')"
-          git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/hoangdieu606/currency.git
+          git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/hoangdieu606/tft.git
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
