@@ -292,9 +292,6 @@ footer a:hover {
     height: 16px;
 }
 
-.tooltip .trait-header>div:first-child {
-    padding: 5px 10px;
-}
 
 .tooltip .skill-name div:first-child {
     width: 30px;

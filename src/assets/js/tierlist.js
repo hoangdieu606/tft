@@ -118,14 +118,24 @@ export function tierList(guidesData, champAndIconCost, itemAndIcon, augsAndIconT
   }, { groupS: "", groupA: "", groupB: "", groupC: "", groupX: "" });
 
 
-    function createTierTemplate(tier, groupContent) {
-  
-      const regex = /<div[^>]*class=["'][^"']*tier-list[^"']*["'][^>]*>/gi;
-      const tierListCount = (groupContent.match(regex) || []).length;
-  
-      const extraClass = tierListCount > 9 ? " more-than-9" : "";
-  
-      return `
+  function createTierTemplate(tier, groupContent) {
+
+    const regex = /<div[^>]*class=["'][^"']*tier-list[^"']*["'][^>]*>/gi;
+    const tierListCount = (groupContent.match(regex) || []).length;
+
+    let extraClass = "";
+
+    if (tierListCount > 15) {
+      extraClass = " more-than-12 more-than-15";
+    } else if (tierListCount > 12) {
+      extraClass = " more-than-12";
+    } else if (tierListCount > 9) {
+      extraClass = " more-than-9";
+    }
+
+
+
+    return `
       <div class="tier-container comp-tier-${tier}${extraClass}">
         <div class="comp-list">
           <div class="tier-title">
@@ -284,7 +294,7 @@ export function renderPostComp(guideData, champAndIconCost, itemAndIcon, augsAnd
 
     const itemsHTML = (items || []).map(item => {
       if (item.includes("Emblem")) {
-        finalEmblem.push({ "apiName": item});
+        finalEmblem.push({ "apiName": item });
       }
       return `<span><img src="${convertURL(itemAndIcon[item])}" width="24" height="24" data-api-name="${item}"></span>`;
     }).join('');
@@ -613,7 +623,7 @@ function processTraits(traits) {
       if (!targetTrait) {
         targetTrait = Object.keys(countMap).reduce((maxTrait, trait) =>
           countMap[trait] > (countMap[maxTrait] || 0) ? trait : maxTrait
-        , null);
+          , null);
       }
 
       if (targetTrait) {
@@ -750,7 +760,7 @@ function showTooltip(message, element) {
 export function syncNameDisplayState(isActive) {
   const body = document.body;
   const root = document.documentElement;
-  
+
   // Cập nhật class và CSS variable
   if (isActive) {
     body.classList.add("name-active");
@@ -758,11 +768,11 @@ export function syncNameDisplayState(isActive) {
     body.classList.remove("name-active");
   }
   root.style.setProperty('--name-display', isActive ? "flex" : "none");
-  
+
   // Cập nhật tất cả các nút toggle
   const allToggles = document.querySelectorAll(".toggle");
   const allLabels = document.querySelectorAll(".toggle-label");
-  
+
   allToggles.forEach(toggle => {
     if (isActive) {
       toggle.classList.add("active");
@@ -770,11 +780,11 @@ export function syncNameDisplayState(isActive) {
       toggle.classList.remove("active");
     }
   });
-  
+
   allLabels.forEach(label => {
     label.textContent = isActive ? "Ẩn Tên" : "Hiện Tên";
   });
-  
+
   // Lưu trạng thái vào localStorage
   localStorage.setItem("nameDisplay", isActive ? "flex" : "none");
 }
