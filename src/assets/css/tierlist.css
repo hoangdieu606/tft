@@ -791,6 +791,7 @@ body.name-active .toggle::before {
   margin-top: 10px;
 }
 
+
 .hexagon-tier-champ a {
   width: 80%;
   height: 80%;
@@ -893,6 +894,12 @@ body.name-active .toggle::before {
   .more-than-9 .hexagon-item {
     width: 25%;
     top: 55px;
+  }
+
+  /* more-than-9 */
+  .more-than-9 .hexagon-title {
+    font-size: 9px;
+    margin-top: 6px;
   }
 
   .row-comp {
