@@ -603,15 +603,21 @@ div.post-comp {
 
 /* Toogle Name */
 /* Container chứa toggle và nhãn */
+.tier-head {
+  display: flex;
+  font-size: 14px;
+  justify-content: space-around;
+}
+
+.last-update .date {
+  color: var(--button-color);
+}
+
 .toggle-container {
   display: flex;
   align-items: center;
   gap: 10px;
   width: fit-content;
-}
-
-.toggle-container.tierlist-toggle {
-  margin: auto;
 }
 
 .toggle-label {

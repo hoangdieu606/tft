@@ -353,3 +353,13 @@ export function apiNameAndData(dataArray, fields) {
         dataArray.map(obj => [obj.apiName, fields.map(field => obj[field])])
     );
 }
+
+export function formatDateLocale(date = new Date()) {
+    const d = new Date(date);
+    return new Intl.DateTimeFormat(undefined, {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
+    }).format(d);
+}
+

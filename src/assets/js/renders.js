@@ -1,6 +1,6 @@
 import { convertURL, apiNameAndIcon, generateStatsHTML } from '/src/assets/js/global.js';
-import { setupStyleMenu } from '/src/assets/js/global-defer.js'
-import { syncNameDisplayState } from '/src/assets/js/tierlist.js'
+import { setupStyleMenu, formatDateLocale } from '/src/assets/js/global-defer.js'
+import { syncNameDisplayState, createTierHead } from '/src/assets/js/tierlist.js'
 
 
 // Render danh sách tướng
@@ -245,15 +245,9 @@ export function renderTierlistAugments(mainAugs) {
         createTierTemplate("B", tierGroups.groupB) +
         createTierTemplate("C", tierGroups.groupC);
 
-    // Thêm nút toggle hiện/ẩn tên
-    const toggleContainer = document.createElement("div");
-    toggleContainer.className = "toggle-container tierlist-toggle";
-    toggleContainer.innerHTML = `
-    <span class="toggle-label">Hiện Tên</span>
-    <div class="toggle"></div>
-  `;
-    augmentsList.insertBefore(toggleContainer, augmentsList.firstChild);
-
+    // // Sử dụng hàm createTierHead để thêm nút toggle và last update
+    const { fragment, toggleContainer } = createTierHead(formatDateLocale);
+    augmentsList.prepend(fragment);
 
     // Thiết lập trạng thái hiện/ẩn tên
     const toggle = toggleContainer.querySelector(".toggle");
@@ -320,15 +314,9 @@ export function renderTierlistItems(mainItems) {
         createTierTemplate("C", tierGroups.groupC) +
         createTierTemplate("X", tierGroups.groupSynergy);
 
-    // Thêm nút toggle hiện/ẩn tên
-    const toggleContainer = document.createElement("div");
-    toggleContainer.className = "toggle-container tierlist-toggle";
-    toggleContainer.innerHTML = `
-    <span class="toggle-label">Hiện Tên</span>
-    <div class="toggle"></div>
-  `;
-    itemsList.insertBefore(toggleContainer, itemsList.firstChild);
-
+    // // Sử dụng hàm createTierHead để thêm nút toggle và last update
+    const { fragment, toggleContainer } = createTierHead(formatDateLocale);
+    itemsList.prepend(fragment);
 
     // Thiết lập trạng thái hiện/ẩn tên
     const toggle = toggleContainer.querySelector(".toggle");

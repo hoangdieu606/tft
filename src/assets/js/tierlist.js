@@ -1,5 +1,5 @@
 import { convertURL, apiNameAndIcon } from '/src/assets/js/global.js';
-import { setupTooltips, setupStyleMenu, apiNameAndData } from '/src/assets/js/global-defer.js';
+import { setupTooltips, setupStyleMenu, apiNameAndData, formatDateLocale } from '/src/assets/js/global-defer.js';
 
 
 export function renderComp(data, guidesData, hexIndexData) {
@@ -156,22 +156,18 @@ export function tierList(guidesData, champAndIconCost, itemAndIcon, augsAndIconT
     createTierTemplate("C", tierGroups.groupC) +
     createTierTemplate("X", tierGroups.groupX);
 
-  // Thêm nút toggle hiện/ẩn tên
-  const toggleContainer = document.createElement("div");
-  toggleContainer.className = "toggle-container tierlist-toggle";
-  toggleContainer.innerHTML = `
-    <span class="toggle-label">Hiện Tên</span>
-    <div class="toggle"></div>
-  `;
-  tierContainer.insertBefore(toggleContainer, tierContainer.firstChild);
+
+  // Sử dụng hàm createTierHead để thêm nút toggle và last update
+  const { fragment, toggleContainer } = createTierHead(formatDateLocale);
+    tierContainer.prepend(fragment);
 
   // Khởi tạo các phần tử UI
+  const toggle = toggleContainer.querySelector(".toggle");
   const tierLists = document.querySelectorAll('.tier-list');
   const searchInput = document.querySelector('.search-input');
   const styleBtn = document.querySelector('.style-btn.tierlist-btn');
   const styleMenu = document.querySelector('.style-menu.tierlist-menu');
   const styleOptions = document.querySelectorAll('.tierlist-menu .style-option');
-  const toggle = toggleContainer.querySelector(".toggle");
   const body = document.body;
 
   // Thiết lập trạng thái hiện/ẩn tên
@@ -787,4 +783,37 @@ export function syncNameDisplayState(isActive) {
 
   // Lưu trạng thái vào localStorage
   localStorage.setItem("nameDisplay", isActive ? "flex" : "none");
+}
+
+
+export function createTierHead(dateFormatter) {
+  const fragment = document.createDocumentFragment();
+  const tierHead = document.createElement("div");
+  tierHead.className = "tier-head";
+
+  // Toggle container
+  const toggleContainer = document.createElement("div");
+  toggleContainer.className = "toggle-container tierlist-toggle";
+  const toggleLabel = document.createElement("span");
+  toggleLabel.className = "toggle-label";
+  toggleLabel.textContent = "Hiện Tên";
+  const toggleDiv = document.createElement("div");
+  toggleDiv.className = "toggle";
+  toggleContainer.append(toggleLabel, toggleDiv);
+
+  // Last update
+  const lastUpdate = document.createElement("div");
+  lastUpdate.className = "last-update";
+  const updateSpan = document.createElement("span");
+  updateSpan.textContent = "Update: ";
+  const dateSpan = document.createElement("span");
+  dateSpan.className = "date";
+  dateSpan.textContent = dateFormatter();
+  updateSpan.append(dateSpan);
+  lastUpdate.append(updateSpan);
+
+  tierHead.append(toggleContainer, lastUpdate);
+  fragment.append(tierHead);
+
+  return { fragment, toggleContainer };
 }
