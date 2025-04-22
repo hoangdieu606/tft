@@ -1,5 +1,6 @@
 import { renderComp } from '/src/assets/js/tierlist.js';
 import { renderChampions, renderAugments, renderItems, renderTraits, renderTierlistAugments, renderTierlistItems } from '/src/assets/js/renders.js';
+import { renderBuilder } from '/src/assets/js/renderBuilder.js'
 import { setupTooltips, setIndexer } from '/src/assets/js/global-defer.js';
 
 // Định nghĩa các route với chú thích
@@ -11,6 +12,7 @@ export const routes = {
   augments: import.meta.env.DEV ? "src/pages/augments.html" : "/pages/augments.html",
   items: import.meta.env.DEV ? "src/pages/items.html" : "/pages/items.html",
   traits: import.meta.env.DEV ? "src/pages/traits.html" : "/pages/traits.html",
+  builder: import.meta.env.DEV ? "src/pages/builder.html" : "/pages/builder.html",
   home: import.meta.env.DEV ? "src/pages/home.html" : "/pages/home.html",
   commingsoon: import.meta.env.DEV ? "src/pages/commingsoon.html" : "/pages/commingsoon.html",
 };
@@ -79,8 +81,8 @@ export async function loadPage(page, { data = {}, guidesData = {}, hexIndexData 
       case 'tierlist-items':
         renderTierlistItems(data.items.mainItems);
         break;
-      case 'commingsoon':
-        // Không cần render gì đặc biệt cho trang commingsoon
+      case 'builder':
+        renderBuilder(data, hexIndexData)
         break;
       case 'home':
         // Thêm case cho home để tránh cảnh báo

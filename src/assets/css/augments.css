@@ -9,7 +9,7 @@
 .augments-list {
     display: flex;
     flex-wrap: wrap;
-    justify-content: center;
+    justify-content: space-evenly;
     gap: 15px;
 }
 
@@ -60,4 +60,8 @@
     max-width: 320px;
     width: 100%;
     border: 1px solid var(--tier-color);
+}
+
+.augments-list .tier- {
+    display: none;
 }

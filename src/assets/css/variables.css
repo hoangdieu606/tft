@@ -139,5 +139,10 @@
     --trait-origin-color: #dafda2;
 }
 
+/* builder.css */
+:root {
+    --builder-primary-color: #86d72f;
+}
+
 /* root index.css */
 

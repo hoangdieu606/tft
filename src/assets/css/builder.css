@@ -1,0 +1,147 @@
+
+
+.builder-container {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+.builder-section {
+    display: flex;
+    min-height: 500px;
+    gap: 10px;
+}
+
+.builder-traits {
+    width: 150px;
+    border: var(--border-tier-list);
+    border-radius: 5px;
+}
+
+.builder-chessboard {
+    flex: 1;
+    border: var(--border-tier-list);
+    border-radius: 5px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    align-items: center;
+    justify-content: center;
+    padding: 15px;
+}
+
+.builder-augments {
+    width: 150px;
+    border: var(--border-tier-list);
+    border-radius: 5px;
+}
+
+.builder-champions,
+.builder-items {
+    flex: 1;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.builder-head {
+    display: flex;
+    gap: 15px;
+    justify-content: space-between;
+}
+
+.builder-filter {
+    display: flex;
+    gap: 8px;
+}
+
+.builder-filter button {
+    background: var(--builder-primary-color);
+    border-radius: 999px;
+    font-size: 12px;
+    padding: 2px 8px;
+    font-weight: 700;
+}
+
+.builder-search {
+    display: flex;
+    height: 24px;
+    border: 1px solid var(--builder-primary-color);
+    border-radius: 999px;
+    overflow: hidden;
+}
+
+.builder-search input {
+    width: 100%;
+    background: transparent;
+    text-align: center;
+}
+
+/*  */
+.builder-chessboard .row:nth-child(odd) {
+    transform: translateX(-2.3vmin);
+}
+
+.builder-chessboard .row:nth-child(even) {
+    transform: translateX(2.3vmin);
+}
+
+.builder-chessboard .hexagon {
+    width: 8vmin;
+}
+
+.builder-chessboard .position-comp {
+    padding: 24px 5px;
+}
+
+.builder-extension {
+    display: flex;
+    gap: 15px;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.builder-extension button {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px;
+    cursor: pointer;
+    border-radius: 4px;
+    font: 700 12px 'Nunito', sans-serif;
+    text-transform: uppercase;
+    background: var(--builder-primary-color);
+}
+
+.builder-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(44px, 1fr));
+    justify-items: center;
+    gap: 5px;
+}
+.builder-champions .tier-list {
+    width: 44px;
+}
+.hexagon-tier-champ>span {
+    width: 85%;
+    height: 85%;
+    object-fit: cover;
+    background-size: cover;
+    margin: auto;
+    display: flex;
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+    clip-path: polygon(50% 0%, 95% 25%, 95% 75%, 50% 100%, 5% 75%, 5% 25%);
+    position: relative;
+    transition: transform 0.3s ease;
+}
+.builder-champions .hexagon-title {
+    font-size: 9px;
+    margin-top: 5px;
+}
+@media (min-width: 768px) {
+    .builder-chessboard .position-comp {
+        margin-left: 0;
+    }
+}

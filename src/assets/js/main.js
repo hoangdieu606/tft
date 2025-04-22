@@ -5,6 +5,8 @@ import '/src/assets/css/items.css';
 import '/src/assets/css/augments.css';
 import '/src/assets/css/variables.css';
 import '/src/assets/css/tierlist.css';
+import '/src/assets/css/builder.css';
+
 
 import { loadPage } from "/src/assets/js/routes.js";
 

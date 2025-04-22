@@ -1,4 +1,4 @@
-import { convertURL, apiNameAndIcon, generateStatsHTML } from '/src/assets/js/global.js';
+import { apiNameAndIcon, generateStatsHTML } from '/src/assets/js/global.js';
 import { loadPage } from '/src/assets/js/routes.js';
 
 export let indexer;
@@ -91,15 +91,15 @@ export function renderTooltipContent(data) {
                         <span>${cost}<img src="/assets/images/gold.png" loading="lazy" alt="Gold"></span>
                     </div>
                     <div>
-                        <img src="${convertURL(icon)}" alt="${name}">
+                        <img src="${icon}" alt="${name}">
                         <div class="traits">
-                            ${traits.map(obj => `<span class="trait"><img src="${convertURL(obj.icon)}">${obj.name}</span>`).join('')}
+                            ${traits.map(obj => `<span class="trait"><img src="${obj.icon}">${obj.name}</span>`).join('')}
                         </div>
                     </div>
                 </div>
                 <div class="skill">
                     <div class="skill-name">
-                        <div><img src="${convertURL(skillIcon || icon)}" alt="${skillName}"></div>
+                        <div><img src="${skillIcon || icon}" alt="${skillName}"></div>
                         <div>
                             <h4>${skillName}</h4>
                             <p><img src="/assets/images/Mana.png" loading="lazy" alt="Mana">${mana}</p>
@@ -120,7 +120,7 @@ export function renderTooltipContent(data) {
             const parsedData = JSON.parse(cachedData);
             const apiNameIconCost = Object.fromEntries(parsedData.champions.mainChampions.map(({ apiName, icon, cost }) => [apiName, [icon, cost]]));
             renderChamp = champions.map(({ apiName }) =>
-                `<li class="champ-cost-${apiNameIconCost[apiName][1]}"><img src="${convertURL(apiNameIconCost[apiName][0])}"></li>`
+                `<li class="champ-cost-${apiNameIconCost[apiName][1]}"><img src="${apiNameIconCost[apiName][0]}"></li>`
             ).join("");
         }
 
@@ -128,7 +128,7 @@ export function renderTooltipContent(data) {
             <div class="trait-card trait-${category}">
                 <div class="trait-header">
                     <div class="trait-style">
-                        <img src="${convertURL(icon)}" alt="${name}">
+                        <img src="${icon}" alt="${name}">
                         <h3>${name}</h3>
                     </div>
                     <ul class="champ-list">${renderChamp}</ul>
@@ -151,16 +151,16 @@ export function renderTooltipContent(data) {
             const apiNameIcon = apiNameAndIcon(parsedData.items.mainItems);
             iconComp = composition?.length ?
                 `<span class="item-composition">
-                    <span><img src="${convertURL(apiNameIcon[composition[0]])}"></span>
+                    <span><img src="${apiNameIcon[composition[0]]}"></span>
                     <span>+</span>
-                    <span><img src="${convertURL(apiNameIcon[composition[1]])}"></span>
+                    <span><img src="${apiNameIcon[composition[1]]}"></span>
                 </span>` : "";
         }
 
         return `
             <div class="items-item item-${category} tier-${tier}">
                 <div class="item-icon">
-                    <img src="${convertURL(icon)}" alt="${name}">
+                    <img src="${icon}" alt="${name}">
                     <span>${tier}</span>
                     ${iconComp}
                 </div>
@@ -180,7 +180,7 @@ export function renderTooltipContent(data) {
         return `
             <div class="aug-item augs-tier-${tier} tier-${tier2}">
                 <div class="aug-icon">
-                    <img src="${convertURL(icon)}" alt="${name} icon">
+                    <img src="${icon}" alt="${name} icon">
                     <span>${tier2}</span>
                 </div>
                 <div class="aug-content">
@@ -273,6 +273,9 @@ export function setupTooltips() {
     }
 }
 
+export function setIndexer(data) {
+    indexer = new TooltipDataIndexer(data);
+}
 
 /*  Style Menu */
 export function setupStyleMenu(styleBtnSelector, styleMenuSelector, styleOptionSelector) {
@@ -343,11 +346,7 @@ export function setupStyleMenu(styleBtnSelector, styleMenuSelector, styleOptionS
     });
 }
 
-
-export function setIndexer(data) {
-    indexer = new TooltipDataIndexer(data);
-}
-
+/* apiNameAndData */
 export function apiNameAndData(dataArray, fields) {
     return Object.fromEntries(
         dataArray.map(obj => [obj.apiName, fields.map(field => obj[field])])

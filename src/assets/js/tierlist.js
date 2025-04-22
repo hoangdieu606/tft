@@ -1,4 +1,4 @@
-import { convertURL, apiNameAndIcon } from '/src/assets/js/global.js';
+import { apiNameAndIcon } from '/src/assets/js/global.js';
 import { setupTooltips, setupStyleMenu, apiNameAndData, formatDateLocale } from '/src/assets/js/global-defer.js';
 
 
@@ -83,7 +83,7 @@ export function tierList(guidesData, champAndIconCost, itemAndIcon, augsAndIconT
   // guidesData
   const tierGroups = guidesData.reduce((acc, { mainChampion, mainItem, mainAugment, tier, title, style }, index) => {
     if (!champAndIconCost[mainChampion.apiName]) return acc;
-    const iconChamp = convertURL(champAndIconCost[mainChampion.apiName][0]);
+    const iconChamp = champAndIconCost[mainChampion.apiName][0];
     const costChamp = champAndIconCost[mainChampion.apiName][1];
     const itemApiName = mainItem ? mainItem.apiName : null;
     const augsApiName = mainAugment ? mainAugment.apiName : null;
@@ -97,10 +97,10 @@ export function tierList(guidesData, champAndIconCost, itemAndIcon, augsAndIconT
         <a href="${hashtag}" style="background-image: url(${iconChamp})" title="${title}" data-index="${index}" data-style="${style}" data-name="${champName}"></a>
       </div>
       ${itemApiName && itemAndIcon[itemApiName] ? `<div class="hexagon-item"> 
-        <div class="hexagon-icon" style="background-image: url(${convertURL(itemAndIcon[itemApiName])})" data-api-name="${itemApiName}"></div>
+        <div class="hexagon-icon" style="background-image: url(${itemAndIcon[itemApiName]})" data-api-name="${itemApiName}"></div>
       </div>` : ""}
       ${augsApiName && augsAndIconTier[augsApiName] ? `<div class="hexagon-item"> 
-        <div class="hexagon-icon" style="background-image: url(${convertURL(augsAndIconTier[augsApiName][0])})" data-api-name="${augsApiName}"></div>
+        <div class="hexagon-icon" style="background-image: url(${augsAndIconTier[augsApiName][0]})" data-api-name="${augsApiName}"></div>
       </div>` : ""}
       <div class="hexagon-title">${title}</div>
     </div>
@@ -292,14 +292,14 @@ export function renderPostComp(guideData, champAndIconCost, itemAndIcon, augsAnd
       if (item.includes("Emblem")) {
         finalEmblem.push({ "apiName": item });
       }
-      return `<span><img src="${convertURL(itemAndIcon[item])}" width="24" height="24" data-api-name="${item}"></span>`;
+      return `<span><img src="${itemAndIcon[item]}" width="24" height="24" data-api-name="${item}"></span>`;
     }).join('');
 
     return `
       <div class="hexagon-icon champ-cost-${champAndIconCost[apiName][1]}">
         ${starHTML}
         <div class="hexagon-champ">
-          <img src="${convertURL(champAndIconCost[apiName][0])}" width="80" height="80" data-api-name="${apiName}">
+          <img src="${champAndIconCost[apiName][0]}" width="80" height="80" data-api-name="${apiName}">
         </div>
         <div class="hexagon-items">
           ${itemsHTML}
@@ -319,10 +319,10 @@ export function renderPostComp(guideData, champAndIconCost, itemAndIcon, augsAnd
           ${tier === "X" ? `<div class="hero-tier tier-${augsAndIconTier[mainAugment.apiName][1]}">${augsAndIconTier[mainAugment.apiName][1]}</div>` : ""}
           <div class="comp-champ-tier">${tier}</div>
           <div class="comp-champ-icon">
-            <div style="background-image: url(${convertURL(champAndIconCost[mainChampion.apiName][0])})" data-api-name="${mainChampion.apiName}"></div>
+            <div style="background-image: url(${champAndIconCost[mainChampion.apiName][0]})" data-api-name="${mainChampion.apiName}"></div>
           </div>
-          ${mainItem && itemAndIcon[mainItem.apiName] ? `<div class="comp-champ-trait"><img src="${convertURL(itemAndIcon[mainItem.apiName])}" data-api-name="${mainItem.apiName}"></div>` : ""}
-          ${mainAugment && augsAndIconTier[mainAugment.apiName][0] ? `<div class="comp-champ-trait"><img src="${convertURL(augsAndIconTier[mainAugment.apiName][0])}" data-api-name="${mainAugment.apiName}"></div>` : ""}
+          ${mainItem && itemAndIcon[mainItem.apiName] ? `<div class="comp-champ-trait"><img src="${itemAndIcon[mainItem.apiName]}" data-api-name="${mainItem.apiName}"></div>` : ""}
+          ${mainAugment && augsAndIconTier[mainAugment.apiName][0] ? `<div class="comp-champ-trait"><img src="${augsAndIconTier[mainAugment.apiName][0]}" data-api-name="${mainAugment.apiName}"></div>` : ""}
         </div>
         <div class="comp-title">
           ${title}
@@ -331,7 +331,7 @@ export function renderPostComp(guideData, champAndIconCost, itemAndIcon, augsAnd
           Phong Cách: ${style}
         </div>
         <div class="comp-traits">
-          ${traitsEmblem.map(({ apiName, icon, maxTraits }) => `<div data-api-name="${apiName}"><img src="${convertURL(icon)}"><span>${maxTraits}</span></div>`).join("")}
+          ${traitsEmblem.map(({ apiName, icon, maxTraits }) => `<div data-api-name="${apiName}"><img src="${icon}"><span>${maxTraits}</span></div>`).join("")}
         </div>
       </div>
       <div class="right-one">
@@ -357,7 +357,7 @@ export function renderPostComp(guideData, champAndIconCost, itemAndIcon, augsAnd
         </div>
         <div class="comp-augs-list">
           <div class="title-comp">Những Lõi Mạnh</div>
-          <div>${augments.map(({ apiName }) => augsAndIconTier[apiName] ? `<img src="${convertURL(augsAndIconTier[apiName][0])}" data-api-name="${apiName}">` : '').join("")}</div>
+          <div>${augments.map(({ apiName }) => augsAndIconTier[apiName] ? `<img src="${augsAndIconTier[apiName][0]}" data-api-name="${apiName}">` : '').join("")}</div>
         </div>
         <div class="comp-augs-priority">
           <div class="title-comp">Ưu tiên lõi</div>
@@ -388,10 +388,10 @@ export function renderPostComp(guideData, champAndIconCost, itemAndIcon, augsAnd
     return `
             <div class="hexagon-icon champ-cost-${champAndIconCost[apiName][1]}">
               <div class="hexagon-champ">
-                <img src="${convertURL(champAndIconCost[apiName][0])}" width="58" height="58" data-api-name="${apiName}">
+                <img src="${champAndIconCost[apiName][0]}" width="58" height="58" data-api-name="${apiName}">
               </div>
               <div class="hexagon-items">
-                ${items ? items.map(item => `<span><img src="${convertURL(itemAndIcon[item])}" width="20" height="20" data-api-name="${item}"></span>`).join('') : ""}
+                ${items ? items.map(item => `<span><img src="${itemAndIcon[item]}" width="20" height="20" data-api-name="${item}"></span>`).join('') : ""}
               </div>
               <div class="hexagon-name">${champAndIconCost[apiName][2]}</div>
             </div>
@@ -407,7 +407,7 @@ export function renderPostComp(guideData, champAndIconCost, itemAndIcon, augsAnd
     return `
             <div class="hexagon-icon">
               <div class="hexagon-champ">
-                <img src="${convertURL(itemAndIcon[apiName])}" width="58" height="58" data-api-name="${apiName}">
+                <img src="${itemAndIcon[apiName]}" width="58" height="58" data-api-name="${apiName}">
               </div>
             </div>
           `;
@@ -422,10 +422,10 @@ export function renderPostComp(guideData, champAndIconCost, itemAndIcon, augsAnd
     return `
             <div class="hexagon-icon champ-cost-${champAndIconCost[apiName][1]}">
               <div class="hexagon-champ">
-                <img src="${convertURL(champAndIconCost[apiName][0])}" width="80" height="80" data-api-name="${apiName}">
+                <img src="${champAndIconCost[apiName][0]}" width="80" height="80" data-api-name="${apiName}">
               </div>
               <div class="hexagon-items">
-                ${items ? items.map(item => `<span><img src="${convertURL(itemAndIcon[item])}" width="24" height="24" data-api-name="${item}"></span>`).join('') : ""}
+                ${items ? items.map(item => `<span><img src="${itemAndIcon[item]}" width="24" height="24" data-api-name="${item}"></span>`).join('') : ""}
               </div>
               <div class="hexagon-name">${champAndIconCost[apiName][2]}</div>
             </div>
@@ -550,7 +550,7 @@ function placeChampions(finalCompData, champAndIconCost, itemAndIcon, board) {
     if (!hexagon) return;
 
     const itemsHTML = items ? items.map(item =>
-      itemAndIcon[item] ? `<span><img src="${convertURL(itemAndIcon[item])}" width="24" height="24" data-api-name="${item}"></span>` : ''
+      itemAndIcon[item] ? `<span><img src="${itemAndIcon[item]}" width="24" height="24" data-api-name="${item}"></span>` : ''
     ).join('') : '';
 
 
@@ -560,7 +560,7 @@ function placeChampions(finalCompData, champAndIconCost, itemAndIcon, board) {
         ${stars === 3 ? `<div class="star-champ three-stars"><span><i class="fa-solid fa-star"></i></span><span><i class="fa-solid fa-star"></i></span><span><i class="fa-solid fa-star"></i></span></div>` : ''}
         ${stars === 4 ? `<div class="star-champ four-stars"><span><i class="fa-solid fa-star"></i></span><span><i class="fa-solid fa-star"></i></span><span><i class="fa-solid fa-star"></i></span><span><i class="fa-solid fa-star"></i></span></div>` : ''}
         <div class="hexagon-champ">
-          <img src="${convertURL(champAndIconCost[apiName][0])}" data-api-name="${apiName}">
+          <img src="${champAndIconCost[apiName][0]}" data-api-name="${apiName}">
         </div>
         <div class="hexagon-items">
           ${itemsHTML}

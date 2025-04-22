@@ -1,9 +1,9 @@
-import { convertURL, apiNameAndIcon, generateStatsHTML } from '/src/assets/js/global.js';
-import { setupStyleMenu, formatDateLocale } from '/src/assets/js/global-defer.js'
+import { generateStatsHTML } from '/src/assets/js/global.js';
+import { setupStyleMenu, formatDateLocale, apiNameAndData } from '/src/assets/js/global-defer.js'
 import { syncNameDisplayState, createTierHead } from '/src/assets/js/tierlist.js'
 
 
-// Render danh sách tướng
+// Render danh sách champions
 export function renderChampions(mainChampions) {
     const championsContainer = document.querySelector('#champ-container');
     if (!championsContainer) return;
@@ -35,13 +35,13 @@ export function renderChampions(mainChampions) {
                             <span>${cost}<img src="/assets/images/gold.png" alt="icon-gold"></span>
                         </div>
                         <div>
-                            <img src="${convertURL(icon)}" alt="${name}">
-                            <div class="traits">${traits.map(obj => `<span class="trait"><img src="${convertURL(obj.icon)}" style="width: 18px; height: 18px;">${obj.name}</span>`).join("")}</div>
+                            <img src="${icon}" alt="${name}">
+                            <div class="traits">${traits.map(obj => `<span class="trait"><img src="${obj.icon}" style="width: 18px; height: 18px;">${obj.name}</span>`).join("")}</div>
                         </div>
                     </div>
                     <div class="skill">
                             <div class="skill-name">
-                                <div><img src="${convertURL(skillIcon || icon)}" alt="${skillName}"></div>
+                                <div><img src="${skillIcon || icon}" alt="${skillName}"></div>
                                 <div><h4>${skillName}</h4><p><img src="/assets/images/Mana.png">${mana}</p></div>
                             </div>
                             <div class="skill-desc"><p>${skillDesc}</p></div>
@@ -55,7 +55,7 @@ export function renderChampions(mainChampions) {
     filterInput('.champions-list>div', '.search-input.champ-input');
 }
 
-// Render danh sách tộc/nguồn gốc
+// Render danh sách traits
 export function renderTraits(mainTraits, mainChampions) {
     const traitsList = document.querySelector(".traits-list");
     if (!traitsList) return;
@@ -69,7 +69,7 @@ export function renderTraits(mainTraits, mainChampions) {
         if (champions.length) {
             renderChamp = champions.map(obj =>
                 `<li class="champ-cost-${champIcons[obj.name][1]}">
-                 <img src="${convertURL(champIcons[obj.name][0])}" alt="${champIcons[obj.name][1]}" data-api-name="${obj.apiName}">
+                 <img src="${champIcons[obj.name][0]}" alt="${champIcons[obj.name][1]}" data-api-name="${obj.apiName}">
               </li>`
             ).join("");
         } else {
@@ -80,7 +80,7 @@ export function renderTraits(mainTraits, mainChampions) {
                 .filter(champion => setKeys1.has(champion))
                 .map(champion =>
                     `<li class="champ-cost-${champIcons[champion][1]}">
-            <img src="${convertURL(champIcons[champion][0])}" alt="${champion}" data-api-name="${champIcons[champion][2]}">
+            <img src="${champIcons[champion][0]}" alt="${champion}" data-api-name="${champIcons[champion][2]}">
         </li>`
                 )
                 .join("");
@@ -97,7 +97,7 @@ ${categoryHeader}
 <div class="trait-card trait-${category}">
     <div class="trait-header">
         <div class="trait-style">
-            <img src="${convertURL(icon)}" alt="${name}">
+            <img src="${icon}" alt="${name}">
             <h3>${name}</h3>
         </div>
         <ul class="champ-list">${renderChamp}</ul>
@@ -115,7 +115,7 @@ ${categoryHeader}
     filterInput('.traits-list>div', '.search-input.champ-input');
 }
 
-// Render danh sách tăng cường
+// Render danh sách augments
 export function renderAugments(mainAugs) {
     const augmentsList = document.querySelector(".augments-list");
     if (!augmentsList) return;
@@ -135,7 +135,7 @@ export function renderAugments(mainAugs) {
 
         return `${categoryHeader}<div class="aug-item augs-tier-${tier} tier-${tier2}">
              <div class="aug-icon">
-              <img src="${convertURL(icon)}" alt="${name} icon">
+              <img src="${icon}" alt="${name} icon">
               <span>${tier2}</span>
             </div>
             <div class="aug-content">
@@ -149,11 +149,11 @@ export function renderAugments(mainAugs) {
     filterInput('.augments-list>div', '.search-input.champ-input');
 }
 
-// Render danh sách trang bị
+// Render danh sách items
 export function renderItems(mainItems) {
     const itemsList = document.querySelector(".items-list");
     if (!itemsList) return;
-    const apiNameIcon = apiNameAndIcon(mainItems)
+    const apiNameIcon = apiNameAndData(mainItems, ["icon"])
     let previousCategory = null;
     const arrCategory = {
         core: "Trang Bị Thường",
@@ -167,7 +167,7 @@ export function renderItems(mainItems) {
 
     itemsList.innerHTML = mainItems.map(({ name, icon, category, effects, desc, tier, apiName, composition }) => {
 
-        const iconComp = composition?.length ? `<span class="item-composition"><span><img src="${convertURL(apiNameIcon[composition[0]])}"></span><span>+</span><span><img src="${convertURL(apiNameIcon[composition[1]])}"></span></span>` : "";
+        const iconComp = composition?.length ? `<span class="item-composition"><span><img src="${apiNameIcon[composition[0]][0]}"></span><span>+</span><span><img src="${apiNameIcon[composition[1]][0]}"></span></span>` : "";
 
         let categoryHeader = "";
         if (category !== previousCategory) {
@@ -178,7 +178,7 @@ export function renderItems(mainItems) {
         return `${categoryHeader}
             <div class="items-item item-${category} tier-${tier}">
                <div class="item-icon">
-                 <img src="${convertURL(icon)}" alt="${name}">
+                 <img src="${icon}" alt="${name}">
                  <span>${tier}</span>
                  ${iconComp}
                 </div>
@@ -207,7 +207,7 @@ export function renderTierlistAugments(mainAugs) {
 
         const html = `
         <div class="augments-child augs-tier-${tier} tier-${tier2}">
-                 <img src="${convertURL(icon)}" alt="${name}" data-api-name="${apiName}">
+                 <img src="${icon}" alt="${name}" data-api-name="${apiName}">
                  <span>${name}</span>
         </div>
         `;
@@ -265,7 +265,7 @@ export function renderTierlistAugments(mainAugs) {
     filterInput('.tierlist-augments .augments-child', '.search-input.champ-input');
 }
 
-// Render danh sách trang bị trong tierlist
+// Render danh sách items trong tierlist
 export function renderTierlistItems(mainItems) {
     const itemsList = document.querySelector(".tierlist-items");
     if (!itemsList) return;
@@ -273,7 +273,7 @@ export function renderTierlistItems(mainItems) {
     const tierGroups = mainItems.reduce((acc, { name, icon, category, tier, apiName }) => {
         const html = `
         <div class="item-child item-${category} tier-${tier}">
-                 <img src="${convertURL(icon)}" alt="${name}" data-api-name="${apiName}">
+                 <img src="${icon}" alt="${name}" data-api-name="${apiName}">
                  <span>${name}</span>
         </div>
         `;
@@ -334,6 +334,7 @@ export function renderTierlistItems(mainItems) {
     filterInput('.tierlist-items .item-child', '.search-input.champ-input');
 }
 
+// NormalizeText
 function normalizeText(text) {
     return text.trim().toLowerCase()
         .normalize("NFD")

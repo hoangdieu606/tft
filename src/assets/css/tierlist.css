@@ -649,7 +649,7 @@ div.post-comp {
 }
 
 body.name-active .toggle {
-  background: #4CAF50;
+  background: var(--button-color)
 }
 
 body.name-active .toggle::before {
