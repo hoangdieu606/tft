@@ -347,6 +347,13 @@ footer a:hover {
 /* MENU: champions, traits, augments, items. */
 
 /* Nhóm Chung Filter active: category-4-active,... */
+[btn-filter="category-other-active"] {
+    --btn-filter-category-4: flex;
+    --btn-filter-category-5: flex;
+    --btn-filter-category-6: flex;
+    --btn-filter-category-7: flex;
+}
+
 [btn-filter="category-0-active"] {
     --btn-filter-category-1: flex;
     --btn-filter-category-2: flex;
@@ -355,42 +362,34 @@ footer a:hover {
     --btn-filter-category-5: flex;
     --btn-filter-category-6: flex;
     --btn-filter-category-7: flex;
-    --btn-background-category-0: var(--btn-bg-color-active);
 }
 
 [btn-filter="category-1-active"] {
     --btn-filter-category-1: flex;
-    --btn-background-category-1: var(--btn-bg-color-active);
 }
 
 [btn-filter="category-2-active"] {
     --btn-filter-category-2: flex;
-    --btn-background-category-2: var(--btn-bg-color-active);
 }
 
 [btn-filter="category-3-active"] {
     --btn-filter-category-3: flex;
-    --btn-background-category-3: var(--btn-bg-color-active);
 }
 
 [btn-filter="category-4-active"] {
     --btn-filter-category-4: flex;
-    --btn-background-category-4: var(--btn-bg-color-active);
 }
 
 [btn-filter="category-5-active"] {
     --btn-filter-category-5: flex;
-    --btn-background-category-5: var(--btn-bg-color-active);
 }
 
 [btn-filter="category-6-active"] {
     --btn-filter-category-6: flex;
-    --btn-background-category-6: var(--btn-bg-color-active);
 }
 
 [btn-filter="category-7-active"] {
     --btn-filter-category-7: flex;
-    --btn-background-category-7: var(--btn-bg-color-active);
 }
 
 /* Nhóm Chung Filter active */
@@ -443,39 +442,6 @@ footer a:hover {
 /* ======= Hiệu ứng chuyển đổi mượt mà ======= */
 .items-item {
     transition: opacity 0.3s ease, visibility 0.3s ease;
-}
-
-
-button.btn-category-0 {
-    background: var(--btn-background-category-0, var(--alpha-bg));
-}
-
-button.btn-category-1 {
-    background: var(--btn-background-category-1, var(--alpha-bg));
-}
-
-button.btn-category-2 {
-    background: var(--btn-background-category-2, var(--alpha-bg));
-}
-
-button.btn-category-3 {
-    background: var(--btn-background-category-3, var(--alpha-bg));
-}
-
-button.btn-category-4 {
-    background: var(--btn-background-category-4, var(--alpha-bg));
-}
-
-button.btn-category-5 {
-    background: var(--btn-background-category-5, var(--alpha-bg));
-}
-
-button.btn-category-6 {
-    background: var(--btn-background-category-6, var(--alpha-bg));
-}
-
-button.btn-category-7 {
-    background: var(--btn-background-category-7, var(--alpha-bg));
 }
 
 /* Category group */

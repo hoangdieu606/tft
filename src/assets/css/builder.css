@@ -1,5 +1,3 @@
-
-
 .builder-container {
     display: flex;
     flex-direction: column;
@@ -43,6 +41,7 @@
     display: flex;
     flex-direction: column;
     gap: 15px;
+    border: var(--border-tier-list);
 }
 
 .builder-head {
@@ -53,11 +52,12 @@
 
 .builder-filter {
     display: flex;
-    gap: 8px;
+    gap: 5px;
 }
 
 .builder-filter button {
-    background: var(--builder-primary-color);
+    background: transparent;
+    color: #fff;
     border-radius: 999px;
     font-size: 12px;
     padding: 2px 8px;
@@ -89,6 +89,12 @@
 
 .builder-chessboard .hexagon {
     width: 8vmin;
+    background: var(--hexagon-background);
+}
+
+.builder-chessboard .hexagon.has-champ {
+    clip-path: unset;
+    background-color: unset;
 }
 
 .builder-chessboard .position-comp {
@@ -111,18 +117,27 @@
     border-radius: 4px;
     font: 700 12px 'Nunito', sans-serif;
     text-transform: uppercase;
-    background: var(--builder-primary-color);
+    background: transparent;
+    color: #fff;
 }
 
 .builder-list {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(44px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(50px, 1fr));
     justify-items: center;
     gap: 5px;
 }
+
 .builder-champions .tier-list {
-    width: 44px;
+    width: 50px;
+    cursor: pointer;
 }
+
+.builder-list .hexagon-tier-champ {
+    clip-path: unset;
+    border-radius: 50%;
+}
+
 .hexagon-tier-champ>span {
     width: 85%;
     height: 85%;
@@ -132,14 +147,68 @@
     display: flex;
     aspect-ratio: 1 / 1;
     overflow: hidden;
-    clip-path: polygon(50% 0%, 95% 25%, 95% 75%, 50% 100%, 5% 75%, 5% 25%);
     position: relative;
     transition: transform 0.3s ease;
+    border-radius: 50%;
 }
+
 .builder-champions .hexagon-title {
     font-size: 9px;
     margin-top: 5px;
+    pointer-events: none;
 }
+
+.builder-items .item-child>span {
+    pointer-events: none;
+}
+
+.tier-list:has(.hexagon-tier-champ span.active) {
+    filter: drop-shadow(0 0 10px var(--border-color-cost)) drop-shadow(0 0 20px var(--border-color-cost));
+    animation: pulse 2s ease-in-out infinite;
+}
+
+.hexagon-tier-champ span.active {
+    transform: scale(1.1);
+}
+
+.builder-items .item-child {
+    flex-direction: column;
+    width: 50px;
+    gap: 10px;
+    text-align: center;
+    font-size: 9px;
+    cursor: pointer;
+}
+
+.builder-items .item-child.item-core>img {
+    border: 1px solid var(--tier-color);
+}
+
+.builder-chessboard .hexagon-champ {
+    width: 100%;
+    height: 100%;
+}
+
+/* Dùng attribute selector để so sánh body và data-category của button */
+body[btn-filter="category-1-active"] button[data-category="1"],
+body[btn-filter="category-2-active"] button[data-category="2"],
+body[btn-filter="category-3-active"] button[data-category="3"],
+body[btn-filter="category-4-active"] button[data-category="4"],
+body[btn-filter="category-5-active"] button[data-category="5"],
+body[btn-filter="category-6-active"] button[data-category="6"],
+body[btn-filter="category-7-active"] button[data-category="7"],
+body[btn-filter="category-other-active"] button[data-category="other"],
+body[btn-filter="category-0-active"] button[data-category="0"] {
+    background-color: var(--btn-builder-bg, #16dc4c);
+    color: #000;
+}
+
+.builder-champions .builder-filter button.active {
+    background: var(--btn-builder-bg, #16dc4c);
+    color: #000;
+
+}
+
 @media (min-width: 768px) {
     .builder-chessboard .position-comp {
         margin-left: 0;

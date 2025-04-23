@@ -90,8 +90,12 @@ export async function loadPage(page, { data = {}, guidesData = {}, hexIndexData 
       default:
         console.warn(`⚠️ No render function for page: ${page}`);
     }
+    if(page === "builder") {
+      document.body.setAttribute("btn-filter", `category-1-active`);
 
-    document.body.setAttribute("btn-filter", `category-0-active`);
+    } else {
+      document.body.setAttribute("btn-filter", `category-0-active`);
+    }
     setIndexer(data || {});
     setupTooltips();
   } catch (error) {
