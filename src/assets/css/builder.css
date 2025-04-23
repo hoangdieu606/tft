@@ -66,7 +66,7 @@
 
 .builder-search {
     display: flex;
-    height: 24px;
+    height: 30px;
     border: 1px solid var(--builder-primary-color);
     border-radius: 999px;
     overflow: hidden;
@@ -76,6 +76,7 @@
     width: 100%;
     background: transparent;
     text-align: center;
+    color: #fff;
 }
 
 /*  */
@@ -207,6 +208,37 @@ body[btn-filter="category-0-active"] button[data-category="0"] {
     background: var(--btn-builder-bg, #16dc4c);
     color: #000;
 
+}
+
+.builder-list-traits {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    grid-column: 1 / -1;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.list-traits-champions {
+    flex: 1;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(50px, 1fr));
+    justify-items: center;
+    gap: 5px;
+}
+.list-traits-title {
+    display: flex;
+    flex-direction: column;
+    font-size: 9px;
+    width: 45px;
+}
+.list-traits-title span {
+    text-align: center;
+}
+
+.hexagon.highlight {
+    box-shadow: 0 0 8px 2px rgba(255, 255, 0, 0.8); /* Hiệu ứng sáng */
+    border: 2px solid yellow; /* Tùy chỉnh */
 }
 
 @media (min-width: 768px) {

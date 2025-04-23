@@ -362,3 +362,31 @@ export function formatDateLocale(date = new Date()) {
     }).format(d);
 }
 
+// NormalizeText
+export function normalizeText(text) {
+    return text.trim().toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "") // Loại bỏ dấu tiếng Việt
+        .replace(/[\u0111]/g, "d")       // Chuyển "đ" thành "d"
+        .replace(/\s+/g, " ");           // Thay nhiều khoảng trắng bằng 1 khoảng trắng
+}
+
+// Xử lý sự kiện khi nhập giá trị vào ô filterInput
+export function filterInput(container, input) {
+    const list = document.querySelectorAll(container);
+    const tag = document.querySelector(input);
+    if (!tag || !list) return;
+
+    tag.addEventListener("input", function () {
+        const searchTerm = normalizeText(this.value);
+        list.forEach(item => {
+            const itemText = normalizeText(item.textContent);
+            if (itemText.includes(searchTerm)) {
+                item.style.removeProperty("display"); 
+            } else {
+                item.style.display = "none"; 
+            }
+        });
+    });
+}
+

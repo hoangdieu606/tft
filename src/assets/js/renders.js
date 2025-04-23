@@ -1,5 +1,5 @@
 import { generateStatsHTML } from '/src/assets/js/global.js';
-import { setupStyleMenu, formatDateLocale, apiNameAndData } from '/src/assets/js/global-defer.js'
+import { setupStyleMenu, formatDateLocale, apiNameAndData, filterInput } from '/src/assets/js/global-defer.js'
 import { syncNameDisplayState, createTierHead } from '/src/assets/js/tierlist.js'
 
 
@@ -332,33 +332,5 @@ export function renderTierlistItems(mainItems) {
     setupStyleMenu('.style-btn.champ-link', '.style-menu.champ-link', '.style-menu.champ-link a');
     setupStyleMenu('.style-btn.champ-btn', '.style-menu.champ-btn', '.style-menu.champ-btn button');
     filterInput('.tierlist-items .item-child', '.search-input.champ-input');
-}
-
-// NormalizeText
-function normalizeText(text) {
-    return text.trim().toLowerCase()
-        .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "") // Loại bỏ dấu tiếng Việt
-        .replace(/[\u0111]/g, "d")       // Chuyển "đ" thành "d"
-        .replace(/\s+/g, " ");           // Thay nhiều khoảng trắng bằng 1 khoảng trắng
-}
-
-// Xử lý sự kiện khi nhập giá trị vào ô filterInput
-function filterInput(container, input) {
-    const list = document.querySelectorAll(container);
-    const tag = document.querySelector(input);
-    if (!tag || !list) return;
-
-    tag.addEventListener("input", function () {
-        const searchTerm = normalizeText(this.value);
-        list.forEach(item => {
-            const itemText = normalizeText(item.textContent);
-            if (itemText.includes(searchTerm)) {
-                item.style.removeProperty("display"); // Xóa thuộc tính display để dùng lại giá trị gốc
-            } else {
-                item.style.display = "none"; // Ẩn nếu không khớp
-            }
-        });
-    });
 }
 

@@ -206,16 +206,19 @@ main#content {
     flex-direction: column;
     gap: 20px;
 }
+
 .title-container {
     display: flex;
     flex-direction: column;
     gap: 10px;
 }
+
 .title-container>h1 {
     color: #d7d7d7;
     font: 700 24px 'Dancing Script', sans-serif;
     text-transform: capitalize;
 }
+
 .title-container>p {
     font-size: 14px;
     color: #d7d7d7;
@@ -275,6 +278,12 @@ footer a:hover {
     padding: 10px;
     border: 1px solid var(--tooltip-champ-card-border-color);
     background: var(--tooltip-champ-card-background);
+}
+
+.tooltip .champ-card,
+.tooltip .aug-item,
+.tooltip .items-item,
+.tooltip .trait-card {
     display: flex !important;
 }
 
@@ -334,10 +343,13 @@ footer a:hover {
     transition: all 0.3s ease;
     background: none;
 }
-.style-menu.champ-btn button.active, .style-menu.champ-btn button:hover {
+
+.style-menu.champ-btn button.active,
+.style-menu.champ-btn button:hover {
     background: var(--button-color);
     color: black;
 }
+
 .style-menu.champ-btn button img {
     width: 18px;
     height: auto;
@@ -484,6 +496,7 @@ footer a:hover {
     .items-list {
         gap: 20px;
     }
+
     .search-container-sub {
         flex-direction: column;
     }
@@ -491,9 +504,8 @@ footer a:hover {
 
 }
 
-@media screen and (max-width: 1280px) {
+@media screen and (max-width: 1280px) {}
 
-}
 /* MEDIA */
 
 /* 📱 Mobile nhỏ */
@@ -528,60 +540,60 @@ footer a:hover {
 }
 
 .social-icon {
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-decoration: none;
-  transition: all 0.3s ease;
-  position: relative;
-  overflow: hidden;
-  opacity: 0.7;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    opacity: 0.7;
 }
 
 .social-icon i {
-  font-size: 18px;
-  color: #fff;
-  transition: all 0.3s ease;
+    font-size: 18px;
+    color: #fff;
+    transition: all 0.3s ease;
 }
 
 .social-icon::before {
-  content: '';
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(45deg, #ff6b6b, #ff8e8e);
-  border-radius: 50%;
-  transform: scale(0);
-  transition: all 0.3s ease;
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(45deg, #ff6b6b, #ff8e8e);
+    border-radius: 50%;
+    transform: scale(0);
+    transition: all 0.3s ease;
 }
 
 .social-icon:hover::before {
-  transform: scale(1);
+    transform: scale(1);
 }
 
 .social-icon:hover i {
-  transform: scale(1.2);
+    transform: scale(1.2);
 }
 
 /* Facebook specific styles */
 .social-icon.facebook {
-  background: #0156c3;
+    background: #0156c3;
 }
 
 .social-icon.facebook::before {
-  background: linear-gradient(45deg, #1877f2, #4c9fff);
+    background: linear-gradient(45deg, #1877f2, #4c9fff);
 }
 
 /* TikTok specific styles */
 .social-icon.tiktok {
-  background: #000000;
+    background: #000000;
 }
 
 .social-icon.tiktok::before {
-  background: linear-gradient(45deg, #000000, #333333);
+    background: linear-gradient(45deg, #000000, #333333);
 }
 
 /* YouTube specific styles */
@@ -590,20 +602,20 @@ footer a:hover {
 }
 
 .social-icon.youtube::before {
-  background: linear-gradient(45deg, #ff0000, #ff4444);
+    background: linear-gradient(45deg, #ff0000, #ff4444);
 }
 
 /* Hover animation */
 .social-icon:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-  opacity: 1;
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    opacity: 1;
 }
 
 /* Active state */
 .social-icon:active {
-  transform: translateY(0);
-  opacity: 1;
+    transform: translateY(0);
+    opacity: 1;
 }
 
 li.social-icons>span {

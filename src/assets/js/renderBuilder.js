@@ -1,6 +1,4 @@
-import { apiNameAndData } from '/src/assets/js/global-defer.js'
-import { setupTooltips, setIndexer } from '/src/assets/js/global-defer.js';
-
+import { apiNameAndData, setupTooltips, setIndexer, filterInput } from '/src/assets/js/global-defer.js';
 
 export function renderBuilder(data, hexIndex) {
     // Lấy các phần tử DOM cho danh sách tướng, vật phẩm, các ô hexagon và nút clear
@@ -24,14 +22,36 @@ export function renderBuilder(data, hexIndex) {
         return;
     }
 
+    // Danh sách lưu thứ tự thêm tướng (chứa {index, timestamp})
+    const championOrder = [];
+
     // Hiển thị danh sách tướng trong giao diện
     function renderBuilderChampions(champions, label = "cost") {
         let data;
         if (label === "traits") {
             const apiNameAndIconCostRange = apiNameAndData(champions, ['icon', 'cost', 'range']);
-            // Chưa triển khai logic cho traits, giữ nguyên code của bạn
-            console.log(traits)
-            builderChampions.innerHTML = ''; // Để tránh lỗi, tạm thời để trống
+            builderChampions.innerHTML = traits.map(({ name: nameTrait, icon: iconTrait, champions, effects, apiName: apiNameTrait }) => {
+                return `
+                <div class="builder-list-traits">
+                    <div class="list-traits-title" draggable="false">
+                        <span><img src="${iconTrait}" alt="${nameTrait}" data-api-name="${apiNameTrait}"></span>
+                        <span>${nameTrait}</span>
+                    </div>
+                    <div class="list-traits-champions">
+                    ${champions.map(({ apiName, name }) => `
+                        <div class="tier-list cost-${apiNameAndIconCostRange[apiName][1]}" draggable="true" 
+                             data-api-name="${apiName}" data-range="${apiNameAndIconCostRange[apiName][2]}" 
+                             data-icon="${apiNameAndIconCostRange[apiName][0]}" data-name="${name}">
+                            <div class="hexagon-tier-champ">
+                                <span style="background-image: url(${apiNameAndIconCostRange[apiName][0]})" title="${name}"></span>
+                            </div>
+                            <div class="hexagon-title">${name}</div>
+                        </div>
+                    `).join('')}
+                    </div>
+                </div>
+                `;
+            }).join('');
         } else {
             data = label === "name"
                 ? [...champions].sort((a, b) => a.name.localeCompare(b.name))
@@ -96,13 +116,14 @@ export function renderBuilder(data, hexIndex) {
                     });
                     targetHexagon.appendChild(hexagonContent);
                     targetHexagon.classList.add('has-champ');
+                    championOrder.push({ index: targetHexagon.dataset.index, timestamp: Date.now() });
                     console.log('Đã thêm tướng vào ô hexagon:', targetHexagon.dataset.index);
                 } else {
                     console.warn('Không còn ô trống để thêm tướng!');
                 }
             });
 
-            // Khi bắt đầu kéo, lưu thông tin tướng vào dữ liệu kéo
+            // Khi bắt đầu kéo, lưu thông tin tướng
             champion.addEventListener('dragstart', (e) => {
                 console.log('Bắt đầu kéo tướng:', champion.dataset.apiName);
                 e.dataTransfer.setData('text/plain', JSON.stringify({
@@ -159,17 +180,20 @@ export function renderBuilder(data, hexIndex) {
     // Gọi hàm lọc
     filterBuilderItems();
     filterBuilderChampions();
+    filterInput(".builder-champions .tier-list", ".builder-champions input");
+    filterInput(".builder-items .item-child", ".builder-items input");
+
 
     // Hàm tạo cấu trúc HTML cho ô hexagon
     function createHexagonContent({ apiName, icon, name, cost }) {
         const hexagonIcon = document.createElement('div');
         hexagonIcon.classList.add('hexagon-icon', `champ-cost-${cost}`);
+        hexagonIcon.dataset.starState = '0'; // Theo dõi trạng thái sao (0, 1, 2)
 
         const hexagonChamp = document.createElement('div');
         hexagonChamp.classList.add('hexagon-champ');
         const img = document.createElement('img');
         img.src = icon;
-        img.dataset.apiName = apiName;
         hexagonChamp.appendChild(img);
 
         const hexagonItems = document.createElement('div');
@@ -209,7 +233,7 @@ export function renderBuilder(data, hexIndex) {
         itemSpan.appendChild(itemImg);
         hexagonItems.appendChild(itemSpan);
 
-        // Thêm sự kiện kéo và nhấp chuột phải cho item
+        // Thêm sự kiện kéo và nhấp chuột trái/phải cho item
         itemSpan.setAttribute('draggable', 'true');
         itemSpan.addEventListener('dragstart', (e) => {
             console.log('Bắt đầu kéo vật phẩm ra khỏi ô hexagon:', itemData.apiName);
@@ -218,6 +242,13 @@ export function renderBuilder(data, hexIndex) {
                 apiName: itemData.apiName,
                 hexagonIndex: hexagon.dataset.index
             }));
+        });
+
+        itemSpan.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation(); // Ngăn sự kiện lan truyền đến ô hexagon
+            hexagonItems.removeChild(itemSpan);
+            console.log('Đã xóa vật phẩm khỏi ô hexagon:', hexagon.dataset.index);
         });
 
         itemSpan.addEventListener('contextmenu', (e) => {
@@ -230,9 +261,37 @@ export function renderBuilder(data, hexIndex) {
         console.log('Đã thêm vật phẩm vào ô hexagon:', hexagon.dataset.index);
     }
 
-    // Tính năng kéo thả vật phẩm
+    // Tính năng nhấp chuột trái để thêm item từ .builder-items
     const itemElements = document.querySelectorAll('.item-child');
     itemElements.forEach(item => {
+        item.addEventListener('click', () => {
+            console.log('Nhấp vào vật phẩm:', item.dataset.apiName);
+            // Tìm ô hexagon có tướng gần nhất được thêm vào và chưa đầy 3 vật phẩm
+            let targetHexagon = null;
+            // Sắp xếp championOrder theo timestamp giảm dần
+            const sortedOrder = [...championOrder].sort((a, b) => b.timestamp - a.timestamp);
+            for (const { index } of sortedOrder) {
+                const hexagon = document.querySelector(`.hexagon[data-index="${index}"]`);
+                if (hexagon && hexagon.querySelector('.hexagon-icon')) {
+                    const hexagonItems = hexagon.querySelector('.hexagon-items');
+                    if (hexagonItems && hexagonItems.children.length < 3) {
+                        targetHexagon = hexagon;
+                        break;
+                    }
+                }
+            }
+
+            if (targetHexagon) {
+                addItemToHexagon(targetHexagon, {
+                    apiName: item.dataset.apiName,
+                    icon: item.dataset.icon,
+                    name: item.dataset.name
+                });
+            } else {
+                console.warn('Không có ô hexagon nào chứa tướng với ít hơn 3 vật phẩm!');
+            }
+        });
+
         item.addEventListener('dragstart', (e) => {
             console.log('Bắt đầu kéo vật phẩm:', item.dataset.apiName);
             e.dataTransfer.setData('text/plain', JSON.stringify({
@@ -248,7 +307,7 @@ export function renderBuilder(data, hexIndex) {
     hexagons.forEach(hexagon => {
         // Cho phép thả tướng hoặc vật phẩm vào ô hexagon
         hexagon.addEventListener('dragover', (e) => {
-            e.preventDefault();
+            e.preventDefault(); // Cho phép thả
         });
 
         // Xử lý khi thả tướng hoặc vật phẩm vào ô hexagon
@@ -257,12 +316,14 @@ export function renderBuilder(data, hexIndex) {
             console.log('Thả vào ô hexagon:', hexagon.dataset.index);
             try {
                 const data = JSON.parse(e.dataTransfer.getData('text/plain'));
+                console.log('Dữ liệu thả:', data);
                 if (data.type === 'champion') {
                     // Thả tướng từ danh sách tướng
                     if (!hexagon.querySelector('.hexagon-icon')) {
                         const hexagonContent = createHexagonContent(data);
                         hexagon.appendChild(hexagonContent);
                         hexagon.classList.add('has-champ');
+                        championOrder.push({ index: hexagon.dataset.index, timestamp: Date.now() });
                         console.log('Đã thêm tướng vào ô hexagon:', hexagon.dataset.index);
                     } else {
                         console.warn('Ô hexagon đã có tướng!');
@@ -285,12 +346,20 @@ export function renderBuilder(data, hexIndex) {
                             sourceHexagon.removeChild(sourceHexagonIcon);
                             hexagon.appendChild(sourceHexagonIcon);
                             sourceHexagon.appendChild(targetHexagonIcon);
+                            // Cập nhật championOrder
+                            const sourceIndex = championOrder.findIndex(o => o.index === data.hexagonIndex);
+                            const targetIndex = championOrder.findIndex(o => o.index === hexagon.dataset.index);
+                            if (sourceIndex !== -1) championOrder[sourceIndex].index = hexagon.dataset.index;
+                            if (targetIndex !== -1) championOrder[targetIndex].index = data.hexagonIndex;
                             console.log(`Đã đổi chỗ tướng giữa ô hexagon ${data.hexagonIndex} và ${hexagon.dataset.index}`);
                         } else {
                             // Di chuyển tướng đến ô trống
                             hexagon.appendChild(sourceHexagonIcon);
                             sourceHexagon.classList.remove('has-champ');
                             hexagon.classList.add('has-champ');
+                            // Cập nhật championOrder
+                            const sourceIndex = championOrder.findIndex(o => o.index === data.hexagonIndex);
+                            if (sourceIndex !== -1) championOrder[sourceIndex].index = hexagon.dataset.index;
                             console.log(`Đã di chuyển tướng từ ô hexagon ${data.hexagonIndex} sang ${hexagon.dataset.index}`);
                         }
                     }
@@ -331,6 +400,7 @@ export function renderBuilder(data, hexIndex) {
         if (!e.target.closest('.hexagon')) {
             try {
                 const data = JSON.parse(e.dataTransfer.getData('text/plain'));
+                console.log('Dữ liệu thả ra ngoài:', data);
                 if (data.type === 'move-champion') {
                     const hexagon = document.querySelector(`.hexagon[data-index="${data.hexagonIndex}"]`);
                     if (hexagon) {
@@ -338,6 +408,9 @@ export function renderBuilder(data, hexIndex) {
                         if (hexagonIcon) {
                             hexagon.removeChild(hexagonIcon);
                             hexagon.classList.remove('has-champ');
+                            // Xóa khỏi championOrder
+                            const index = championOrder.findIndex(o => o.index === data.hexagonIndex);
+                            if (index !== -1) championOrder.splice(index, 1);
                             console.log('Đã xóa tướng khỏi ô hexagon:', data.hexagonIndex);
                         }
                     }
@@ -367,6 +440,7 @@ export function renderBuilder(data, hexIndex) {
                 hexagon.classList.remove('has-champ');
             }
         });
+        championOrder.length = 0; // Xóa danh sách thứ tự
         console.log('Đã xóa tất cả tướng khỏi các ô hexagon');
     });
 
@@ -378,7 +452,60 @@ export function renderBuilder(data, hexIndex) {
             if (hexagonIcon && !e.target.closest('.item-span')) { // Chỉ xóa tướng nếu không nhấp vào item
                 hexagon.removeChild(hexagonIcon);
                 hexagon.classList.remove('has-champ');
+                // Xóa khỏi championOrder
+                const index = championOrder.findIndex(o => o.index === hexagon.dataset.index);
+                if (index !== -1) championOrder.splice(index, 1);
                 console.log('Đã xóa tướng khỏi ô hexagon:', hexagon.dataset.index);
+            }
+        });
+
+        // Xử lý nhấp chuột trái để thêm/xóa sao cho tướng
+        hexagon.addEventListener('click', (e) => {
+            const hexagonIcon = hexagon.querySelector('.hexagon-icon');
+            if (!hexagonIcon || e.target.closest('.item-span')) {
+                console.log('Bỏ qua nhấp chuột: Không có hexagon-icon hoặc nhấp vào item-span');
+                return; // Bỏ qua nếu nhấp vào item hoặc không có tướng
+            }
+
+            // Ngăn lan truyền nếu nhấp vào các phần tử con
+            e.stopPropagation();
+
+            let starState = parseInt(hexagonIcon.dataset.starState) || 0;
+            starState = (starState + 1) % 3; // Chuyển đổi giữa 0, 1, 2
+            hexagonIcon.dataset.starState = starState;
+            console.log('Cập nhật starState:', starState, 'cho ô hexagon:', hexagon.dataset.index);
+
+            // Xóa thẻ star-champ hiện tại nếu có
+            const existingStarChamp = hexagonIcon.querySelector('.star-champ');
+            if (existingStarChamp) {
+                hexagonIcon.removeChild(existingStarChamp);
+                console.log('Đã xóa star-champ cũ');
+            }
+
+            // Thêm thẻ star-champ tương ứng
+            if (starState === 1) {
+                const starChamp = document.createElement('div');
+                starChamp.classList.add('star-champ', 'three-stars');
+                starChamp.innerHTML = `
+                    <span><i class="fa-solid fa-star"></i></span>
+                    <span><i class="fa-solid fa-star"></i></span>
+                    <span><i class="fa-solid fa-star"></i></span>
+                `;
+                hexagonIcon.insertAdjacentElement('afterbegin', starChamp);
+                console.log('Đã thêm 3 sao cho ô hexagon:', hexagon.dataset.index);
+            } else if (starState === 2) {
+                const starChamp = document.createElement('div');
+                starChamp.classList.add('star-champ', 'four-stars');
+                starChamp.innerHTML = `
+                    <span><i class="fa-solid fa-star"></i></span>
+                    <span><i class="fa-solid fa-star"></i></span>
+                    <span><i class="fa-solid fa-star"></i></span>
+                    <span><i class="fa-solid fa-star"></i></span>
+                `;
+                hexagonIcon.insertAdjacentElement('afterbegin', starChamp);
+                console.log('Đã thêm 4 sao cho ô hexagon:', hexagon.dataset.index);
+            } else {
+                console.log('Đã xóa sao khỏi ô hexagon:', hexagon.dataset.index);
             }
         });
     });
