@@ -7,7 +7,6 @@ import '/src/assets/css/variables.css';
 import '/src/assets/css/tierlist.css';
 import '/src/assets/css/builder.css';
 
-
 import { loadPage } from "/src/assets/js/routes.js";
 
 // Chọn tất cả các link có thuộc tính data-page
@@ -125,7 +124,20 @@ async function handleNavigation(page, addToHistory = true) {
   updateActiveLink(page);
 
   if (addToHistory) {
-    history.pushState({ page }, "", `/${page}`);
+    const currentUrl = new URL(window.location);
+    const newUrl = new URL(`/${page}`, window.location.origin);
+    
+    // Chỉ giữ query parameter 'comp' cho trang builder
+    if (page === 'builder') {
+      newUrl.search = currentUrl.search; // Giữ nguyên query string
+    } else {
+      // Xóa 'comp' cho các trang khác, giữ các query parameter khác
+      const params = new URLSearchParams(currentUrl.search);
+      params.delete('comp');
+      newUrl.search = params.toString();
+    }
+    
+    history.pushState({ page }, "", newUrl);
   }
 }
 
@@ -142,8 +154,23 @@ window.addEventListener("popstate", async (e) => {
   await handleNavigation(e.state?.page || "tierlist", false);
 });
 
-// Load trang ban đầu
-const initialPage = window.location.pathname.slice(1) || "tierlist";
-handleNavigation(initialPage, false).then(() => {
-  history.replaceState({ page: initialPage }, "", `/${initialPage}${window.location.hash}`);
+// Khởi tạo tooltip và load trang ban đầu
+document.addEventListener('DOMContentLoaded', () => {
+  const initialPage = window.location.pathname.slice(1) || "tierlist";
+  handleNavigation(initialPage, false).then(() => {
+    const currentUrl = new URL(window.location);
+    const newUrl = new URL(`/${initialPage}`, window.location.origin);
+    
+    // Chỉ giữ query parameter 'comp' cho trang builder
+    if (initialPage === 'builder') {
+      newUrl.search = currentUrl.search; // Giữ nguyên query string
+    } else {
+      // Xóa 'comp' cho các trang khác
+      const params = new URLSearchParams(currentUrl.search);
+      params.delete('comp');
+      newUrl.search = params.toString();
+    }
+    newUrl.hash = currentUrl.hash; // Giữ nguyên hash (nếu có)
+    history.replaceState({ page: initialPage }, "", newUrl);
+  });
 });

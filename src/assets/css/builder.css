@@ -29,7 +29,8 @@
     gap: 15px;
     align-items: center;
     justify-content: center;
-    padding: 15px;
+    padding: 15px 30px;
+    width: 60%;
 }
 
 .builder-chessboard .hexagon .hexagon-name {
@@ -95,7 +96,7 @@
 }
 
 .builder-chessboard .hexagon {
-    width: 8vmin;
+    /* width: 8vmin; */
     background: var(--hexagon-background);
 }
 
@@ -106,6 +107,7 @@
 
 .builder-chessboard .position-comp {
     padding: 24px 5px;
+    width: 100%;
 }
 
 .builder-extension {
@@ -366,6 +368,7 @@ body[augs-btn-filter="category-3-active"] button[data-augs-category="3"] {
     color: #666;
     /* Dấu I */
 }
+
 .custom-tooltip {
     position: absolute;
     background-color: rgba(0, 0, 0, 0.8);
@@ -387,6 +390,7 @@ body[augs-btn-filter="category-3-active"] button[data-augs-category="3"] {
     gap: 15px;
     text-align: center;
 }
+
 .builder-augments .augments-child {
     display: flex;
     flex-direction: column;
@@ -396,9 +400,11 @@ body[augs-btn-filter="category-3-active"] button[data-augs-category="3"] {
     font-size: 9px;
     margin: 0 auto;
 }
+
 .selected-augs .augments-child {
     display: flex !important;
 }
+
 span.builder-title {
     font: 900 18px 'Nunito', sans-serif;
     text-transform: uppercase;
@@ -406,13 +412,14 @@ span.builder-title {
     justify-content: center;
     margin: 15px;
 }
+
 .builder-augments .builder-icon-augs img {
     width: 80px;
     height: 80px;
     position: absolute;
     left: 50%;
     top: 50%;
-    transform: translate(-50%,-50%);
+    transform: translate(-50%, -50%);
     filter: hue-rotate(60deg);
 }
 
@@ -430,11 +437,13 @@ span.builder-title {
 }
 
 .builder-list-augments.active {
-    display: flex; 
+    display: flex;
 }
+
 .builder-render-augs .tier- {
     display: none !important;
 }
+
 .augments-child.active {
     border: 2px solid var(--tier-color);
     opacity: 0.8;
@@ -460,11 +469,13 @@ span.builder-title {
     gap: 15px;
     margin: 0 22px;
 }
+
 .selected-augs {
     flex: 1;
     background-color: #0b141e;
     border-radius: 30px;
 }
+
 .selected-augs .augments-child {
     filter: brightness(90%) contrast(110%);
 }
@@ -475,9 +486,12 @@ span.builder-title {
     gap: 10px;
     padding: 5px 15px;
 }
-button.selected-augs-clear, button.selected-augs-ok {
+
+button.selected-augs-clear,
+button.selected-augs-ok {
     padding: 5px 15px;
     height: 30px;
+    min-width: 70px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -493,17 +507,21 @@ button.selected-augs-clear, button.selected-augs-ok {
     gap: 10px;
     text-align: center;
     cursor: pointer;
+    margin: 0 auto;
 }
 
-.builder-list-augments  span {
+.builder-list-augments span {
     font-size: 10px;
 }
+
 span.selected-augs-count {
     font: 700 14px 'Nunito', sans-serif;
 }
-span.count-auguments {
+
+span.count-augments {
     color: var(--btn-builder-bg);
     font-size: 14px;
+    margin-right: 3px;
 }
 
 .builder-list-augments .builder-head {
@@ -512,7 +530,8 @@ span.count-auguments {
     align-items: center;
     gap: 30px;
 }
-.builder-list-augments  .builder-search {
+
+.builder-list-augments .builder-search {
     width: 50%;
     height: 40px;
     background-color: #0b141e;
@@ -529,9 +548,11 @@ span.count-auguments {
 .builder-list-augments .augs-tier-silver {
     display: var(--btn-filter-augs-category-1, none);
 }
+
 .builder-list-augments .augs-tier-gold {
     display: var(--btn-filter-augs-category-2, none);
 }
+
 .builder-list-augments .augs-tier-prism {
     display: var(--btn-filter-augs-category-3, none);
 }
@@ -557,31 +578,56 @@ span.count-auguments {
 /* Thanh cuộn */
 .builder-traits,
 .builder-list {
-  overflow-y: auto;
-  scrollbar-width: thin;                  /* Firefox */
-  scrollbar-color: #19271d transparent;      /* Firefox */
+    overflow-y: auto;
+    scrollbar-width: thin;
+    /* Firefox */
+    scrollbar-color: #19271d transparent;
+    /* Firefox */
 }
 
 /* Chrome, Edge, Safari */
 .builder-traits::-webkit-scrollbar,
 .builder-list::-webkit-scrollbar {
-  width: 6px;
+    width: 6px;
 }
 
 .builder-traits::-webkit-scrollbar-track,
 .builder-list::-webkit-scrollbar-track {
-  background: transparent;
+    background: transparent;
 }
 
 .builder-traits::-webkit-scrollbar-thumb,
 .builder-list::-webkit-scrollbar-thumb {
-  background: #19271d;
-  border-radius: 3px;
+    background: #19271d;
+    border-radius: 3px;
 }
 
 .builder-traits::-webkit-scrollbar-thumb:hover,
 .builder-list::-webkit-scrollbar-thumb:hover {
-  background: #888;
+    background: #888;
+}
+
+/* Builder section */
+.builder-options {
+    display: flex;
+    gap: 15px;
+    display: none;
+}
+
+.builder-options button {
+    display: flex;
+    width: 80px;
+    justify-content: center;
+    align-items: center;
+    height: 30px;
+    border-radius: 5px;
+    background: transparent;
+    color: #fff;
+}
+
+.builder-options button.active {
+    background: var(--btn-builder-bg);
+    color: #0b141e;
 }
 
 
@@ -589,4 +635,87 @@ span.count-auguments {
     .builder-chessboard .position-comp {
         margin-left: 0;
     }
+
+}
+
+@media (max-width: 768px) {
+    .builder-container {
+        margin: 0;
+    }
+
+    .builder-list-augments .builder-head {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .builder-list-augments .builder-search {
+        width: 90%;
+    }
+
+    .selected-augs-wrapper {
+        flex-direction: column;
+    }
+
+    .selected-action {
+        flex-direction: row;
+        gap: 15px;
+        align-items: center;
+    }
+
+    .builder-section {
+        flex-direction: column;
+        height: auto;
+    }
+
+    .builder-traits,
+    .builder-augments {
+        width: 100%;
+    }
+
+    .builder-chessboard {
+        width: 100%;
+        order: 1;
+    }
+
+    /*  */
+    .builder-traits {
+        flex-direction: row;
+    }
+
+    .trait-item {
+        justify-content: center;
+    }
+
+    .trait-name,
+    .trait-number,
+    .trait-title span:nth-child(2) {
+        display: none;
+    }
+
+    .trait-icon {
+        width: 30px;
+        height: 30px;
+    }
+
+    .builder-augments {
+        grid-template-columns: repeat(4, 1fr);
+        grid-template-rows: repeat(2, 30px);
+    }
+
+    .builder-augments .augments-child {
+        width: 40px;
+    }
+
+    .builder-augments .augments-child span {
+        display: none;
+    }
+
+    .builder-options {
+        display: flex;
+    }
+
+    .builder-items {
+        display: none;
+    }
+
 }

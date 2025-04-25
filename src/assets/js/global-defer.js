@@ -1,7 +1,6 @@
 import { apiNameAndIcon, generateStatsHTML } from '/src/assets/js/global.js';
 import { loadPage } from '/src/assets/js/routes.js';
 
-export let indexer;
 
 
 
@@ -43,8 +42,9 @@ export let indexer;
 })();
 
 
-
+// 
 /*  ToolTip START */
+export let indexer;
 export class TooltipDataIndexer {
     constructor(transformedData) {
         this.index = new Map();
@@ -79,6 +79,7 @@ export class TooltipDataIndexer {
 }
 
 /*  Hàm render nội dung tooltip */
+
 export function renderTooltipContent(data) {
     /* Render champions */
     if ("cost" in data) {
@@ -240,7 +241,7 @@ export function hideTooltip() {
 
 export function setupTooltips() {
     const icons = document.querySelectorAll('[data-api-name]');
-    
+
     // Kiểm tra thiết bị có hỗ trợ cảm ứng không (mobile)
     const isMobile = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
 
@@ -309,7 +310,7 @@ export function setupStyleMenu(styleBtnSelector, styleMenuSelector, styleOptionS
             // Cập nhật UI
             styleOptions.forEach(opt => opt.classList.remove('active'));
             option.classList.add('active');
-            
+
             // Cập nhật text cho button
             const buttonText = option.textContent;
             styleBtn.innerHTML = `${buttonText}<i class="fa-solid fa-chevron-down"></i>`;
@@ -324,16 +325,16 @@ export function setupStyleMenu(styleBtnSelector, styleMenuSelector, styleOptionS
                 if (page) {
                     // Lưu text hiện tại của button
                     const currentButtonText = styleBtn.innerHTML;
-                    
+
                     // Gọi loadPage
                     await loadPage(page);
-                    
+
                     // Sau khi loadPage hoàn thành, cập nhật lại text của button
                     const styleBtnAfterLoad = document.querySelector(styleBtnSelector);
                     if (styleBtnAfterLoad) {
                         styleBtnAfterLoad.innerHTML = currentButtonText;
                     }
-                    
+
                     // Cập nhật URL
                     history.pushState({ page }, "", `/${page}`);
                 }
@@ -382,9 +383,9 @@ export function filterInput(container, input) {
         list.forEach(item => {
             const itemText = normalizeText(item.textContent);
             if (itemText.includes(searchTerm)) {
-                item.style.removeProperty("display"); 
+                item.style.removeProperty("display");
             } else {
-                item.style.display = "none"; 
+                item.style.display = "none";
             }
         });
     });

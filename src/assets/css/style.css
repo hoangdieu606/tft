@@ -255,6 +255,14 @@ footer a:hover {
 
 
 /* tooltip */
+/* Ngăn bubbling từ phần tử con của [data-api-name] */
+/* [data-api-name] * {
+    pointer-events: none;
+} */
+
+.augments-child>* {
+    pointer-events: none;
+}
 .tooltip {
     position: fixed;
     max-width: 300px;
@@ -269,6 +277,10 @@ footer a:hover {
 
 /* Khi tooltip được thêm vào DOM, hiệu ứng sẽ tự chạy */
 .tooltip[style] {
+    opacity: 1;
+    transform: scale(1);
+}
+.tooltip.show {
     opacity: 1;
     transform: scale(1);
 }

@@ -159,7 +159,7 @@ export function tierList(guidesData, champAndIconCost, itemAndIcon, augsAndIconT
 
   // Sử dụng hàm createTierHead để thêm nút toggle và last update
   const { fragment, toggleContainer } = createTierHead(formatDateLocale);
-    tierContainer.prepend(fragment);
+  tierContainer.prepend(fragment);
 
   // Khởi tạo các phần tử UI
   const toggle = toggleContainer.querySelector(".toggle");
@@ -341,6 +341,10 @@ export function renderPostComp(guideData, champAndIconCost, itemAndIcon, augsAnd
             <i class="fa-solid fa-ellipsis"></i>
             </button>
             <div class="copy-dropdown">
+            <button class="copy-option" data-action="open-in-builder">
+            <i class="fa-solid fa-tools"></i>
+            <span>Open in builder</span>
+            </button>
             <button class="copy-option" data-action="teamCode">
             <i class="fa-solid fa-copy"></i>
                 <span>Copy TeamCode</span>
@@ -495,6 +499,17 @@ export function renderPostComp(guideData, champAndIconCost, itemAndIcon, augsAnd
         } catch (err) {
           console.error('Không thể copy link:', err);
         }
+      } else if (action === 'open-in-builder') {
+        const compData = finalComp.map(({ apiName, boardIndex, items, stars }) => ({
+          apiName,
+          boardIndex,
+          items,
+          stars
+        }));
+        const augmentsData = augments.map(({ apiName }) => ({ apiName })); // Lưu apiName của augments
+        localStorage.setItem('builderCompData', JSON.stringify(compData));
+        localStorage.setItem('builderAugmentsData', JSON.stringify(augmentsData));
+        window.location.href = '/builder';
       }
 
       copyMenu.classList.remove('active');
