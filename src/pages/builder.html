@@ -1,7 +1,7 @@
 <div class="builder-container">
     <div class="builder-section">
         <div class="builder-traits">
-            traits
+            <span class="builder-title">traits</span>
         </div>
         <div class="builder-chessboard">
             <div class="position-comp">
@@ -57,7 +57,8 @@
             </div>
         </div>
         <div class="builder-augments">
-            augments
+            <!-- <span class="builder-title">Augments</span>
+            <span class="builder-icon-augs"><img src="/assets/images/add-augs.png" alt=""></span> -->
         </div>
     </div>
 
@@ -68,7 +69,8 @@
                     <input type="text" placeholder="search champions">
                 </div>
                 <div class="builder-filter">
-                    <button class="active" data-label="cost">Cost</button><button data-label="name">Name</button><button data-label="traits">Traits</button>
+                    <button class="active" data-label="cost">Cost</button><button data-label="name">Name</button><button
+                        data-label="traits">Traits</button>
                 </div>
             </div>
 
@@ -86,6 +88,70 @@
                 </div>
             </div>
             <div class="builder-list">items</div>
+
+        </div>
+    </div>
+    <div class="builder-list-augments">
+        <div class="builder-head">
+            <div class="builder-search">
+                <input type="text" placeholder="search augments">
+            </div>
+            <div class="builder-filter">
+                <button data-augs-category="0">All</button>
+                <button data-augs-category="1">Bạc</button><button data-augs-category="2">Vàng</button><button
+                    data-augs-category="3">Kim Cương</button>
+            </div>
+        </div>
+        <div class="selected-augs-wrapper">
+            <div class="selected-augs">
+                <div class="augments-child tier-A">
+                    <img src="/assets/images/set14/augments/Red-Buff-I.png" alt="Đánh Siêu Rát"
+                        data-api-name="TFT9_Augment_RedBuff">
+                    <span>Đánh Siêu Rát</span>
+                </div>
+                <div class="augments-child tier-B">
+                    <img src="/assets/images/set14/augments/Healing-Orbs-I.png" alt="Cầu Hồi Phục I"
+                        data-api-name="TFT9_Augment_HealingOrbsI">
+                    <span>Cầu Hồi Phục I</span>
+                </div>
+                <div class="augments-child tier-B">
+                    <img src="/assets/images/set14/augments/Pandoras-Bench-I.png" alt="Hàng Chờ Pandora"
+                        data-api-name="TFT7_Augment_PandorasBench">
+                    <span>Hàng Chờ Pandora</span>
+                </div>
+                <div class="augments-child tier-S">
+                    <img src="/assets/images/set14/augments/PortableForge2.png" alt="Lò Rèn Thần Thoại"
+                        data-api-name="TFT6_Augment_PortableForge">
+                    <span>Lò Rèn Thần Thoại</span>
+                </div>
+                <div class="augments-child tier-A">
+                    <img src="/assets/images/set14/augments/BadLuckProtection_II.TFT_Set13.png" alt="Bảo Hiểm Rủi Ro"
+                        data-api-name="TFT_Augment_BadLuckProtection">
+                    <span>Bảo Hiểm Rủi Ro</span>
+                </div>
+                <div class="augments-child tier-A">
+                    <img src="/assets/images/set14/augments/Health-is-Wealth-II.png" alt="Hồi Máu Nhận Tiền II"
+                        data-api-name="TFT_Augment_WealthyRehab2">
+                    <span>Hồi Máu Nhận Tiền II</span>
+                </div>
+                <div class="augments-child tier-S">
+                    <img src="/assets/images/set14/augments/Living-Forge-III.png" alt="Chế Tạo Tại Chỗ"
+                        data-api-name="TFT7_Augment_LivingForge">
+                    <span>Chế Tạo Tại Chỗ</span>
+                </div>
+                <div class="augments-child tier-S">
+                    <img src="/assets/images/set14/augments/Gargantuan-Resolve-III.png" alt="Quyền Năng Phi Thường"
+                        data-api-name="TFT14_Augment_BlackMarketGargantuanResolve">
+                    <span>Quyền Năng Phi Thường</span>
+                </div>
+            </div>
+            <div class="selected-action">
+                <span class="selected-augs-count"><span class="count-auguments">8 </span>I 8 Selected</span>
+                <button class="selected-augs-clear">Clear</button>
+                <button class="selected-augs-ok">OK</button>
+            </div>
+        </div>
+        <div class="builder-render-augs">
 
         </div>
     </div>

@@ -2,16 +2,20 @@
     display: flex;
     flex-direction: column;
     gap: 25px;
+    margin: 0 -22px;
+    position: relative;
 }
 
 .builder-section {
     display: flex;
-    min-height: 500px;
     gap: 10px;
+    height: 450px;
+    overflow: hidden;
 }
 
-.builder-traits {
-    width: 150px;
+.builder-traits,
+.builder-augments {
+    width: 180px;
     border: var(--border-tier-list);
     border-radius: 5px;
 }
@@ -28,10 +32,12 @@
     padding: 15px;
 }
 
-.builder-augments {
-    width: 150px;
-    border: var(--border-tier-list);
-    border-radius: 5px;
+.builder-chessboard .hexagon .hexagon-name {
+    font-size: 1.2vmin;
+}
+
+.builder-chessboard .star-champ {
+    font-size: 9px;
 }
 
 .builder-champions,
@@ -67,7 +73,7 @@
 .builder-search {
     display: flex;
     height: 30px;
-    border: 1px solid var(--builder-primary-color);
+    background: #1d1d1d;
     border-radius: 999px;
     overflow: hidden;
 }
@@ -127,6 +133,7 @@
     grid-template-columns: repeat(auto-fill, minmax(50px, 1fr));
     justify-items: center;
     gap: 5px;
+    overflow-y: auto;
 }
 
 .builder-champions .tier-list {
@@ -199,7 +206,12 @@ body[btn-filter="category-5-active"] button[data-category="5"],
 body[btn-filter="category-6-active"] button[data-category="6"],
 body[btn-filter="category-7-active"] button[data-category="7"],
 body[btn-filter="category-other-active"] button[data-category="other"],
-body[btn-filter="category-0-active"] button[data-category="0"] {
+body[btn-filter="category-0-active"] button[data-category="0"],
+
+body[augs-btn-filter="category-0-active"] button[data-augs-category="0"],
+body[augs-btn-filter="category-1-active"] button[data-augs-category="1"],
+body[augs-btn-filter="category-2-active"] button[data-augs-category="2"],
+body[augs-btn-filter="category-3-active"] button[data-augs-category="3"] {
     background-color: var(--btn-builder-bg, #16dc4c);
     color: #000;
 }
@@ -226,20 +238,352 @@ body[btn-filter="category-0-active"] button[data-category="0"] {
     justify-items: center;
     gap: 5px;
 }
+
 .list-traits-title {
     display: flex;
     flex-direction: column;
     font-size: 9px;
     width: 45px;
 }
+
 .list-traits-title span {
     text-align: center;
 }
 
 .hexagon.highlight {
-    box-shadow: 0 0 8px 2px rgba(255, 255, 0, 0.8); /* Hiệu ứng sáng */
-    border: 2px solid yellow; /* Tùy chỉnh */
+    box-shadow: 0 0 8px 2px rgba(255, 255, 0, 0.8);
+    /* Hiệu ứng sáng */
+    border: 2px solid yellow;
+    /* Tùy chỉnh */
 }
+
+/*  */
+.builder-traits {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 8px;
+}
+
+.trait-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+}
+
+.trait-item.style-0 {
+    border-color: #808080;
+    /* Xám */
+}
+
+.trait-item.style-1 {
+    border-color: #cd7f32;
+    /* Đồng */
+}
+
+.trait-item.style-3 {
+    border-color: #c0c0c0;
+    /* Bạc */
+}
+
+.trait-item.style-4 {
+    border-color: #ffd700;
+    /* Vàng */
+}
+
+.trait-item.style-5 {
+    border-color: #b9f2ff;
+    /* Kim cương */
+}
+
+.trait-icon {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+    pointer-events: none;
+}
+
+.trait-content {
+    pointer-events: none;
+    font: 700 12px 'Nunito', sans-serif;
+
+}
+
+.trait-icon img:first-child {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 50%;
+    margin: auto;
+    z-index: 1;
+}
+
+.trait-icon img:nth-child(2) {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 100%;
+    margin: auto;
+}
+
+.trait-title {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+
+.trait-title span:nth-child(2) {
+    color: #ccc;
+    font-size: 12px;
+}
+
+.trait-number {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px;
+}
+
+.trait-number span {
+    font-size: 12px;
+}
+
+.trait-number span:nth-child(odd) {
+    opacity: 0.5;
+    /* Mờ cho minUnits mặc định */
+}
+
+.trait-number span:nth-child(even) {
+    color: #666;
+    /* Dấu I */
+}
+.custom-tooltip {
+    position: absolute;
+    background-color: rgba(0, 0, 0, 0.8);
+    color: #fff;
+    padding: 5px 10px;
+    border-radius: 4px;
+    z-index: 1000;
+    font-size: 14px;
+}
+
+/* builder-list-augments */
+.builder-augments {
+    position: relative;
+    cursor: pointer;
+    padding: 15px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(4, 90px);
+    gap: 15px;
+    text-align: center;
+}
+.builder-augments .augments-child {
+    display: flex;
+    flex-direction: column;
+    width: 50px;
+    gap: 10px;
+    text-align: center;
+    font-size: 9px;
+    margin: 0 auto;
+}
+.selected-augs .augments-child {
+    display: flex !important;
+}
+span.builder-title {
+    font: 900 18px 'Nunito', sans-serif;
+    text-transform: uppercase;
+    display: flex;
+    justify-content: center;
+    margin: 15px;
+}
+.builder-augments .builder-icon-augs img {
+    width: 80px;
+    height: 80px;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%,-50%);
+    filter: hue-rotate(60deg);
+}
+
+.builder-list-augments {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #1d1d1d;
+    flex-direction: column;
+    gap: 15px;
+    z-index: 5;
+    display: none;
+}
+
+.builder-list-augments.active {
+    display: flex; 
+}
+.builder-render-augs .tier- {
+    display: none !important;
+}
+.augments-child.active {
+    border: 2px solid var(--tier-color);
+    opacity: 0.8;
+    border-radius: 5px;
+    padding: 5px;
+}
+
+.builder-list-augments .builder-head {
+    margin: 15px;
+}
+
+.selected-augs,
+.builder-render-augs {
+    display: grid;
+    background-color: #1d1d1d;
+    gap: 15px;
+    grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+    padding: 15px;
+}
+
+.selected-augs-wrapper {
+    display: flex;
+    gap: 15px;
+    margin: 0 22px;
+}
+.selected-augs {
+    flex: 1;
+    background-color: #0b141e;
+    border-radius: 30px;
+}
+.selected-augs .augments-child {
+    filter: brightness(90%) contrast(110%);
+}
+
+.selected-action {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 5px 15px;
+}
+button.selected-augs-clear, button.selected-augs-ok {
+    padding: 5px 15px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--btn-builder-bg);
+    border-radius: 999px;
+    font: 700 14px 'Nunito', sans-serif;
+}
+
+.builder-list-augments .augments-child {
+    display: flex;
+    flex-direction: column;
+    width: 60px;
+    gap: 10px;
+    text-align: center;
+    cursor: pointer;
+}
+
+.builder-list-augments  span {
+    font-size: 10px;
+}
+span.selected-augs-count {
+    font: 700 14px 'Nunito', sans-serif;
+}
+span.count-auguments {
+    color: var(--btn-builder-bg);
+    font-size: 14px;
+}
+
+.builder-list-augments .builder-head {
+    margin: 15px;
+    display: flex;
+    align-items: center;
+    gap: 30px;
+}
+.builder-list-augments  .builder-search {
+    width: 50%;
+    height: 40px;
+    background-color: #0b141e;
+}
+
+.builder-list-augments .builder-filter button {
+    padding: 5px 15px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.builder-list-augments .augs-tier-silver {
+    display: var(--btn-filter-augs-category-1, none);
+}
+.builder-list-augments .augs-tier-gold {
+    display: var(--btn-filter-augs-category-2, none);
+}
+.builder-list-augments .augs-tier-prism {
+    display: var(--btn-filter-augs-category-3, none);
+}
+
+[augs-btn-filter="category-0-active"] {
+    --btn-filter-augs-category-1: flex;
+    --btn-filter-augs-category-2: flex;
+    --btn-filter-augs-category-3: flex;
+}
+
+[augs-btn-filter="category-1-active"] {
+    --btn-filter-augs-category-1: flex;
+}
+
+[augs-btn-filter="category-2-active"] {
+    --btn-filter-augs-category-2: flex;
+}
+
+[augs-btn-filter="category-3-active"] {
+    --btn-filter-augs-category-3: flex;
+}
+
+/* Thanh cuộn */
+.builder-traits,
+.builder-list {
+  overflow-y: auto;
+  scrollbar-width: thin;                  /* Firefox */
+  scrollbar-color: #19271d transparent;      /* Firefox */
+}
+
+/* Chrome, Edge, Safari */
+.builder-traits::-webkit-scrollbar,
+.builder-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.builder-traits::-webkit-scrollbar-track,
+.builder-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.builder-traits::-webkit-scrollbar-thumb,
+.builder-list::-webkit-scrollbar-thumb {
+  background: #19271d;
+  border-radius: 3px;
+}
+
+.builder-traits::-webkit-scrollbar-thumb:hover,
+.builder-list::-webkit-scrollbar-thumb:hover {
+  background: #888;
+}
+
 
 @media (min-width: 768px) {
     .builder-chessboard .position-comp {

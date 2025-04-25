@@ -92,6 +92,7 @@ export async function loadPage(page, { data = {}, guidesData = {}, hexIndexData 
     }
     if(page === "builder") {
       document.body.setAttribute("btn-filter", `category-1-active`);
+      document.body.setAttribute("augs-btn-filter", "category-0-active");
 
     } else {
       document.body.setAttribute("btn-filter", `category-0-active`);
