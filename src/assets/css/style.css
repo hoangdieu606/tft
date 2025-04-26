@@ -206,6 +206,7 @@ main#content {
     display: flex;
     flex-direction: column;
     gap: 20px;
+    overflow: hidden;
 }
 
 .title-container {
