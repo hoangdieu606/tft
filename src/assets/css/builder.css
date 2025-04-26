@@ -729,23 +729,12 @@ button.btn-builder-show-name .fa-eye-slash {
     -webkit-overflow-scrolling: touch;
     touch-action: pan-y;
 }
-
-/* .drag-preview {
-    position: absolute;
-    z-index: 1000;
-    width: 48px;
-    height: 48px;
-    background-size: cover;
-    border: 2px solid #fff;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-    pointer-events: none;
+.builder-chessboard.dragging,
+.builder-champions.dragging,
+.builder-items.dragging,
+.hexagon.dragging {
+    touch-action: none;
 }
-
-.hexagon.drag-over {
-    background-color: rgba(255, 255, 255, 0.2);
-    border: 2px solid #00ff00;
-} */
 
 .hexagon-icon {
     touch-action: manipulation;
@@ -776,10 +765,6 @@ button.btn-builder-show-name .fa-eye-slash {
 @media (max-width: 768px) {
     .builder-container {
         margin: 0;
-    }
-    .builder-extension {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
     }
 
     .builder-list-augments .builder-head {

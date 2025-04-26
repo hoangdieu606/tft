@@ -16,8 +16,6 @@ export function renderBuilder(data, hexIndexData) {
     const teamCodeButton = document.querySelector('.builder-copy');
     const positionComp = document.querySelector('.position-comp');
     const chessboard = document.querySelector('.builder-chessboard');
-    const isTouchDevice = 'ontouchstart' in window;
-    let currentDragPreview = null;
 
     if (
         !builderChampions ||
@@ -455,9 +453,6 @@ export function renderBuilder(data, hexIndexData) {
     }
 
     function createDragPreview(icon, name) {
-        if (currentDragPreview) {
-            removeDragPreview(currentDragPreview);
-        }
         const preview = document.createElement('div');
         preview.className = 'drag-preview';
         preview.style.position = 'absolute';
@@ -472,7 +467,6 @@ export function renderBuilder(data, hexIndexData) {
         preview.style.boxShadow = '0 2px 8px rgba(0,0,0,0.3)';
         preview.dataset.name = name;
         document.body.appendChild(preview);
-        currentDragPreview = preview;
         return preview;
     }
 
@@ -487,62 +481,66 @@ export function renderBuilder(data, hexIndexData) {
         if (preview && preview.parentNode) {
             preview.parentNode.removeChild(preview);
         }
-        if (preview === currentDragPreview) {
-            currentDragPreview = null;
-        }
-    }
-
-    function updateStarState(hexagonIcon) {
-        let starState = parseInt(hexagonIcon.dataset.starState) || 0;
-        starState = (starState + 1) % 3;
-        hexagonIcon.dataset.starState = starState;
-
-        const existingStarChamp = hexagonIcon.querySelector('.star-champ');
-        if (existingStarChamp) hexagonIcon.removeChild(existingStarChamp);
-
-        if (starState === 1) {
-            const starChamp = document.createElement('div');
-            starChamp.classList.add('star-champ', 'three-stars');
-            starChamp.innerHTML = `
-                <span><i class="fa-solid fa-star"></i></span>
-                <span><i class="fa-solid fa-star"></i></span>
-                <span><i class="fa-solid fa-star"></i></span>
-            `;
-            hexagonIcon.insertAdjacentElement('afterbegin', starChamp);
-        } else if (starState === 2) {
-            const starChamp = document.createElement('div');
-            starChamp.classList.add('star-champ', 'four-stars');
-            starChamp.innerHTML = `
-                <span><i class="fa-solid fa-star"></i></span>
-                <span><i class="fa-solid fa-star"></i></span>
-                <span><i class="fa-solid fa-star"></i></span>
-                <span><i class="fa-solid fa-star"></i></span>
-            `;
-            hexagonIcon.insertAdjacentElement('afterbegin', starChamp);
-        }
-        updateTeamUrl();
     }
 
     function attachHexagonEvents(hexagons) {
         hexagons.forEach(hexagon => {
             let touchStartTime = 0;
-
+            let dragPreview = null;
+    
             hexagon.addEventListener('dragover', e => {
                 e.preventDefault();
                 hexagon.classList.add('drag-over');
             });
-
+    
             hexagon.addEventListener('dragleave', () => {
                 hexagon.classList.remove('drag-over');
             });
-
+    
             hexagon.addEventListener('drop', e => {
                 e.preventDefault();
                 handleDrop(e, hexagon);
                 hexagon.classList.remove('drag-over');
-                removeDragPreview(currentDragPreview);
+                removeDragPreview(dragPreview);
+                dragPreview = null;
             });
-
+    
+            hexagon.addEventListener('click', e => {
+                const hexagonIcon = hexagon.querySelector('.hexagon-icon');
+                if (hexagonIcon && !e.target.closest('.item-span')) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    let starState = parseInt(hexagonIcon.dataset.starState) || 0;
+                    starState = (starState + 1) % 3;
+                    hexagonIcon.dataset.starState = starState;
+    
+                    const existingStarChamp = hexagonIcon.querySelector('.star-champ');
+                    if (existingStarChamp) hexagonIcon.removeChild(existingStarChamp);
+    
+                    if (starState === 1) {
+                        const starChamp = document.createElement('div');
+                        starChamp.classList.add('star-champ', 'three-stars');
+                        starChamp.innerHTML = `
+                            <span><i class="fa-solid fa-star"></i></span>
+                            <span><i class="fa-solid fa-star"></i></span>
+                            <span><i class="fa-solid fa-star"></i></span>
+                        `;
+                        hexagonIcon.insertAdjacentElement('afterbegin', starChamp);
+                    } else if (starState === 2) {
+                        const starChamp = document.createElement('div');
+                        starChamp.classList.add('star-champ', 'four-stars');
+                        starChamp.innerHTML = `
+                            <span><i class="fa-solid fa-star"></i></span>
+                            <span><i class="fa-solid fa-star"></i></span>
+                            <span><i class="fa-solid fa-star"></i></span>
+                            <span><i class="fa-solid fa-star"></i></span>
+                        `;
+                        hexagonIcon.insertAdjacentElement('afterbegin', starChamp);
+                    }
+                    updateTeamUrl();
+                }
+            });
+    
             hexagon.addEventListener('touchstart', e => {
                 const hexagonIcon = hexagon.querySelector('.hexagon-icon');
                 if (hexagonIcon && !e.target.closest('.item-span')) {
@@ -554,51 +552,60 @@ export function renderBuilder(data, hexIndexData) {
                     hexagonIcon.classList.add('dragging');
                     const icon = hexagonIcon.querySelector('.hexagon-champ img').src;
                     const name = hexagonIcon.querySelector('.hexagon-name').textContent;
-                    createDragPreview(icon, name);
+                    dragPreview = createDragPreview(icon, name);
                     const touch = e.touches[0];
-                    updateDragPreview(currentDragPreview, touch.clientX, touch.clientY);
+                    updateDragPreview(dragPreview, touch.clientX, touch.clientY);
                 }
             });
-
+    
             hexagon.addEventListener('touchend', e => {
+                e.preventDefault();
                 const touchDuration = Date.now() - touchStartTime;
                 const hexagonIcon = hexagon.querySelector('.hexagon-icon');
-
+    
                 if (touchDuration < 200 && hexagonIcon && !e.target.closest('.item-span')) {
-                    updateStarState(hexagonIcon);
-                } else if (!e.target.closest('.item-span')) {
+                    let starState = parseInt(hexagonIcon.dataset.starState) || 0;
+                    starState = (starState + 1) % 3;
+                    hexagonIcon.dataset.starState = starState;
+    
+                    const existingStarChamp = hexagonIcon.querySelector('.star-champ');
+                    if (existingStarChamp) hexagonIcon.removeChild(existingStarChamp);
+    
+                    if (starState === 1) {
+                        const starChamp = document.createElement('div');
+                        starChamp.classList.add('star-champ', 'three-stars');
+                        starChamp.innerHTML = `
+                            <span><i class="fa-solid fa-star"></i></span>
+                            <span><i class="fa-solid fa-star"></i></span>
+                            <span><i class="fa-solid fa-star"></i></span>
+                        `;
+                        hexagonIcon.insertAdjacentElement('afterbegin', starChamp);
+                    } else if (starState === 2) {
+                        const starChamp = document.createElement('div');
+                        starChamp.classList.add('star-champ', 'four-stars');
+                        starChamp.innerHTML = `
+                            <span><i class="fa-solid fa-star"></i></span>
+                            <span><i class="fa-solid fa-star"></i></span>
+                            <span><i class="fa-solid fa-star"></i></span>
+                            <span><i class="fa-solid fa-star"></i></span>
+                        `;
+                        hexagonIcon.insertAdjacentElement('afterbegin', starChamp);
+                    }
+                    updateTeamUrl();
+                } else {
                     handleTouchEnd(e, hexagon);
                 }
-
+    
                 if (hexagon.dataset.touchData) {
                     delete hexagon.dataset.touchData;
                     if (hexagonIcon) {
                         hexagonIcon.classList.remove('dragging');
                     }
-                    removeDragPreview(currentDragPreview);
+                    removeDragPreview(dragPreview);
+                    dragPreview = null;
                 }
             });
-
-            hexagon.addEventListener('touchcancel', () => {
-                const hexagonIcon = hexagon.querySelector('.hexagon-icon');
-                if (hexagon.dataset.touchData) {
-                    delete hexagon.dataset.touchData;
-                    if (hexagonIcon) {
-                        hexagonIcon.classList.remove('dragging');
-                    }
-                    removeDragPreview(currentDragPreview);
-                }
-            });
-
-            if (!isTouchDevice) {
-                hexagon.addEventListener('click', e => {
-                    const hexagonIcon = hexagon.querySelector('.hexagon-icon');
-                    if (hexagonIcon && !e.target.closest('.item-span')) {
-                        updateStarState(hexagonIcon);
-                    }
-                });
-            }
-
+    
             hexagon.addEventListener('dragstart', e => {
                 const hexagonIcon = hexagon.querySelector('.hexagon-icon');
                 if (hexagonIcon && !e.target.closest('.item-span')) {
@@ -612,7 +619,7 @@ export function renderBuilder(data, hexIndexData) {
                     hexagonIcon.setAttribute('draggable', 'true');
                 }
             });
-
+    
             hexagon.addEventListener('contextmenu', e => {
                 e.preventDefault();
                 const hexagonIcon = hexagon.querySelector('.hexagon-icon');
@@ -627,7 +634,7 @@ export function renderBuilder(data, hexIndexData) {
                 }
             });
         });
-
+    
         chessboard.addEventListener(
             'touchmove',
             e => {
@@ -635,8 +642,9 @@ export function renderBuilder(data, hexIndexData) {
                 if (source) {
                     e.preventDefault();
                     const touch = e.touches[0];
-                    updateDragPreview(currentDragPreview, touch.clientX, touch.clientY);
-
+                    const dragPreview = document.querySelector('.drag-preview');
+                    updateDragPreview(dragPreview, touch.clientX, touch.clientY);
+    
                     const targetElement = document.elementFromPoint(touch.clientX, touch.clientY);
                     const targetHexagon = targetElement?.closest('.hexagon');
                     hexagons.forEach(h => h.classList.remove('drag-over'));
@@ -707,22 +715,6 @@ export function renderBuilder(data, hexIndexData) {
                 if (hexagon.querySelector('.hexagon-icon')) {
                     addItemToHexagon(hexagon, data);
                     updateTeamUrl();
-                }
-            } else if (data.type === 'remove-item') {
-                const sourceHexagon = document.querySelector(
-                    `.hexagon[data-index="${data.hexagonIndex}"]`
-                );
-                if (sourceHexagon) {
-                    const hexagonItems = sourceHexagon.querySelector('.hexagon-items');
-                    const itemSpan = hexagonItems.querySelector(
-                        `.item-span img[data-api-name="${data.apiName}"]`
-                    )?.parentElement;
-                    if (itemSpan) {
-                        hexagonItems.removeChild(itemSpan);
-                        shouldUpdateTraits = true;
-                        renderBuilderTraits();
-                        updateTeamUrl();
-                    }
                 }
             }
         } catch (error) {
@@ -890,6 +882,7 @@ export function renderBuilder(data, hexIndexData) {
 
         document.querySelectorAll('.tier-list').forEach(champion => {
             let touchStartTime = 0;
+            let dragPreview = null;
 
             champion.addEventListener('click', () => {
                 const range = parseInt(champion.dataset.range);
@@ -971,9 +964,9 @@ export function renderBuilder(data, hexIndexData) {
                     cost: parseInt(champion.classList[1].split('-')[1]),
                 });
                 champion.classList.add('dragging');
-                createDragPreview(champion.dataset.icon, champion.dataset.name);
+                dragPreview = createDragPreview(champion.dataset.icon, champion.dataset.name);
                 const touch = e.touches[0];
-                updateDragPreview(currentDragPreview, touch.clientX, touch.clientY);
+                updateDragPreview(dragPreview, touch.clientX, touch.clientY);
             });
 
             champion.addEventListener('touchend', e => {
@@ -1001,15 +994,8 @@ export function renderBuilder(data, hexIndexData) {
                 if (champion.dataset.touchData) {
                     delete champion.dataset.touchData;
                     champion.classList.remove('dragging');
-                    removeDragPreview(currentDragPreview);
-                }
-            });
-
-            champion.addEventListener('touchcancel', () => {
-                if (champion.dataset.touchData) {
-                    delete champion.dataset.touchData;
-                    champion.classList.remove('dragging');
-                    removeDragPreview(currentDragPreview);
+                    removeDragPreview(dragPreview);
+                    dragPreview = null;
                 }
             });
         });
@@ -1021,7 +1007,8 @@ export function renderBuilder(data, hexIndexData) {
                 if (source) {
                     e.preventDefault();
                     const touch = e.touches[0];
-                    updateDragPreview(currentDragPreview, touch.clientX, touch.clientY);
+                    const dragPreview = document.querySelector('.drag-preview');
+                    updateDragPreview(dragPreview, touch.clientX, touch.clientY);
 
                     const targetElement = document.elementFromPoint(touch.clientX, touch.clientY);
                     const targetHexagon = targetElement?.closest('.hexagon');
@@ -1072,7 +1059,7 @@ export function renderBuilder(data, hexIndexData) {
         .join('');
 
     document.querySelectorAll('.item-child').forEach(item => {
-        let touchStartTime = 0;
+        let dragPreview = null;
 
         item.addEventListener('click', () => {
             const sortedOrder = [...championOrder].sort((a, b) => b.timestamp - a.timestamp);
@@ -1112,7 +1099,6 @@ export function renderBuilder(data, hexIndexData) {
         });
 
         item.addEventListener('touchstart', e => {
-            touchStartTime = Date.now();
             item.dataset.touchData = JSON.stringify({
                 type: 'item',
                 apiName: item.dataset.apiName,
@@ -1120,9 +1106,9 @@ export function renderBuilder(data, hexIndexData) {
                 name: item.dataset.name,
             });
             item.classList.add('dragging');
-            createDragPreview(item.dataset.icon, item.dataset.name);
+            dragPreview = createDragPreview(item.dataset.icon, item.dataset.name);
             const touch = e.touches[0];
-            updateDragPreview(currentDragPreview, touch.clientX, touch.clientY);
+            updateDragPreview(dragPreview, touch.clientX, touch.clientY);
         });
 
         item.addEventListener('touchend', e => {
@@ -1139,15 +1125,8 @@ export function renderBuilder(data, hexIndexData) {
             if (item.dataset.touchData) {
                 delete item.dataset.touchData;
                 item.classList.remove('dragging');
-                removeDragPreview(currentDragPreview);
-            }
-        });
-
-        item.addEventListener('touchcancel', () => {
-            if (item.dataset.touchData) {
-                delete item.dataset.touchData;
-                item.classList.remove('dragging');
-                removeDragPreview(currentDragPreview);
+                removeDragPreview(dragPreview);
+                dragPreview = null;
             }
         });
     });
@@ -1159,7 +1138,8 @@ export function renderBuilder(data, hexIndexData) {
             if (source) {
                 e.preventDefault();
                 const touch = e.touches[0];
-                updateDragPreview(currentDragPreview, touch.clientX, touch.clientY);
+                const dragPreview = document.querySelector('.drag-preview');
+                updateDragPreview(dragPreview, touch.clientX, touch.clientY);
 
                 const targetElement = document.elementFromPoint(touch.clientX, touch.clientY);
                 const targetHexagon = targetElement?.closest('.hexagon');
@@ -1221,21 +1201,21 @@ export function renderBuilder(data, hexIndexData) {
     function addItemToHexagon(hexagon, itemData) {
         const hexagonItems = hexagon.querySelector('.hexagon-items');
         if (!hexagonItems || hexagonItems.children.length >= 3) return;
-
+    
         const championApiName = hexagon.querySelector('.hexagon-icon')?.dataset.apiName;
         const champion = champions.find(c => c.apiName === championApiName);
         if (!champion) return;
-
+    
         const item = items.find(i => i.apiName === itemData.apiName);
         if (!item) return;
-
+    
         if (item.category === 'emblem' && item.incompatibleTraits?.length > 0) {
             const emblemTraitApiName = item.incompatibleTraits[0];
             const emblemTrait = traits.find(t => t.apiName === emblemTraitApiName);
             if (!emblemTrait) return;
-
+    
             if (champion.traits.some(trait => trait.apiName === emblemTraitApiName)) return;
-
+    
             const existingItems = Array.from(hexagonItems.children).map(span => {
                 const img = span.querySelector('img');
                 return items.find(i => i.apiName === img.dataset.apiName);
@@ -1247,7 +1227,7 @@ export function renderBuilder(data, hexIndexData) {
             )
                 return;
         }
-
+    
         const itemSpan = document.createElement('span');
         itemSpan.classList.add('item-span');
         const itemImg = document.createElement('img');
@@ -1257,9 +1237,10 @@ export function renderBuilder(data, hexIndexData) {
         itemImg.dataset.apiName = itemData.apiName;
         itemSpan.appendChild(itemImg);
         hexagonItems.appendChild(itemSpan);
-
+    
+        let dragPreview = null;
         let touchStartTime = 0;
-
+    
         itemSpan.setAttribute('draggable', 'true');
         itemSpan.addEventListener('dragstart', e => {
             e.dataTransfer.setData(
@@ -1271,67 +1252,63 @@ export function renderBuilder(data, hexIndexData) {
                 })
             );
         });
-
-        if (isTouchDevice) {
-            itemSpan.addEventListener('touchstart', e => {
-                e.stopPropagation();
-                touchStartTime = Date.now();
-                itemSpan.dataset.touchData = JSON.stringify({
-                    type: 'remove-item',
-                    apiName: itemData.apiName,
-                    hexagonIndex: hexagon.dataset.index,
-                });
-                itemSpan.classList.add('dragging');
-                createDragPreview(itemData.icon, itemData.name);
-                const touch = e.touches[0];
-                updateDragPreview(currentDragPreview, touch.clientX, touch.clientY);
+    
+        itemSpan.addEventListener('touchstart', e => {
+            touchStartTime = Date.now();
+            itemSpan.dataset.touchData = JSON.stringify({
+                type: 'remove-item',
+                apiName: itemData.apiName,
+                hexagonIndex: hexagon.dataset.index,
             });
-
-            itemSpan.addEventListener('touchend', e => {
-                const touchDuration = Date.now() - touchStartTime;
-                const touch = e.changedTouches[0];
-                const targetElement = document.elementFromPoint(touch.clientX, touch.clientY);
-                const targetHexagon = targetElement?.closest('.hexagon');
-                const data = itemSpan.dataset.touchData ? JSON.parse(itemSpan.dataset.touchData) : null;
-
-                if (touchDuration < 200 && e.target.closest('.item-span')) {
+            itemSpan.classList.add('dragging');
+            dragPreview = createDragPreview(itemData.icon, itemData.name);
+            const touch = e.touches[0];
+            updateDragPreview(dragPreview, touch.clientX, touch.clientY);
+        });
+    
+        itemSpan.addEventListener('touchend', e => {
+            const touchDuration = Date.now() - touchStartTime;
+            const touch = e.changedTouches[0];
+            const targetElement = document.elementFromPoint(touch.clientX, touch.clientY);
+            const targetHexagon = targetElement?.closest('.hexagon');
+            const data = itemSpan.dataset.touchData ? JSON.parse(itemSpan.dataset.touchData) : null;
+    
+            if (data) {
+                // Xử lý tap (chạm ngắn) như click
+                if (touchDuration < 200) {
                     e.preventDefault();
+                    e.stopPropagation();
                     hexagonItems.removeChild(itemSpan);
                     shouldUpdateTraits = true;
                     renderBuilderTraits();
                     updateTeamUrl();
-                } else if (data && (!targetHexagon || targetHexagon.dataset.index !== data.hexagonIndex)) {
+                }
+                // Xử lý kéo (drag) ra ngoài hexagon
+                else if (!targetHexagon || targetHexagon.dataset.index !== data.hexagonIndex) {
                     hexagonItems.removeChild(itemSpan);
                     shouldUpdateTraits = true;
                     renderBuilderTraits();
                     updateTeamUrl();
                 }
-
-                if (itemSpan.dataset.touchData) {
-                    delete itemSpan.dataset.touchData;
-                    itemSpan.classList.remove('dragging');
-                    removeDragPreview(currentDragPreview);
-                }
-            });
-
-            itemSpan.addEventListener('touchcancel', () => {
-                if (itemSpan.dataset.touchData) {
-                    delete itemSpan.dataset.touchData;
-                    itemSpan.classList.remove('dragging');
-                    removeDragPreview(currentDragPreview);
-                }
-            });
-        } else {
-            itemSpan.addEventListener('click', e => {
-                e.preventDefault();
-                e.stopPropagation();
-                hexagonItems.removeChild(itemSpan);
-                shouldUpdateTraits = true;
-                renderBuilderTraits();
-                updateTeamUrl();
-            });
-        }
-
+            }
+    
+            if (itemSpan.dataset.touchData) {
+                delete itemSpan.dataset.touchData;
+                itemSpan.classList.remove('dragging');
+                removeDragPreview(dragPreview);
+                dragPreview = null;
+            }
+        });
+    
+        itemSpan.addEventListener('click', e => {
+            e.preventDefault();
+            e.stopPropagation();
+            hexagonItems.removeChild(itemSpan);
+            shouldUpdateTraits = true;
+            renderBuilderTraits();
+            updateTeamUrl();
+        });
+    
         itemSpan.addEventListener('contextmenu', e => {
             e.preventDefault();
             e.stopPropagation();
@@ -1340,7 +1317,7 @@ export function renderBuilder(data, hexIndexData) {
             renderBuilderTraits();
             updateTeamUrl();
         });
-
+    
         shouldUpdateTraits = true;
         renderBuilderTraits();
     }
@@ -1383,15 +1360,6 @@ export function renderBuilder(data, hexIndexData) {
             } catch (error) {
                 console.warn('Error handling body drop:', error);
             }
-        }
-    });
-
-    document.body.addEventListener('touchcancel', () => {
-        const source = document.querySelector('[data-touch-data]');
-        if (source) {
-            delete source.dataset.touchData;
-            source.classList.remove('dragging');
-            removeDragPreview(currentDragPreview);
         }
     });
 
