@@ -1,4 +1,4 @@
-import { apiNameAndData, filterInput, setupTooltips } from '/src/assets/js/global-defer.js';
+import { apiNameAndData, filterInput, setupTooltips, customTooltip } from '/src/assets/js/global-defer.js';
 
 export function renderBuilder(data, hexIndexData) {
     const builderChampions = document.querySelector('.builder-champions .builder-list');
@@ -82,12 +82,10 @@ export function renderBuilder(data, hexIndexData) {
             const teamString = encodeTeamToString();
             const newUrl = new URL(window.location);
             if (championOrder.length > 0 || selectedAugments.length > 0) {
-                // Đội hình không trống: cập nhật comp
                 if (teamString) {
                     newUrl.searchParams.set('comp', teamString);
                 }
             } else {
-                // Đội hình trống: xóa comp
                 newUrl.searchParams.delete('comp');
             }
             history.replaceState(null, '', newUrl);
@@ -131,7 +129,6 @@ export function renderBuilder(data, hexIndexData) {
             const teamData = JSON.parse(jsonString);
             const usedPositions = new Set();
 
-            // Validate champions
             const champions = (teamData.champions || [])
                 .map((champ, idx) => {
                     if (
@@ -164,7 +161,6 @@ export function renderBuilder(data, hexIndexData) {
                 })
                 .filter(champ => champ !== null);
 
-            // Validate augments
             const augments = (teamData.augments || [])
                 .map((augId, idx) => {
                     if (typeof augId !== 'number' || augId < 0 || augId >= augmentMap.length) {
@@ -241,7 +237,7 @@ export function renderBuilder(data, hexIndexData) {
                     ? augmentsToRender
                         .map(
                             aug => `
-              <div class="augments-child augs-tier-${aug.tier} tier-${aug.tier2 || aug.tier}" data-api-name="${aug.apiName}">
+              <div class="augments-child augs-tier-${aug.tier} tier-${aug.tier2}" data-api-name="${aug.apiName}">
                 <img src="${aug.icon}" alt="${aug.name}">
                 <span>${aug.name}</span>
               </div>
@@ -274,7 +270,7 @@ export function renderBuilder(data, hexIndexData) {
         const success = renderTeam(teamData);
         if (!success) {
             console.warn('Failed to render team from URL:', compString);
-            showTooltip('Đội hình không hợp lệ, kiểm tra chuỗi comp', 100, 100, 3000);
+            customTooltip('Đội hình không hợp lệ, kiểm tra chuỗi comp', 100, 100, 3000);
         }
         return success;
     }
@@ -316,25 +312,7 @@ export function renderBuilder(data, hexIndexData) {
         return `02${hexIndexes.join('')}TFTSet14`;
     }
 
-    function showTooltip(message, x, y, duration = 2000) {
-        const tooltip = document.createElement('div');
-        tooltip.classList.add('custom-tooltip');
-        tooltip.textContent = message;
-        tooltip.style.position = 'absolute';
-        tooltip.style.left = `${x + 10}px`;
-        tooltip.style.top = `${y + 10}px`;
-        tooltip.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
-        tooltip.style.color = '#fff';
-        tooltip.style.padding = '5px 10px';
-        tooltip.style.borderRadius = '4px';
-        tooltip.style.zIndex = '1000';
-        tooltip.style.fontSize = '14px';
-        document.body.appendChild(tooltip);
 
-        setTimeout(() => {
-            tooltip.remove();
-        }, duration);
-    }
 
     function renderBuilderTraits() {
         if (!shouldUpdateTraits) return;
@@ -470,71 +448,16 @@ export function renderBuilder(data, hexIndexData) {
     function attachHexagonEvents(hexagons) {
         hexagons.forEach(hexagon => {
             hexagon.addEventListener('dragover', e => e.preventDefault());
+            hexagon.addEventListener('touchmove', e => e.preventDefault(), { passive: false });
 
             hexagon.addEventListener('drop', e => {
                 e.preventDefault();
-                try {
-                    const data = JSON.parse(e.dataTransfer.getData('text/plain'));
-                    if (data.type === 'champion') {
-                        if (!hexagon.querySelector('.hexagon-icon')) {
-                            const hexagonContent = createHexagonContent(data);
-                            hexagon.appendChild(hexagonContent);
-                            hexagon.classList.add('has-champ');
-                            championOrder.push({
-                                index: hexagon.dataset.index,
-                                timestamp: Date.now(),
-                                apiName: data.apiName,
-                            });
-                            shouldUpdateTraits = true;
-                            renderBuilderTraits();
-                            updateTeamUrl();
-                        }
-                    } else if (data.type === 'move-champion') {
-                        if (data.hexagonIndex !== hexagon.dataset.index) {
-                            const sourceHexagon = document.querySelector(
-                                `.hexagon[data-index="${data.hexagonIndex}"]`
-                            );
-                            const sourceHexagonIcon = sourceHexagon?.querySelector('.hexagon-icon');
-                            const targetHexagonIcon = hexagon.querySelector('.hexagon-icon');
+                handleDrop(e, hexagon);
+            });
 
-                            if (sourceHexagon && sourceHexagonIcon) {
-                                if (targetHexagonIcon) {
-                                    hexagon.removeChild(targetHexagonIcon);
-                                    sourceHexagon.removeChild(sourceHexagonIcon);
-                                    hexagon.appendChild(sourceHexagonIcon);
-                                    sourceHexagon.appendChild(targetHexagonIcon);
-                                    const sourceIndex = championOrder.findIndex(
-                                        o => o.index === data.hexagonIndex
-                                    );
-                                    const targetIndex = championOrder.findIndex(
-                                        o => o.index === hexagon.dataset.index
-                                    );
-                                    if (sourceIndex !== -1) championOrder[sourceIndex].index = hexagon.dataset.index;
-                                    if (targetIndex !== -1)
-                                        championOrder[targetIndex].index = data.hexagonIndex;
-                                } else {
-                                    hexagon.appendChild(sourceHexagonIcon);
-                                    sourceHexagon.classList.remove('has-champ');
-                                    hexagon.classList.add('has-champ');
-                                    const sourceIndex = championOrder.findIndex(
-                                        o => o.index === data.hexagonIndex
-                                    );
-                                    if (sourceIndex !== -1) championOrder[sourceIndex].index = hexagon.dataset.index;
-                                }
-                                shouldUpdateTraits = true;
-                                renderBuilderTraits();
-                                updateTeamUrl();
-                            }
-                        }
-                    } else if (data.type === 'item') {
-                        if (hexagon.querySelector('.hexagon-icon')) {
-                            addItemToHexagon(hexagon, data);
-                            updateTeamUrl();
-                        }
-                    }
-                } catch (error) {
-                    // No console.error
-                }
+            hexagon.addEventListener('touchend', e => {
+                e.preventDefault();
+                handleTouchEnd(e, hexagon);
             });
 
             hexagon.addEventListener('dragstart', e => {
@@ -548,6 +471,17 @@ export function renderBuilder(data, hexIndexData) {
                         })
                     );
                     hexagonIcon.setAttribute('draggable', 'true');
+                }
+            });
+
+            hexagon.addEventListener('touchstart', e => {
+                const hexagonIcon = hexagon.querySelector('.hexagon-icon');
+                if (hexagonIcon && !e.target.closest('.item-span')) {
+                    hexagon.dataset.touchData = JSON.stringify({
+                        type: 'move-champion',
+                        hexagonIndex: hexagon.dataset.index,
+                    });
+                    hexagonIcon.classList.add('dragging');
                 }
             });
 
@@ -602,6 +536,163 @@ export function renderBuilder(data, hexIndexData) {
         });
     }
 
+    function handleDrop(e, hexagon) {
+        try {
+            const data = JSON.parse(e.dataTransfer.getData('text/plain'));
+            if (data.type === 'champion') {
+                if (!hexagon.querySelector('.hexagon-icon')) {
+                    const hexagonContent = createHexagonContent(data);
+                    hexagon.appendChild(hexagonContent);
+                    hexagon.classList.add('has-champ');
+                    championOrder.push({
+                        index: hexagon.dataset.index,
+                        timestamp: Date.now(),
+                        apiName: data.apiName,
+                    });
+                    shouldUpdateTraits = true;
+                    renderBuilderTraits();
+                    updateTeamUrl();
+                }
+            } else if (data.type === 'move-champion') {
+                if (data.hexagonIndex !== hexagon.dataset.index) {
+                    const sourceHexagon = document.querySelector(
+                        `.hexagon[data-index="${data.hexagonIndex}"]`
+                    );
+                    const sourceHexagonIcon = sourceHexagon?.querySelector('.hexagon-icon');
+                    const targetHexagonIcon = hexagon.querySelector('.hexagon-icon');
+
+                    if (sourceHexagon && sourceHexagonIcon) {
+                        if (targetHexagonIcon) {
+                            hexagon.removeChild(targetHexagonIcon);
+                            sourceHexagon.removeChild(sourceHexagonIcon);
+                            hexagon.appendChild(sourceHexagonIcon);
+                            sourceHexagon.appendChild(targetHexagonIcon);
+                            const sourceIndex = championOrder.findIndex(
+                                o => o.index === data.hexagonIndex
+                            );
+                            const targetIndex = championOrder.findIndex(
+                                o => o.index === hexagon.dataset.index
+                            );
+                            if (sourceIndex !== -1) championOrder[sourceIndex].index = hexagon.dataset.index;
+                            if (targetIndex !== -1)
+                                championOrder[targetIndex].index = data.hexagonIndex;
+                        } else {
+                            hexagon.appendChild(sourceHexagonIcon);
+                            sourceHexagon.classList.remove('has-champ');
+                            hexagon.classList.add('has-champ');
+                            const sourceIndex = championOrder.findIndex(
+                                o => o.index === data.hexagonIndex
+                            );
+                            if (sourceIndex !== -1) championOrder[sourceIndex].index = hexagon.dataset.index;
+                        }
+                        shouldUpdateTraits = true;
+                        renderBuilderTraits();
+                        updateTeamUrl();
+                    }
+                }
+            } else if (data.type === 'item') {
+                if (hexagon.querySelector('.hexagon-icon')) {
+                    addItemToHexagon(hexagon, data);
+                    updateTeamUrl();
+                }
+            }
+        } catch (error) {
+            // No console.error
+        }
+    }
+
+    function handleTouchEnd(e, hexagon) {
+        const touch = e.changedTouches[0];
+        const targetElement = document.elementFromPoint(touch.clientX, touch.clientY);
+        const targetHexagon = targetElement?.closest('.hexagon');
+        const data = hexagon.dataset.touchData ? JSON.parse(hexagon.dataset.touchData) : null;
+
+        if (data && targetHexagon && targetHexagon !== hexagon) {
+            try {
+                if (data.type === 'champion') {
+                    if (!targetHexagon.querySelector('.hexagon-icon')) {
+                        const championElement = document.querySelector(
+                            `.tier-list[data-api-name="${data.apiName}"]`
+                        );
+                        const hexagonContent = createHexagonContent({
+                            apiName: data.apiName,
+                            icon: championElement.dataset.icon,
+                            name: championElement.dataset.name,
+                            cost: parseInt(championElement.classList[1].split('-')[1]),
+                        });
+                        targetHexagon.appendChild(hexagonContent);
+                        targetHexagon.classList.add('has-champ');
+                        championOrder.push({
+                            index: targetHexagon.dataset.index,
+                            timestamp: Date.now(),
+                            apiName: data.apiName,
+                        });
+                        shouldUpdateTraits = true;
+                        renderBuilderTraits();
+                        updateTeamUrl();
+                    }
+                } else if (data.type === 'move-champion') {
+                    const sourceHexagon = document.querySelector(
+                        `.hexagon[data-index="${data.hexagonIndex}"]`
+                    );
+                    const sourceHexagonIcon = sourceHexagon?.querySelector('.hexagon-icon');
+                    const targetHexagonIcon = targetHexagon.querySelector('.hexagon-icon');
+
+                    if (sourceHexagon && sourceHexagonIcon) {
+                        if (targetHexagonIcon) {
+                            targetHexagon.removeChild(targetHexagonIcon);
+                            sourceHexagon.removeChild(sourceHexagonIcon);
+                            targetHexagon.appendChild(sourceHexagonIcon);
+                            sourceHexagon.appendChild(targetHexagonIcon);
+                            const sourceIndex = championOrder.findIndex(
+                                o => o.index === data.hexagonIndex
+                            );
+                            const targetIndex = championOrder.findIndex(
+                                o => o.index === targetHexagon.dataset.index
+                            );
+                            if (sourceIndex !== -1) championOrder[sourceIndex].index = targetHexagon.dataset.index;
+                            if (targetIndex !== -1)
+                                championOrder[targetIndex].index = data.hexagonIndex;
+                        } else {
+                            targetHexagon.appendChild(sourceHexagonIcon);
+                            sourceHexagon.classList.remove('has-champ');
+                            targetHexagon.classList.add('has-champ');
+                            const sourceIndex = championOrder.findIndex(
+                                o => o.index === data.hexagonIndex
+                            );
+                            if (sourceIndex !== -1) championOrder[sourceIndex].index = targetHexagon.dataset.index;
+                        }
+                        shouldUpdateTraits = true;
+                        renderBuilderTraits();
+                        updateTeamUrl();
+                    }
+                } else if (data.type === 'item') {
+                    if (targetHexagon.querySelector('.hexagon-icon')) {
+                        const itemElement = document.querySelector(
+                            `.item-child[data-api-name="${data.apiName}"]`
+                        );
+                        addItemToHexagon(targetHexagon, {
+                            apiName: data.apiName,
+                            icon: itemElement.dataset.icon,
+                            name: itemElement.dataset.name,
+                        });
+                        updateTeamUrl();
+                    }
+                }
+            } catch (error) {
+                // No console.error
+            }
+        }
+
+        if (hexagon.dataset.touchData) {
+            delete hexagon.dataset.touchData;
+            const hexagonIcon = hexagon.querySelector('.hexagon-icon');
+            if (hexagonIcon) {
+                hexagonIcon.classList.remove('dragging');
+            }
+        }
+    }
+
     function renderBuilderChampions(champions, label = 'cost') {
         let data = label === 'name' ? [...champions].sort((a, b) => a.name.localeCompare(b.name)) : champions;
 
@@ -617,8 +708,8 @@ export function renderBuilder(data, hexIndexData) {
               </div>
               <div class="list-traits-champions">
                 ${champions
-                            .map(
-                                ({ apiName, name }) => `
+                    .map(
+                        ({ apiName, name }) => `
                       <div class="tier-list cost-${apiNameAndIconCostRange[apiName][1]}" draggable="true" 
                            data-api-name="${apiName}" data-range="${apiNameAndIconCostRange[apiName][2]}" 
                            data-icon="${apiNameAndIconCostRange[apiName][0]}" data-name="${name}">
@@ -628,8 +719,8 @@ export function renderBuilder(data, hexIndexData) {
                         <div class="hexagon-title">${name}</div>
                       </div>
                     `
-                            )
-                            .join('')}
+                    )
+                    .join('')}
               </div>
             </div>
           `
@@ -722,6 +813,45 @@ export function renderBuilder(data, hexIndexData) {
                     })
                 );
             });
+
+            champion.addEventListener('touchstart', e => {
+                champion.dataset.touchData = JSON.stringify({
+                    type: 'champion',
+                    apiName: champion.dataset.apiName,
+                    icon: champion.dataset.icon,
+                    name: champion.dataset.name,
+                    cost: parseInt(champion.classList[1].split('-')[1]),
+                });
+                champion.classList.add('dragging');
+            });
+
+            champion.addEventListener('touchend', e => {
+                const touch = e.changedTouches[0];
+                const targetElement = document.elementFromPoint(touch.clientX, touch.clientY);
+                const targetHexagon = targetElement?.closest('.hexagon');
+                const data = champion.dataset.touchData ? JSON.parse(champion.dataset.touchData) : null;
+
+                if (data && targetHexagon) {
+                    if (!targetHexagon.querySelector('.hexagon-icon')) {
+                        const hexagonContent = createHexagonContent(data);
+                        targetHexagon.appendChild(hexagonContent);
+                        targetHexagon.classList.add('has-champ');
+                        championOrder.push({
+                            index: targetHexagon.dataset.index,
+                            timestamp: Date.now(),
+                            apiName: data.apiName,
+                        });
+                        shouldUpdateTraits = true;
+                        renderBuilderTraits();
+                        updateTeamUrl();
+                    }
+                }
+
+                if (champion.dataset.touchData) {
+                    delete champion.dataset.touchData;
+                    champion.classList.remove('dragging');
+                }
+            });
         });
     }
 
@@ -760,6 +890,72 @@ export function renderBuilder(data, hexIndexData) {
       `
         )
         .join('');
+
+    document.querySelectorAll('.item-child').forEach(item => {
+        item.addEventListener('click', () => {
+            const sortedOrder = [...championOrder].sort((a, b) => b.timestamp - a.timestamp);
+            let targetHexagon = null;
+            for (const { index } of sortedOrder) {
+                const hexagon = document.querySelector(`.hexagon[data-index="${index}"]`);
+                if (
+                    hexagon &&
+                    hexagon.querySelector('.hexagon-icon') &&
+                    hexagon.querySelector('.hexagon-items')?.children.length < 3
+                ) {
+                    targetHexagon = hexagon;
+                    break;
+                }
+            }
+
+            if (targetHexagon) {
+                addItemToHexagon(targetHexagon, {
+                    apiName: item.dataset.apiName,
+                    icon: item.dataset.icon,
+                    name: item.dataset.name,
+                });
+                updateTeamUrl();
+            }
+        });
+
+        item.addEventListener('dragstart', e => {
+            e.dataTransfer.setData(
+                'text/plain',
+                JSON.stringify({
+                    type: 'item',
+                    apiName: item.dataset.apiName,
+                    icon: item.dataset.icon,
+                    name: item.dataset.name,
+                })
+            );
+        });
+
+        item.addEventListener('touchstart', e => {
+            item.dataset.touchData = JSON.stringify({
+                type: 'item',
+                apiName: item.dataset.apiName,
+                icon: item.dataset.icon,
+                name: item.dataset.name,
+            });
+            item.classList.add('dragging');
+        });
+
+        item.addEventListener('touchend', e => {
+            const touch = e.changedTouches[0];
+            const targetElement = document.elementFromPoint(touch.clientX, touch.clientY);
+            const targetHexagon = targetElement?.closest('.hexagon');
+            const data = item.dataset.touchData ? JSON.parse(item.dataset.touchData) : null;
+
+            if (data && targetHexagon && targetHexagon.querySelector('.hexagon-icon')) {
+                addItemToHexagon(targetHexagon, data);
+                updateTeamUrl();
+            }
+
+            if (item.dataset.touchData) {
+                delete item.dataset.touchData;
+                item.classList.remove('dragging');
+            }
+        });
+    });
 
     function createHexagonContent({ apiName, icon, name, cost, stars = 0 }) {
         const hexagonIcon = document.createElement('div');
@@ -859,6 +1055,34 @@ export function renderBuilder(data, hexIndexData) {
             );
         });
 
+        itemSpan.addEventListener('touchstart', e => {
+            itemSpan.dataset.touchData = JSON.stringify({
+                type: 'remove-item',
+                apiName: itemData.apiName,
+                hexagonIndex: hexagon.dataset.index,
+            });
+            itemSpan.classList.add('dragging');
+        });
+
+        itemSpan.addEventListener('touchend', e => {
+            const touch = e.changedTouches[0];
+            const targetElement = document.elementFromPoint(touch.clientX, touch.clientY);
+            const targetHexagon = targetElement?.closest('.hexagon');
+            const data = itemSpan.dataset.touchData ? JSON.parse(itemSpan.dataset.touchData) : null;
+
+            if (data && (!targetHexagon || targetHexagon.dataset.index !== data.hexagonIndex)) {
+                hexagonItems.removeChild(itemSpan);
+                shouldUpdateTraits = true;
+                renderBuilderTraits();
+                updateTeamUrl();
+            }
+
+            if (itemSpan.dataset.touchData) {
+                delete itemSpan.dataset.touchData;
+                itemSpan.classList.remove('dragging');
+            }
+        });
+
         itemSpan.addEventListener('click', e => {
             e.preventDefault();
             e.stopPropagation();
@@ -881,46 +1105,8 @@ export function renderBuilder(data, hexIndexData) {
         renderBuilderTraits();
     }
 
-    document.querySelectorAll('.item-child').forEach(item => {
-        item.addEventListener('click', () => {
-            const sortedOrder = [...championOrder].sort((a, b) => b.timestamp - a.timestamp);
-            let targetHexagon = null;
-            for (const { index } of sortedOrder) {
-                const hexagon = document.querySelector(`.hexagon[data-index="${index}"]`);
-                if (
-                    hexagon &&
-                    hexagon.querySelector('.hexagon-icon') &&
-                    hexagon.querySelector('.hexagon-items')?.children.length < 3
-                ) {
-                    targetHexagon = hexagon;
-                    break;
-                }
-            }
-
-            if (targetHexagon) {
-                addItemToHexagon(targetHexagon, {
-                    apiName: item.dataset.apiName,
-                    icon: item.dataset.icon,
-                    name: item.dataset.name,
-                });
-                updateTeamUrl();
-            }
-        });
-
-        item.addEventListener('dragstart', e => {
-            e.dataTransfer.setData(
-                'text/plain',
-                JSON.stringify({
-                    type: 'item',
-                    apiName: item.dataset.apiName,
-                    icon: item.dataset.icon,
-                    name: item.dataset.name,
-                })
-            );
-        });
-    });
-
     document.body.addEventListener('dragover', e => e.preventDefault());
+    document.body.addEventListener('touchmove', e => e.preventDefault(), { passive: false });
 
     document.body.addEventListener('drop', e => {
         if (!e.target.closest('.hexagon')) {
@@ -961,6 +1147,50 @@ export function renderBuilder(data, hexIndexData) {
         }
     });
 
+    document.body.addEventListener('touchend', e => {
+        const touch = e.changedTouches[0];
+        const targetElement = document.elementFromPoint(touch.clientX, touch.clientY);
+        if (!targetElement?.closest('.hexagon')) {
+            const sourceElement = document.querySelector('[data-touch-data]');
+            if (sourceElement) {
+                const data = sourceElement.dataset.touchData ? JSON.parse(sourceElement.dataset.touchData) : null;
+                if (data) {
+                    if (data.type === 'move-champion') {
+                        const hexagon = document.querySelector(`.hexagon[data-index="${data.hexagonIndex}"]`);
+                        if (hexagon) {
+                            const hexagonIcon = hexagon.querySelector('.hexagon-icon');
+                            if (hexagonIcon) {
+                                hexagon.removeChild(hexagonIcon);
+                                hexagon.classList.remove('has-champ');
+                                const index = championOrder.findIndex(o => o.index === data.hexagonIndex);
+                                if (index !== -1) championOrder.splice(index, 1);
+                                shouldUpdateTraits = true;
+                                renderBuilderTraits();
+                                updateTeamUrl();
+                            }
+                        }
+                    } else if (data.type === 'remove-item') {
+                        const hexagon = document.querySelector(`.hexagon[data-index="${data.hexagonIndex}"]`);
+                        if (hexagon) {
+                            const hexagonItems = hexagon.querySelector('.hexagon-items');
+                            const itemSpan = hexagonItems.querySelector(
+                                `.item-span img[data-api-name="${data.apiName}"]`
+                            )?.parentElement;
+                            if (itemSpan) {
+                                hexagonItems.removeChild(itemSpan);
+                                shouldUpdateTraits = true;
+                                renderBuilderTraits();
+                                updateTeamUrl();
+                            }
+                        }
+                    }
+                }
+                delete sourceElement.dataset.touchData;
+                sourceElement.classList.remove('dragging');
+            }
+        }
+    });
+
     clearButton.addEventListener('click', () => {
         hexagons.forEach(hexagon => {
             const hexagonIcon = hexagon.querySelector('.hexagon-icon');
@@ -985,17 +1215,79 @@ export function renderBuilder(data, hexIndexData) {
     teamCodeButton.addEventListener('click', e => {
         const teamCode = generateTeamCode();
         navigator.clipboard.writeText(teamCode).then(() => {
-            showTooltip('Đã copy', e.clientX, e.clientY);
+            customTooltip('Đã copy', e.clientX, e.clientY);
         }).catch(() => {
-            showTooltip('Lỗi khi copy', e.clientX, e.clientY);
+            customTooltip('Lỗi khi copy', e.clientX, e.clientY);
         });
     });
+
+    function showNameChessBoard() {
+        const nameChessboard = document.querySelector('.builder-chessboard');
+        const showNameButton = document.querySelector('.btn-builder-show-name');
+    
+        // Đọc trạng thái từ localStorage khi trang load
+        const savedState = localStorage.getItem('builder-show-name');
+        if (savedState === 'true') {
+            nameChessboard.classList.add('builder-show-name');
+        }
+    
+        // Gán sự kiện click để toggle + lưu lại trạng thái
+        showNameButton.addEventListener('click', () => {
+            const isVisible = nameChessboard.classList.toggle('builder-show-name');
+            localStorage.setItem('builder-show-name', isVisible);
+        });
+    }
+    
+
+    function setupSaveCompButton() {
+        const saveCompButton = document.querySelector('.builder-save-comp');
+        const menu = document.querySelector('.save-comp-menu');
+
+        saveCompButton.addEventListener('click', e => {
+            menu.classList.toggle('show')
+        });
+
+        menu.addEventListener('click', e => {
+            const option = e.target.closest('.save-comp-option');
+            if (option) {
+                const action = option.dataset.action;
+                const currentUrl = window.location.href;
+                if (action === 'copy-url') {
+                    navigator.clipboard.writeText(currentUrl).then(() => {
+                        customTooltip('Đã copy URL', e.clientX, e.clientY);
+                    }).catch(() => {
+                        customTooltip('Lỗi khi copy URL', e.clientX, e.clientY);
+                    });
+                } else if (action === 'add-bookmark') {
+                    const title = 'TFT Team Comp';
+                    try {
+                        if (window.sidebar && window.sidebar.addPanel) {
+                            window.sidebar.addPanel(title, currentUrl, '');
+                        } else if (window.external && 'AddFavorite' in window.external) {
+                            window.external.AddFavorite(currentUrl, title);
+                        } else {
+                            customTooltip('Nhấn Ctrl+D (Windows) hoặc Cmd+D (Mac) để lưu bookmark', e.clientX, e.clientY, 3000);
+                        }
+                    } catch (error) {
+                        customTooltip('Không thể lưu bookmark tự động. Vui lòng sử dụng Ctrl+D/Cmd+D', e.clientX, e.clientY);
+                    }
+                }
+                menu.classList.remove('show');
+            }
+        });
+
+        document.addEventListener('click', e => {
+            if (!saveCompButton.contains(e.target) && !menu.contains(e.target)) {
+                menu.classList.remove('show');
+            }
+        });
+    }
 
     function renderSelectedAugments() {
         selectedAugs.innerHTML = selectedAugments
             .map(
                 aug => `
-          <div class="augments-child augs-tier-${aug.tier} tier-${aug.tier2 || aug.tier}" data-api-name="${aug.apiName}">
+          <div class="augments-child augs-tier-${aug.tier} tier-${aug.tier2}" data-api-name="${aug.apiName}">
             <img src="${aug.icon}" alt="${aug.name}">
             <span>${aug.name}</span>
           </div>
@@ -1028,7 +1320,7 @@ export function renderBuilder(data, hexIndexData) {
         builderRenderAugs.innerHTML = augments
             .map(
                 ({ name, icon, tier, tier2, apiName }) => `
-          <div class="augments-child augs-tier-${tier} tier-${tier2 || tier}" data-api-name="${apiName}">
+          <div class="augments-child augs-tier-${tier} tier-${tier2}" data-api-name="${apiName}">
             <img src="${icon}" alt="${name}" data-api-name="${apiName}">
             <span>${name}</span>
           </div>
@@ -1037,7 +1329,7 @@ export function renderBuilder(data, hexIndexData) {
             .join('');
 
         document.querySelectorAll('.builder-render-augs .augments-child').forEach(augElement => {
-            augElement.addEventListener('click', () => {
+            augElement.addEventListener('click', (e) => {
                 const apiName = augElement.querySelector('img').dataset.apiName;
                 const aug = augments.find(a => a.apiName === apiName);
                 if (!aug) return;
@@ -1047,6 +1339,8 @@ export function renderBuilder(data, hexIndexData) {
                     selectedAugments.splice(index, 1);
                 } else if (selectedAugments.length < 8) {
                     selectedAugments.push(aug);
+                }else if (selectedAugments.length === 8) {
+                    customTooltip('Đã đủ 8 Nâng Cấp', e.clientX, e.clientY);
                 }
                 renderSelectedAugments();
             });
@@ -1097,7 +1391,7 @@ export function renderBuilder(data, hexIndexData) {
             builderAugments.innerHTML = selectedAugments
                 .map(
                     aug => `
-            <div class="augments-child augs-tier-${aug.tier} tier-${aug.tier2 || aug.tier}" data-api-name="${aug.apiName}">
+            <div class="augments-child augs-tier-${aug.tier} tier-${aug.tier2}" data-api-name="${aug.apiName}">
               <img src="${aug.icon}" alt="${aug.name}">
               <span>${aug.name}</span>
             </div>
@@ -1111,23 +1405,6 @@ export function renderBuilder(data, hexIndexData) {
         updateTeamUrl();
     });
 
-    attachHexagonEvents(hexagons);
-    renderBuilderChampions(champions, 'cost');
-    renderBuilderTraits();
-    renderBuilderAugments();
-    filterBuilderItems();
-    filterBuilderChampions();
-    filterBuilderAugs();
-    filterInput('.builder-champions .tier-list', '.builder-champions input');
-    filterInput('.builder-items .item-child', '.builder-items input');
-    filterInput('.builder-render-augs .augments-child', '.builder-list-augments input');
-
-    const loadedFromUrl = loadCompFromUrl();
-    if (!loadedFromUrl) {
-        loadCompFromTierList();
-    }
-
-    /* builderOptionsBtn */
     function builderOptionsBtn() {
         const [champBtn, itemBtn] = document.querySelectorAll('.builder-options button');
         const champPanel = document.querySelector('.builder-champions');
@@ -1142,9 +1419,24 @@ export function renderBuilder(data, hexIndexData) {
 
         champBtn.onclick = () => activate('champions');
         itemBtn.onclick = () => activate('items');
-
-        // champBtn.click();
     }
-    builderOptionsBtn()
-}
 
+    attachHexagonEvents(hexagons);
+    renderBuilderChampions(champions, 'cost');
+    renderBuilderTraits();
+    renderBuilderAugments();
+    filterBuilderItems();
+    filterBuilderChampions();
+    filterBuilderAugs();
+    filterInput('.builder-champions .tier-list', '.builder-champions input');
+    filterInput('.builder-items .item-child', '.builder-items input');
+    filterInput('.builder-render-augs .augments-child', '.builder-list-augments input');
+    builderOptionsBtn();
+    setupSaveCompButton();
+    showNameChessBoard()
+
+    const loadedFromUrl = loadCompFromUrl();
+    if (!loadedFromUrl) {
+        loadCompFromTierList();
+    }
+}

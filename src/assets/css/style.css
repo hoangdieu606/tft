@@ -117,6 +117,7 @@ strong {
 .nav-list {
     display: flex;
     background: var(--primary-bg-color);
+    overflow: hidden;
 }
 
 .nav-list li {
@@ -272,7 +273,7 @@ footer a:hover {
     opacity: 0;
     transform: scale(0.9);
     pointer-events: none;
-    z-index: 9999;
+    z-index: 99;
 }
 
 /* Khi tooltip được thêm vào DOM, hiệu ứng sẽ tự chạy */
@@ -498,12 +499,21 @@ footer a:hover {
         --nav-font-size: 14px;
         --nav-ul-li-flex-direction: column;
     }
+    .nav-list li:nth-child(2) {
+        display: none;
+    }
+    .nav-list li:nth-child(4) a {
+        padding: 0;
+    }
 
     .menu-list {
         flex-direction: column;
     }
 
     /* HEADER */
+    main#content {
+        padding: 15px;
+    }
 
     .items-list {
         gap: 20px;
@@ -529,9 +539,12 @@ footer a:hover {
         gap: 3px;
         font-size: 16px;
     }
+    .nav-list li:nth-child(4) a {
+        font-size: 14px;
+    }
 
     main#content {
-        padding: 15px;
+        padding: 8px;
     }
 
     .champ-card,
@@ -632,4 +645,45 @@ footer a:hover {
 
 li.social-icons>span {
     font: 600 18px 'Dancing Script', sans-serif;
+}
+
+/* .custom-tooltip */
+.custom-tooltip {
+    position: absolute;
+    background: rgba(0, 0, 0, 0.85); /* Tăng độ mờ nhẹ cho nền đậm hơn */
+    /* background: var(--primary-bg-color); */
+    color: #fff;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; /* Font hệ thống hiện đại */
+    font-weight: 400; /* Trọng lượng chữ nhẹ, dễ đọc */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2); /* Thêm bóng nhẹ để tạo chiều sâu */
+    z-index: 1000;
+    pointer-events: none; /* Ngăn tooltip chặn tương tác chuột */
+    opacity: 0; /* Để sẵn cho hiệu ứng fade-in */
+    transform: translateY(10px); /* Hiệu ứng di chuyển nhẹ khi xuất hiện */
+    transition: opacity 0.2s ease, transform 0.2s ease; /* Hiệu ứng mượt mà */
+}
+
+/* Trạng thái hiển thị */
+.custom-tooltip.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Mũi tên (arrow) */
+.custom-tooltip::before {
+    content: '';
+    position: absolute;
+    top: -6px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 9px solid transparent;
+    border-right: 9px solid transparent;
+    border-bottom: 9px solid rgba(0, 0, 0, 0.85);
+    /* border-bottom: 9px solid var(--primary-color); */
+
 }

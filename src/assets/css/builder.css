@@ -10,7 +10,6 @@
     display: flex;
     gap: 10px;
     height: 450px;
-    overflow: hidden;
 }
 
 .builder-traits,
@@ -28,13 +27,17 @@
     flex-direction: column;
     gap: 15px;
     align-items: center;
-    justify-content: center;
+    justify-content: space-between;
     padding: 15px 30px;
     width: 60%;
 }
 
 .builder-chessboard .hexagon .hexagon-name {
     font-size: 1.2vmin;
+    display: none;
+}
+.builder-chessboard.builder-show-name .hexagon .hexagon-name {
+    display: flex;
 }
 
 .builder-chessboard .star-champ {
@@ -106,15 +109,14 @@
 }
 
 .builder-chessboard .position-comp {
-    padding: 24px 5px;
+    padding: 5px;
     width: 100%;
 }
 
 .builder-extension {
-    display: flex;
-    gap: 15px;
-    justify-content: space-between;
     width: 100%;
+    display: flex;
+    justify-content: space-between;
 }
 
 .builder-extension button {
@@ -369,15 +371,7 @@ body[augs-btn-filter="category-3-active"] button[data-augs-category="3"] {
     /* Dấu I */
 }
 
-.custom-tooltip {
-    position: absolute;
-    background-color: rgba(0, 0, 0, 0.8);
-    color: #fff;
-    padding: 5px 10px;
-    border-radius: 4px;
-    z-index: 1000;
-    font-size: 14px;
-}
+
 
 /* builder-list-augments */
 .builder-augments {
@@ -417,10 +411,17 @@ span.builder-title {
     width: 80px;
     height: 80px;
     position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
     filter: hue-rotate(60deg);
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin: auto;
+    transition: all 0.1s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.builder-augments .builder-icon-augs img:hover {
+    transform: scale(105%,105%);
 }
 
 .builder-list-augments {
@@ -474,6 +475,12 @@ span.builder-title {
     flex: 1;
     background-color: #0b141e;
     border-radius: 30px;
+    min-height: 40px;
+    width: 100%;
+    grid-template-columns: repeat(8, 1fr);
+    padding: 10px;
+    gap: 0;
+    overflow: hidden;
 }
 
 .selected-augs .augments-child {
@@ -525,7 +532,7 @@ span.count-augments {
 }
 
 .builder-list-augments .builder-head {
-    margin: 15px;
+    margin: 15px 22px;
     display: flex;
     align-items: center;
     gap: 30px;
@@ -630,7 +637,90 @@ span.count-augments {
     color: #0b141e;
 }
 
+/* builder-extension */
+.dragging {
+    opacity: 0.7;
+    transform: scale(1.1);
+    transition: all 0.2s ease;
+}
+.save-comp-wrapper {
+    position: relative;
+    user-select: none;
+    display: flex;
+    justify-content: flex-end;
+}
 
+.save-comp-menu .save-comp-option {
+    padding: 10px 20px;
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: left;
+    display: flex;
+    gap: 15px;
+}
+.save-comp-menu .save-comp-option:hover {
+    background: var(--button-color);
+    color: black;
+}
+
+.builder-extension button:hover {
+    background-color: #45a049;
+}
+button.btn-builder-show-name {
+    justify-content: flex-end;
+}
+button.btn-builder-show-name .fa-eye {
+    display: none;
+}
+button.btn-builder-show-name .fa-eye-slash {
+    display: inline-block;
+}
+.builder-show-name button.btn-builder-show-name .fa-eye {
+    display: inline-block;
+}
+.builder-show-name button.btn-builder-show-name .fa-eye-slash {
+    display: none;
+}
+.btn-builder-show-name .hide-text {
+    display: none;
+  }
+  
+  .builder-show-name .btn-builder-show-name .show-text {
+    display: none;
+  }
+  
+  .builder-show-name .btn-builder-show-name .hide-text {
+    display: inline;
+  }
+  
+.save-comp-menu {
+    position: absolute;
+    top: calc(100% + 5px);
+    left: 0;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    min-width: 180px;
+    background: #0f1510;
+    border: var(--border-tier-list);
+    border-radius: 10px;
+    overflow: hidden;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.3s ease;
+    z-index: 100;
+  }
+  .save-comp-menu.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+
+
+/* Media min-width 768px */
 @media (min-width: 768px) {
     .builder-chessboard .position-comp {
         margin-left: 0;
@@ -638,9 +728,14 @@ span.count-augments {
 
 }
 
+/* Media max-width 768px */
 @media (max-width: 768px) {
     .builder-container {
         margin: 0;
+    }
+    .builder-extension {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
     }
 
     .builder-list-augments .builder-head {
@@ -649,11 +744,16 @@ span.count-augments {
     }
 
     .builder-list-augments .builder-search {
-        width: 90%;
+        width: 100%;
     }
 
     .selected-augs-wrapper {
         flex-direction: column;
+    }
+
+    .selected-augs {
+        grid-template-columns: repeat(4, 1fr);
+        grid-template-rows: repeat(2, 1fr);
     }
 
     .selected-action {
@@ -675,6 +775,7 @@ span.count-augments {
     .builder-chessboard {
         width: 100%;
         order: 1;
+        padding: 15px;
     }
 
     /*  */
@@ -699,7 +800,16 @@ span.count-augments {
 
     .builder-augments {
         grid-template-columns: repeat(4, 1fr);
-        grid-template-rows: repeat(2, 30px);
+        grid-template-rows: repeat(2, 1fr);
+        min-height: 74px;
+    }
+
+    .builder-augments span.builder-title {
+        position: absolute;
+        left: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        margin: 0;
     }
 
     .builder-augments .augments-child {
@@ -718,4 +828,22 @@ span.count-augments {
         display: none;
     }
 
+}
+
+/* 📱 Mobile nhỏ */
+@media (max-width: 575px) {
+    .builder-chessboard {
+        padding: 8px;
+    }
+    .builder-augments .builder-icon-augs img{
+        width: 55px;
+        height: 55px;
+    }
+    .builder-augments {
+        gap: 8px;
+        padding: 8px;
+    }
+    .builder-extension button {
+        font-size: 9px;
+    }
 }

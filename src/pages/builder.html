@@ -47,13 +47,29 @@
                     <i class="fa-solid fa-broom"></i>
                     <span>Clear</span>
                 </button>
-                <div class="toggle-container tierlist-toggle"><span class="toggle-label">Ẩn Tên</span>
-                    <div class="toggle active"></div>
-                </div>
+                <button class="btn-builder-show-name" data-action="showname">
+                    <i class="fa-regular fa-eye-slash"></i>
+                    <i class="fa-regular fa-eye"></i>
+                    <span class="show-text">Show Name</span>
+                    <span class="hide-text">Hide Name</span>
+                  </button>
+                  
                 <button class="builder-copy" data-action="teamCode">
                     <i class="fa-solid fa-copy"></i>
                     <span>Copy Team Code</span>
                 </button>
+                
+                <div class="save-comp-wrapper">
+                    <button class="builder-save-comp">
+                        <i class="fa-solid fa-save"></i>
+                        <span>Save Comp</span>
+                    </button>
+                    <div class="save-comp-menu">
+                        <button class="save-comp-option" data-action="copy-url"><i class="fa-solid fa-link"></i>Copy URL</button>
+                        <button class="save-comp-option" data-action="add-bookmark"><i class="fa-solid fa-bookmark"></i>Add To Bookmarks</button>
+                    </div>
+                </div>
+                
             </div>
         </div>
         <div class="builder-augments">

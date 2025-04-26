@@ -391,3 +391,25 @@ export function filterInput(container, input) {
     });
 }
 
+// customTooltip
+export function customTooltip(message, x, y, duration = 2000) {
+    const tooltip = document.createElement('div');
+    tooltip.classList.add('custom-tooltip');
+    tooltip.textContent = message;
+
+    // Tính toán vị trí dựa trên scroll
+    tooltip.style.left = `${x + window.scrollX + 10}px`;
+    tooltip.style.top = `${y + window.scrollY + 10}px`;
+
+    document.body.appendChild(tooltip);
+
+    // Thêm lớp show để kích hoạt hiệu ứng
+    requestAnimationFrame(() => {
+        tooltip.classList.add('show');
+    });
+
+    setTimeout(() => {
+        tooltip.classList.remove('show'); // Xóa lớp show trước khi xóa
+        setTimeout(() => tooltip.remove(), 200); // Đợi hiệu ứng hoàn tất
+    }, duration);
+}
