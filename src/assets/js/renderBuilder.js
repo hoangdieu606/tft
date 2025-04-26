@@ -15,6 +15,9 @@ export function renderBuilder(data, hexIndexData) {
     const clearButton = document.querySelector('.builder-clear');
     const teamCodeButton = document.querySelector('.builder-copy');
     const positionComp = document.querySelector('.position-comp');
+    const chessboard = document.querySelector('.builder-chessboard');
+    const isTouchDevice = 'ontouchstart' in window;
+    let currentDragPreview = null;
 
     if (
         !builderChampions ||
@@ -29,8 +32,10 @@ export function renderBuilder(data, hexIndexData) {
         !selectedAugsOk ||
         !clearButton ||
         !teamCodeButton ||
-        !positionComp
+        !positionComp ||
+        !chessboard
     ) {
+        console.warn('Missing required DOM elements');
         return;
     }
 
@@ -62,6 +67,7 @@ export function renderBuilder(data, hexIndexData) {
     } = data;
 
     if (!champions || !items || !augments || !traits) {
+        console.warn('Missing required data');
         return;
     }
 
@@ -98,8 +104,8 @@ export function renderBuilder(data, hexIndexData) {
                 const hexagon = document.querySelector(`.hexagon[data-index="${index}"]`);
                 const items = hexagon
                     ? Array.from(hexagon.querySelectorAll('.hexagon-items .item-span img')).map(
-                        img => itemMap.indexOf(img.dataset.apiName)
-                    )
+                          img => itemMap.indexOf(img.dataset.apiName)
+                      )
                     : [];
                 const stars = hexagon
                     ? parseInt(hexagon.querySelector('.hexagon-icon')?.dataset.starState || 0)
@@ -235,19 +241,19 @@ export function renderBuilder(data, hexIndexData) {
                 selectedAugments.push(...augmentsToRender);
                 builderAugments.innerHTML = augmentsToRender.length > 0
                     ? augmentsToRender
-                        .map(
-                            aug => `
-              <div class="augments-child augs-tier-${aug.tier} tier-${aug.tier2}" data-api-name="${aug.apiName}">
-                <img src="${aug.icon}" alt="${aug.name}">
-                <span>${aug.name}</span>
-              </div>
-            `
-                        )
-                        .join('')
+                          .map(
+                              aug => `
+                              <div class="augments-child augs-tier-${aug.tier} tier-${aug.tier2}" data-api-name="${aug.apiName}">
+                                  <img src="${aug.icon}" alt="${aug.name}">
+                                  <span>${aug.name}</span>
+                              </div>
+                          `
+                          )
+                          .join('')
                     : `
-              <span class="builder-title">Augments</span>
-              <span class="builder-icon-augs"><img src="/assets/images/add-augs.png" alt=""></span>
-            `;
+                      <span class="builder-title">Augments</span>
+                      <span class="builder-icon-augs"><img src="/assets/images/add-augs.png" alt=""></span>
+                  `;
                 countAugments.textContent = augmentsToRender.length;
                 renderSelectedAugments();
             }
@@ -345,7 +351,8 @@ export function renderBuilder(data, hexIndexData) {
                             }
                             if (!emblemTraitsByApiName[apiName].has(emblemTraitApiName)) {
                                 emblemTraitsByApiName[apiName].add(emblemTraitApiName);
-                                traitCounts[emblemTraitApiName] = (traitCounts[emblemTraitApiName] || 0) + 1;
+                                traitCounts[emblemTraitApiName] =
+                                    (traitCounts[emblemTraitApiName] || 0) + 1;
                             }
                         }
                     });
@@ -412,30 +419,34 @@ export function renderBuilder(data, hexIndexData) {
             builderTraits.innerHTML = traitList
                 .map(
                     ({ apiName, name, icon, count, style, effects, activeMinUnits, badgeImage }) => {
-                        const minUnitsList = effects.map(effect => effect.minUnits).sort((a, b) => a - b);
+                        const minUnitsList = effects
+                            .map(effect => effect.minUnits)
+                            .sort((a, b) => a - b);
                         const traitNumberHTML = minUnitsList
                             .map(minUnit => {
                                 const isActive = count >= minUnit && minUnit === activeMinUnits;
-                                return `<span style="opacity: ${isActive ? 1 : 0.5}">${minUnit}</span>`;
+                                return `<span style="opacity: ${
+                                    isActive ? 1 : 0.5
+                                }">${minUnit}</span>`;
                             })
-                            .join('<span>I</span>');
+                            .join('<span>|</span>');
 
                         return `
-              <div class="trait-item style-${style}" data-api-name="${apiName}">
-                <div class="trait-icon">
-                  <img src="${icon}" alt="${name}" class="style-${style}">
-                  <img src="${badgeImage}" alt="trait badge">
-                </div>
-                <div class="trait-content">
-                  <div class="trait-title">
-                    <span class="trait-count">${count}</span>
-                    <span>-</span>
-                    <span class="trait-name">${name}</span>
-                  </div>
-                  <div class="trait-number">${traitNumberHTML}</div>
-                </div>
-              </div>
-            `;
+                        <div class="trait-item style-${style}" data-api-name="${apiName}">
+                            <div class="trait-icon">
+                                <img src="${icon}" alt="${name}" class="style-${style}">
+                                <img src="${badgeImage}" alt="trait badge">
+                            </div>
+                            <div class="trait-content">
+                                <div class="trait-title">
+                                    <span class="trait-count">${count}</span>
+                                    <span>-</span>
+                                    <span class="trait-name">${name}</span>
+                                </div>
+                                <div class="trait-number">${traitNumberHTML}</div>
+                            </div>
+                        </div>
+                    `;
                     }
                 )
                 .join('');
@@ -443,24 +454,150 @@ export function renderBuilder(data, hexIndexData) {
         setupTooltips();
     }
 
+    function createDragPreview(icon, name) {
+        if (currentDragPreview) {
+            removeDragPreview(currentDragPreview);
+        }
+        const preview = document.createElement('div');
+        preview.className = 'drag-preview';
+        preview.style.position = 'absolute';
+        preview.style.zIndex = '1000';
+        preview.style.pointerEvents = 'none';
+        preview.style.width = '48px';
+        preview.style.height = '48px';
+        preview.style.backgroundImage = `url(${icon})`;
+        preview.style.backgroundSize = 'cover';
+        preview.style.border = '2px solid #fff';
+        preview.style.borderRadius = '8px';
+        preview.style.boxShadow = '0 2px 8px rgba(0,0,0,0.3)';
+        preview.dataset.name = name;
+        document.body.appendChild(preview);
+        currentDragPreview = preview;
+        return preview;
+    }
+
+    function updateDragPreview(preview, x, y) {
+        if (preview) {
+            preview.style.left = `${x - 24}px`;
+            preview.style.top = `${y - 24}px`;
+        }
+    }
+
+    function removeDragPreview(preview) {
+        if (preview && preview.parentNode) {
+            preview.parentNode.removeChild(preview);
+        }
+        if (preview === currentDragPreview) {
+            currentDragPreview = null;
+        }
+    }
+
+    function updateStarState(hexagonIcon) {
+        let starState = parseInt(hexagonIcon.dataset.starState) || 0;
+        starState = (starState + 1) % 3;
+        hexagonIcon.dataset.starState = starState;
+
+        const existingStarChamp = hexagonIcon.querySelector('.star-champ');
+        if (existingStarChamp) hexagonIcon.removeChild(existingStarChamp);
+
+        if (starState === 1) {
+            const starChamp = document.createElement('div');
+            starChamp.classList.add('star-champ', 'three-stars');
+            starChamp.innerHTML = `
+                <span><i class="fa-solid fa-star"></i></span>
+                <span><i class="fa-solid fa-star"></i></span>
+                <span><i class="fa-solid fa-star"></i></span>
+            `;
+            hexagonIcon.insertAdjacentElement('afterbegin', starChamp);
+        } else if (starState === 2) {
+            const starChamp = document.createElement('div');
+            starChamp.classList.add('star-champ', 'four-stars');
+            starChamp.innerHTML = `
+                <span><i class="fa-solid fa-star"></i></span>
+                <span><i class="fa-solid fa-star"></i></span>
+                <span><i class="fa-solid fa-star"></i></span>
+                <span><i class="fa-solid fa-star"></i></span>
+            `;
+            hexagonIcon.insertAdjacentElement('afterbegin', starChamp);
+        }
+        updateTeamUrl();
+    }
+
     function attachHexagonEvents(hexagons) {
         hexagons.forEach(hexagon => {
-            hexagon.addEventListener('dragover', e => e.preventDefault());
-            hexagon.addEventListener('touchmove', e => {
-                if (hexagon.dataset.touchData) {
-                    e.preventDefault();
-                }
-            }, { passive: false });
+            let touchStartTime = 0;
+
+            hexagon.addEventListener('dragover', e => {
+                e.preventDefault();
+                hexagon.classList.add('drag-over');
+            });
+
+            hexagon.addEventListener('dragleave', () => {
+                hexagon.classList.remove('drag-over');
+            });
 
             hexagon.addEventListener('drop', e => {
                 e.preventDefault();
                 handleDrop(e, hexagon);
+                hexagon.classList.remove('drag-over');
+                removeDragPreview(currentDragPreview);
+            });
+
+            hexagon.addEventListener('touchstart', e => {
+                const hexagonIcon = hexagon.querySelector('.hexagon-icon');
+                if (hexagonIcon && !e.target.closest('.item-span')) {
+                    touchStartTime = Date.now();
+                    hexagon.dataset.touchData = JSON.stringify({
+                        type: 'move-champion',
+                        hexagonIndex: hexagon.dataset.index,
+                    });
+                    hexagonIcon.classList.add('dragging');
+                    const icon = hexagonIcon.querySelector('.hexagon-champ img').src;
+                    const name = hexagonIcon.querySelector('.hexagon-name').textContent;
+                    createDragPreview(icon, name);
+                    const touch = e.touches[0];
+                    updateDragPreview(currentDragPreview, touch.clientX, touch.clientY);
+                }
             });
 
             hexagon.addEventListener('touchend', e => {
-                e.preventDefault();
-                handleTouchEnd(e, hexagon);
+                const touchDuration = Date.now() - touchStartTime;
+                const hexagonIcon = hexagon.querySelector('.hexagon-icon');
+
+                if (touchDuration < 200 && hexagonIcon && !e.target.closest('.item-span')) {
+                    updateStarState(hexagonIcon);
+                } else if (!e.target.closest('.item-span')) {
+                    handleTouchEnd(e, hexagon);
+                }
+
+                if (hexagon.dataset.touchData) {
+                    delete hexagon.dataset.touchData;
+                    if (hexagonIcon) {
+                        hexagonIcon.classList.remove('dragging');
+                    }
+                    removeDragPreview(currentDragPreview);
+                }
             });
+
+            hexagon.addEventListener('touchcancel', () => {
+                const hexagonIcon = hexagon.querySelector('.hexagon-icon');
+                if (hexagon.dataset.touchData) {
+                    delete hexagon.dataset.touchData;
+                    if (hexagonIcon) {
+                        hexagonIcon.classList.remove('dragging');
+                    }
+                    removeDragPreview(currentDragPreview);
+                }
+            });
+
+            if (!isTouchDevice) {
+                hexagon.addEventListener('click', e => {
+                    const hexagonIcon = hexagon.querySelector('.hexagon-icon');
+                    if (hexagonIcon && !e.target.closest('.item-span')) {
+                        updateStarState(hexagonIcon);
+                    }
+                });
+            }
 
             hexagon.addEventListener('dragstart', e => {
                 const hexagonIcon = hexagon.querySelector('.hexagon-icon');
@@ -473,17 +610,6 @@ export function renderBuilder(data, hexIndexData) {
                         })
                     );
                     hexagonIcon.setAttribute('draggable', 'true');
-                }
-            });
-
-            hexagon.addEventListener('touchstart', e => {
-                const hexagonIcon = hexagon.querySelector('.hexagon-icon');
-                if (hexagonIcon && !e.target.closest('.item-span')) {
-                    hexagon.dataset.touchData = JSON.stringify({
-                        type: 'move-champion',
-                        hexagonIndex: hexagon.dataset.index,
-                    });
-                    hexagonIcon.classList.add('dragging');
                 }
             });
 
@@ -500,42 +626,27 @@ export function renderBuilder(data, hexIndexData) {
                     updateTeamUrl();
                 }
             });
-
-            hexagon.addEventListener('click', e => {
-                const hexagonIcon = hexagon.querySelector('.hexagon-icon');
-                if (!hexagonIcon || e.target.closest('.item-span')) return;
-
-                e.stopPropagation();
-                let starState = parseInt(hexagonIcon.dataset.starState) || 0;
-                starState = (starState + 1) % 3;
-                hexagonIcon.dataset.starState = starState;
-
-                const existingStarChamp = hexagonIcon.querySelector('.star-champ');
-                if (existingStarChamp) hexagonIcon.removeChild(existingStarChamp);
-
-                if (starState === 1) {
-                    const starChamp = document.createElement('div');
-                    starChamp.classList.add('star-champ', 'three-stars');
-                    starChamp.innerHTML = `
-            <span><i class="fa-solid fa-star"></i></span>
-            <span><i class="fa-solid fa-star"></i></span>
-            <span><i class="fa-solid fa-star"></i></span>
-          `;
-                    hexagonIcon.insertAdjacentElement('afterbegin', starChamp);
-                } else if (starState === 2) {
-                    const starChamp = document.createElement('div');
-                    starChamp.classList.add('star-champ', 'four-stars');
-                    starChamp.innerHTML = `
-            <span><i class="fa-solid fa-star"></i></span>
-            <span><i class="fa-solid fa-star"></i></span>
-            <span><i class="fa-solid fa-star"></i></span>
-            <span><i class="fa-solid fa-star"></i></span>
-          `;
-                    hexagonIcon.insertAdjacentElement('afterbegin', starChamp);
-                }
-                updateTeamUrl();
-            });
         });
+
+        chessboard.addEventListener(
+            'touchmove',
+            e => {
+                const source = document.querySelector('[data-touch-data]');
+                if (source) {
+                    e.preventDefault();
+                    const touch = e.touches[0];
+                    updateDragPreview(currentDragPreview, touch.clientX, touch.clientY);
+
+                    const targetElement = document.elementFromPoint(touch.clientX, touch.clientY);
+                    const targetHexagon = targetElement?.closest('.hexagon');
+                    hexagons.forEach(h => h.classList.remove('drag-over'));
+                    if (targetHexagon) {
+                        targetHexagon.classList.add('drag-over');
+                    }
+                }
+            },
+            { passive: false }
+        );
     }
 
     function handleDrop(e, hexagon) {
@@ -597,9 +708,25 @@ export function renderBuilder(data, hexIndexData) {
                     addItemToHexagon(hexagon, data);
                     updateTeamUrl();
                 }
+            } else if (data.type === 'remove-item') {
+                const sourceHexagon = document.querySelector(
+                    `.hexagon[data-index="${data.hexagonIndex}"]`
+                );
+                if (sourceHexagon) {
+                    const hexagonItems = sourceHexagon.querySelector('.hexagon-items');
+                    const itemSpan = hexagonItems.querySelector(
+                        `.item-span img[data-api-name="${data.apiName}"]`
+                    )?.parentElement;
+                    if (itemSpan) {
+                        hexagonItems.removeChild(itemSpan);
+                        shouldUpdateTraits = true;
+                        renderBuilderTraits();
+                        updateTeamUrl();
+                    }
+                }
             }
         } catch (error) {
-            // No console.error
+            console.warn('Error handling drop:', error);
         }
     }
 
@@ -608,6 +735,8 @@ export function renderBuilder(data, hexIndexData) {
         const targetElement = document.elementFromPoint(touch.clientX, touch.clientY);
         const targetHexagon = targetElement?.closest('.hexagon');
         const data = hexagon.dataset.touchData ? JSON.parse(hexagon.dataset.touchData) : null;
+
+        hexagons.forEach(h => h.classList.remove('drag-over'));
 
         if (data && targetHexagon && targetHexagon !== hexagon) {
             try {
@@ -682,15 +811,23 @@ export function renderBuilder(data, hexIndexData) {
                     }
                 }
             } catch (error) {
-                // No console.error
+                console.warn('Error handling touch end:', error);
             }
-        }
-
-        if (hexagon.dataset.touchData) {
-            delete hexagon.dataset.touchData;
-            const hexagonIcon = hexagon.querySelector('.hexagon-icon');
-            if (hexagonIcon) {
-                hexagonIcon.classList.remove('dragging');
+        } else if (data && !targetHexagon && data.type === 'move-champion') {
+            const sourceHexagon = document.querySelector(
+                `.hexagon[data-index="${data.hexagonIndex}"]`
+            );
+            if (sourceHexagon) {
+                const hexagonIcon = sourceHexagon.querySelector('.hexagon-icon');
+                if (hexagonIcon) {
+                    sourceHexagon.removeChild(hexagonIcon);
+                    sourceHexagon.classList.remove('has-champ');
+                    const index = championOrder.findIndex(o => o.index === data.hexagonIndex);
+                    if (index !== -1) championOrder.splice(index, 1);
+                    shouldUpdateTraits = true;
+                    renderBuilderTraits();
+                    updateTeamUrl();
+                }
             }
         }
     }
@@ -703,49 +840,57 @@ export function renderBuilder(data, hexIndexData) {
             builderChampions.innerHTML = traits
                 .map(
                     ({ name: nameTrait, icon: iconTrait, champions, apiName: apiNameTrait }) => `
-            <div class="builder-list-traits">
-              <div class="list-traits-title" draggable="false">
-                <span><img src="${iconTrait}" alt="${nameTrait}" data-api-name="${apiNameTrait}"></span>
-                <span>${nameTrait}</span>
-              </div>
-              <div class="list-traits-champions">
-                ${champions
-                    .map(
-                        ({ apiName, name }) => `
-                      <div class="tier-list cost-${apiNameAndIconCostRange[apiName][1]}" draggable="true" 
-                           data-api-name="${apiName}" data-range="${apiNameAndIconCostRange[apiName][2]}" 
-                           data-icon="${apiNameAndIconCostRange[apiName][0]}" data-name="${name}">
-                        <div class="hexagon-tier-champ">
-                          <span style="background-image: url(${apiNameAndIconCostRange[apiName][0]})" title="${name}"></span>
+                    <div class="builder-list-traits">
+                        <div class="list-traits-title" draggable="false">
+                            <span><img src="${iconTrait}" alt="${nameTrait}" data-api-name="${apiNameTrait}"></span>
+                            <span>${nameTrait}</span>
                         </div>
-                        <div class="hexagon-title">${name}</div>
-                      </div>
-                    `
-                    )
-                    .join('')}
-              </div>
-            </div>
-          `
+                        <div class="list-traits-champions">
+                            ${champions
+                                .map(
+                                    ({ apiName, name }) => `
+                                    <div class="tier-list cost-${
+                                        apiNameAndIconCostRange[apiName][1]
+                                    }" draggable="true" 
+                                         data-api-name="${apiName}" data-range="${
+                                        apiNameAndIconCostRange[apiName][2]
+                                    }" 
+                                         data-icon="${apiNameAndIconCostRange[apiName][0]}" data-name="${name}">
+                                        <div class="hexagon-tier-champ">
+                                            <span style="background-image: url(${
+                                                apiNameAndIconCostRange[apiName][0]
+                                            })" title="${name}"></span>
+                                        </div>
+                                        <div class="hexagon-title">${name}</div>
+                                    </div>
+                                `
+                                )
+                                .join('')}
+                        </div>
+                    </div>
+                `
                 )
                 .join('');
         } else {
             builderChampions.innerHTML = data
                 .map(
                     ({ apiName, name, icon, cost, range }) => `
-            <div class="tier-list cost-${cost}" draggable="true" 
-                 data-api-name="${apiName}" data-range="${range}" 
-                 data-icon="${icon}" data-name="${name}">
-              <div class="hexagon-tier-champ">
-                <span style="background-image: url(${icon})" title="${name}"></span>
-              </div>
-              <div class="hexagon-title">${name}</div>
-            </div>
-          `
+                    <div class="tier-list cost-${cost}" draggable="true" 
+                         data-api-name="${apiName}" data-range="${range}" 
+                         data-icon="${icon}" data-name="${name}">
+                        <div class="hexagon-tier-champ">
+                            <span style="background-image: url(${icon})" title="${name}"></span>
+                        </div>
+                        <div class="hexagon-title">${name}</div>
+                    </div>
+                `
                 )
                 .join('');
         }
 
         document.querySelectorAll('.tier-list').forEach(champion => {
+            let touchStartTime = 0;
+
             champion.addEventListener('click', () => {
                 const range = parseInt(champion.dataset.range);
                 const rows = {
@@ -817,6 +962,7 @@ export function renderBuilder(data, hexIndexData) {
             });
 
             champion.addEventListener('touchstart', e => {
+                touchStartTime = Date.now();
                 champion.dataset.touchData = JSON.stringify({
                     type: 'champion',
                     apiName: champion.dataset.apiName,
@@ -825,13 +971,10 @@ export function renderBuilder(data, hexIndexData) {
                     cost: parseInt(champion.classList[1].split('-')[1]),
                 });
                 champion.classList.add('dragging');
+                createDragPreview(champion.dataset.icon, champion.dataset.name);
+                const touch = e.touches[0];
+                updateDragPreview(currentDragPreview, touch.clientX, touch.clientY);
             });
-
-            champion.addEventListener('touchmove', e => {
-                if (champion.dataset.touchData) {
-                    e.preventDefault();
-                }
-            }, { passive: false });
 
             champion.addEventListener('touchend', e => {
                 const touch = e.changedTouches[0];
@@ -858,9 +1001,38 @@ export function renderBuilder(data, hexIndexData) {
                 if (champion.dataset.touchData) {
                     delete champion.dataset.touchData;
                     champion.classList.remove('dragging');
+                    removeDragPreview(currentDragPreview);
+                }
+            });
+
+            champion.addEventListener('touchcancel', () => {
+                if (champion.dataset.touchData) {
+                    delete champion.dataset.touchData;
+                    champion.classList.remove('dragging');
+                    removeDragPreview(currentDragPreview);
                 }
             });
         });
+
+        builderChampions.addEventListener(
+            'touchmove',
+            e => {
+                const source = document.querySelector('[data-touch-data]');
+                if (source) {
+                    e.preventDefault();
+                    const touch = e.touches[0];
+                    updateDragPreview(currentDragPreview, touch.clientX, touch.clientY);
+
+                    const targetElement = document.elementFromPoint(touch.clientX, touch.clientY);
+                    const targetHexagon = targetElement?.closest('.hexagon');
+                    hexagons.forEach(h => h.classList.remove('drag-over'));
+                    if (targetHexagon) {
+                        targetHexagon.classList.add('drag-over');
+                    }
+                }
+            },
+            { passive: false }
+        );
     }
 
     function filterBuilderChampions() {
@@ -891,15 +1063,17 @@ export function renderBuilder(data, hexIndexData) {
     builderItems.innerHTML = items
         .map(
             ({ name, icon, category, tier, apiName }) => `
-        <div class="item-child item-${category} tier-${tier}" draggable="true" data-api-name="${apiName}" data-icon="${icon}" data-name="${name}">
-          <img src="${icon}" alt="${name}">
-          <span>${name}</span>
-        </div>
-      `
+            <div class="item-child item-${category} tier-${tier}" draggable="true" data-api-name="${apiName}" data-icon="${icon}" data-name="${name}">
+                <img src="${icon}" alt="${name}">
+                <span>${name}</span>
+            </div>
+        `
         )
         .join('');
 
     document.querySelectorAll('.item-child').forEach(item => {
+        let touchStartTime = 0;
+
         item.addEventListener('click', () => {
             const sortedOrder = [...championOrder].sort((a, b) => b.timestamp - a.timestamp);
             let targetHexagon = null;
@@ -938,6 +1112,7 @@ export function renderBuilder(data, hexIndexData) {
         });
 
         item.addEventListener('touchstart', e => {
+            touchStartTime = Date.now();
             item.dataset.touchData = JSON.stringify({
                 type: 'item',
                 apiName: item.dataset.apiName,
@@ -945,13 +1120,10 @@ export function renderBuilder(data, hexIndexData) {
                 name: item.dataset.name,
             });
             item.classList.add('dragging');
+            createDragPreview(item.dataset.icon, item.dataset.name);
+            const touch = e.touches[0];
+            updateDragPreview(currentDragPreview, touch.clientX, touch.clientY);
         });
-
-        item.addEventListener('touchmove', e => {
-            if (item.dataset.touchData) {
-                e.preventDefault();
-            }
-        }, { passive: false });
 
         item.addEventListener('touchend', e => {
             const touch = e.changedTouches[0];
@@ -967,9 +1139,38 @@ export function renderBuilder(data, hexIndexData) {
             if (item.dataset.touchData) {
                 delete item.dataset.touchData;
                 item.classList.remove('dragging');
+                removeDragPreview(currentDragPreview);
+            }
+        });
+
+        item.addEventListener('touchcancel', () => {
+            if (item.dataset.touchData) {
+                delete item.dataset.touchData;
+                item.classList.remove('dragging');
+                removeDragPreview(currentDragPreview);
             }
         });
     });
+
+    builderItems.addEventListener(
+        'touchmove',
+        e => {
+            const source = document.querySelector('[data-touch-data]');
+            if (source) {
+                e.preventDefault();
+                const touch = e.touches[0];
+                updateDragPreview(currentDragPreview, touch.clientX, touch.clientY);
+
+                const targetElement = document.elementFromPoint(touch.clientX, touch.clientY);
+                const targetHexagon = targetElement?.closest('.hexagon');
+                hexagons.forEach(h => h.classList.remove('drag-over'));
+                if (targetHexagon) {
+                    targetHexagon.classList.add('drag-over');
+                }
+            }
+        },
+        { passive: false }
+    );
 
     function createHexagonContent({ apiName, icon, name, cost, stars = 0 }) {
         const hexagonIcon = document.createElement('div');
@@ -994,20 +1195,20 @@ export function renderBuilder(data, hexIndexData) {
             const starChamp = document.createElement('div');
             starChamp.classList.add('star-champ', 'three-stars');
             starChamp.innerHTML = `
-        <span><i class="fa-solid fa-star"></i></span>
-        <span><i class="fa-solid fa-star"></i></span>
-        <span><i class="fa-solid fa-star"></i></span>
-      `;
+                <span><i class="fa-solid fa-star"></i></span>
+                <span><i class="fa-solid fa-star"></i></span>
+                <span><i class="fa-solid fa-star"></i></span>
+            `;
             hexagonIcon.appendChild(starChamp);
         } else if (stars === 2) {
             const starChamp = document.createElement('div');
             starChamp.classList.add('star-champ', 'four-stars');
             starChamp.innerHTML = `
-        <span><i class="fa-solid fa-star"></i></span>
-        <span><i class="fa-solid fa-star"></i></span>
-        <span><i class="fa-solid fa-star"></i></span>
-        <span><i class="fa-solid fa-star"></i></span>
-      `;
+                <span><i class="fa-solid fa-star"></i></span>
+                <span><i class="fa-solid fa-star"></i></span>
+                <span><i class="fa-solid fa-star"></i></span>
+                <span><i class="fa-solid fa-star"></i></span>
+            `;
             hexagonIcon.appendChild(starChamp);
         }
 
@@ -1057,6 +1258,8 @@ export function renderBuilder(data, hexIndexData) {
         itemSpan.appendChild(itemImg);
         hexagonItems.appendChild(itemSpan);
 
+        let touchStartTime = 0;
+
         itemSpan.setAttribute('draggable', 'true');
         itemSpan.addEventListener('dragstart', e => {
             e.dataTransfer.setData(
@@ -1069,48 +1272,65 @@ export function renderBuilder(data, hexIndexData) {
             );
         });
 
-        itemSpan.addEventListener('touchstart', e => {
-            itemSpan.dataset.touchData = JSON.stringify({
-                type: 'remove-item',
-                apiName: itemData.apiName,
-                hexagonIndex: hexagon.dataset.index,
+        if (isTouchDevice) {
+            itemSpan.addEventListener('touchstart', e => {
+                e.stopPropagation();
+                touchStartTime = Date.now();
+                itemSpan.dataset.touchData = JSON.stringify({
+                    type: 'remove-item',
+                    apiName: itemData.apiName,
+                    hexagonIndex: hexagon.dataset.index,
+                });
+                itemSpan.classList.add('dragging');
+                createDragPreview(itemData.icon, itemData.name);
+                const touch = e.touches[0];
+                updateDragPreview(currentDragPreview, touch.clientX, touch.clientY);
             });
-            itemSpan.classList.add('dragging');
-        });
 
-        itemSpan.addEventListener('touchmove', e => {
-            if (itemSpan.dataset.touchData) {
+            itemSpan.addEventListener('touchend', e => {
+                const touchDuration = Date.now() - touchStartTime;
+                const touch = e.changedTouches[0];
+                const targetElement = document.elementFromPoint(touch.clientX, touch.clientY);
+                const targetHexagon = targetElement?.closest('.hexagon');
+                const data = itemSpan.dataset.touchData ? JSON.parse(itemSpan.dataset.touchData) : null;
+
+                if (touchDuration < 200 && e.target.closest('.item-span')) {
+                    e.preventDefault();
+                    hexagonItems.removeChild(itemSpan);
+                    shouldUpdateTraits = true;
+                    renderBuilderTraits();
+                    updateTeamUrl();
+                } else if (data && (!targetHexagon || targetHexagon.dataset.index !== data.hexagonIndex)) {
+                    hexagonItems.removeChild(itemSpan);
+                    shouldUpdateTraits = true;
+                    renderBuilderTraits();
+                    updateTeamUrl();
+                }
+
+                if (itemSpan.dataset.touchData) {
+                    delete itemSpan.dataset.touchData;
+                    itemSpan.classList.remove('dragging');
+                    removeDragPreview(currentDragPreview);
+                }
+            });
+
+            itemSpan.addEventListener('touchcancel', () => {
+                if (itemSpan.dataset.touchData) {
+                    delete itemSpan.dataset.touchData;
+                    itemSpan.classList.remove('dragging');
+                    removeDragPreview(currentDragPreview);
+                }
+            });
+        } else {
+            itemSpan.addEventListener('click', e => {
                 e.preventDefault();
-            }
-        }, { passive: false });
-
-        itemSpan.addEventListener('touchend', e => {
-            const touch = e.changedTouches[0];
-            const targetElement = document.elementFromPoint(touch.clientX, touch.clientY);
-            const targetHexagon = targetElement?.closest('.hexagon');
-            const data = itemSpan.dataset.touchData ? JSON.parse(itemSpan.dataset.touchData) : null;
-
-            if (data && (!targetHexagon || targetHexagon.dataset.index !== data.hexagonIndex)) {
+                e.stopPropagation();
                 hexagonItems.removeChild(itemSpan);
                 shouldUpdateTraits = true;
                 renderBuilderTraits();
                 updateTeamUrl();
-            }
-
-            if (itemSpan.dataset.touchData) {
-                delete itemSpan.dataset.touchData;
-                itemSpan.classList.remove('dragging');
-            }
-        });
-
-        itemSpan.addEventListener('click', e => {
-            e.preventDefault();
-            e.stopPropagation();
-            hexagonItems.removeChild(itemSpan);
-            shouldUpdateTraits = true;
-            renderBuilderTraits();
-            updateTeamUrl();
-        });
+            });
+        }
 
         itemSpan.addEventListener('contextmenu', e => {
             e.preventDefault();
@@ -1161,52 +1381,17 @@ export function renderBuilder(data, hexIndexData) {
                     }
                 }
             } catch (error) {
-                // No console.error
+                console.warn('Error handling body drop:', error);
             }
         }
     });
 
-    document.body.addEventListener('touchend', e => {
-        const touch = e.changedTouches[0];
-        const targetElement = document.elementFromPoint(touch.clientX, touch.clientY);
-        if (!targetElement?.closest('.hexagon')) {
-            const sourceElement = document.querySelector('[data-touch-data]');
-            if (sourceElement) {
-                const data = sourceElement.dataset.touchData ? JSON.parse(sourceElement.dataset.touchData) : null;
-                if (data) {
-                    if (data.type === 'move-champion') {
-                        const hexagon = document.querySelector(`.hexagon[data-index="${data.hexagonIndex}"]`);
-                        if (hexagon) {
-                            const hexagonIcon = hexagon.querySelector('.hexagon-icon');
-                            if (hexagonIcon) {
-                                hexagon.removeChild(hexagonIcon);
-                                hexagon.classList.remove('has-champ');
-                                const index = championOrder.findIndex(o => o.index === data.hexagonIndex);
-                                if (index !== -1) championOrder.splice(index, 1);
-                                shouldUpdateTraits = true;
-                                renderBuilderTraits();
-                                updateTeamUrl();
-                            }
-                        }
-                    } else if (data.type === 'remove-item') {
-                        const hexagon = document.querySelector(`.hexagon[data-index="${data.hexagonIndex}"]`);
-                        if (hexagon) {
-                            const hexagonItems = hexagon.querySelector('.hexagon-items');
-                            const itemSpan = hexagonItems.querySelector(
-                                `.item-span img[data-api-name="${data.apiName}"]`
-                            )?.parentElement;
-                            if (itemSpan) {
-                                hexagonItems.removeChild(itemSpan);
-                                shouldUpdateTraits = true;
-                                renderBuilderTraits();
-                                updateTeamUrl();
-                            }
-                        }
-                    }
-                }
-                delete sourceElement.dataset.touchData;
-                sourceElement.classList.remove('dragging');
-            }
+    document.body.addEventListener('touchcancel', () => {
+        const source = document.querySelector('[data-touch-data]');
+        if (source) {
+            delete source.dataset.touchData;
+            source.classList.remove('dragging');
+            removeDragPreview(currentDragPreview);
         }
     });
 
@@ -1221,9 +1406,9 @@ export function renderBuilder(data, hexIndexData) {
         championOrder.length = 0;
         selectedAugments.length = 0;
         builderAugments.innerHTML = `
-      <span class="builder-title">Augments</span>
-      <span class="builder-icon-augs"><img src="/assets/images/add-augs.png" alt=""></span>
-    `;
+            <span class="builder-title">Augments</span>
+            <span class="builder-icon-augs"><img src="/assets/images/add-augs.png" alt=""></span>
+        `;
         countAugments.textContent = '0';
         renderSelectedAugments();
         shouldUpdateTraits = true;
@@ -1243,14 +1428,12 @@ export function renderBuilder(data, hexIndexData) {
     function showNameChessBoard() {
         const nameChessboard = document.querySelector('.builder-chessboard');
         const showNameButton = document.querySelector('.btn-builder-show-name');
-    
-        // Đọc trạng thái từ localStorage khi trang load
+
         const savedState = localStorage.getItem('builder-show-name');
         if (savedState === 'true') {
             nameChessboard.classList.add('builder-show-name');
         }
-    
-        // Gán sự kiện click để toggle + lưu lại trạng thái
+
         showNameButton.addEventListener('click', () => {
             const isVisible = nameChessboard.classList.toggle('builder-show-name');
             localStorage.setItem('builder-show-name', isVisible);
@@ -1284,10 +1467,19 @@ export function renderBuilder(data, hexIndexData) {
                         } else if (window.external && 'AddFavorite' in window.external) {
                             window.external.AddFavorite(currentUrl, title);
                         } else {
-                            customTooltip('Nhấn Ctrl+D (Windows) hoặc Cmd+D (Mac) để lưu bookmark', e.clientX, e.clientY, 3000);
+                            customTooltip(
+                                'Nhấn Ctrl+D (Windows) hoặc Cmd+D (Mac) để lưu bookmark',
+                                e.clientX,
+                                e.clientY,
+                                3000
+                            );
                         }
                     } catch (error) {
-                        customTooltip('Không thể lưu bookmark tự động. Vui lòng sử dụng Ctrl+D/Cmd+D', e.clientX, e.clientY);
+                        customTooltip(
+                            'Không thể lưu bookmark tự động. Vui lòng sử dụng Ctrl+D/Cmd+D',
+                            e.clientX,
+                            e.clientY
+                        );
                     }
                 }
                 menu.classList.remove('show');
@@ -1305,11 +1497,11 @@ export function renderBuilder(data, hexIndexData) {
         selectedAugs.innerHTML = selectedAugments
             .map(
                 aug => `
-          <div class="augments-child augs-tier-${aug.tier} tier-${aug.tier2}" data-api-name="${aug.apiName}">
-            <img src="${aug.icon}" alt="${aug.name}">
-            <span>${aug.name}</span>
-          </div>
-        `
+                <div class="augments-child augs-tier-${aug.tier} tier-${aug.tier2}" data-api-name="${aug.apiName}">
+                    <img src="${aug.icon}" alt="${aug.name}">
+                    <span>${aug.name}</span>
+                </div>
+            `
             )
             .join('');
 
@@ -1326,9 +1518,9 @@ export function renderBuilder(data, hexIndexData) {
 
         if (selectedAugments.length === 0) {
             builderAugments.innerHTML = `
-        <span class="builder-title">Augments</span>
-        <span class="builder-icon-augs"><img src="/assets/images/add-augs.png" alt=""></span>
-      `;
+                <span class="builder-title">Augments</span>
+                <span class="builder-icon-augs"><img src="/assets/images/add-augs.png" alt=""></span>
+            `;
         }
         setupTooltips();
         updateTeamUrl();
@@ -1338,16 +1530,16 @@ export function renderBuilder(data, hexIndexData) {
         builderRenderAugs.innerHTML = augments
             .map(
                 ({ name, icon, tier, tier2, apiName }) => `
-          <div class="augments-child augs-tier-${tier} tier-${tier2}" data-api-name="${apiName}">
-            <img src="${icon}" alt="${name}" data-api-name="${apiName}">
-            <span>${name}</span>
-          </div>
-        `
+                <div class="augments-child augs-tier-${tier} tier-${tier2}" data-api-name="${apiName}">
+                    <img src="${icon}" alt="${name}" data-api-name="${apiName}">
+                    <span>${name}</span>
+                </div>
+            `
             )
             .join('');
 
         document.querySelectorAll('.builder-render-augs .augments-child').forEach(augElement => {
-            augElement.addEventListener('click', (e) => {
+            augElement.addEventListener('click', e => {
                 const apiName = augElement.querySelector('img').dataset.apiName;
                 const aug = augments.find(a => a.apiName === apiName);
                 if (!aug) return;
@@ -1402,18 +1594,18 @@ export function renderBuilder(data, hexIndexData) {
     selectedAugsOk.addEventListener('click', () => {
         if (selectedAugments.length === 0) {
             builderAugments.innerHTML = `
-        <span class="builder-title">Augments</span>
-        <span class="builder-icon-augs"><img src="/assets/images/add-augs.png" alt=""></span>
-      `;
+                <span class="builder-title">Augments</span>
+                <span class="builder-icon-augs"><img src="/assets/images/add-augs.png" alt=""></span>
+            `;
         } else {
             builderAugments.innerHTML = selectedAugments
                 .map(
                     aug => `
-            <div class="augments-child augs-tier-${aug.tier} tier-${aug.tier2}" data-api-name="${aug.apiName}">
-              <img src="${aug.icon}" alt="${aug.name}">
-              <span>${aug.name}</span>
-            </div>
-          `
+                    <div class="augments-child augs-tier-${aug.tier} tier-${aug.tier2}" data-api-name="${aug.apiName}">
+                        <img src="${aug.icon}" alt="${aug.name}">
+                        <span>${aug.name}</span>
+                    </div>
+                `
                 )
                 .join('');
         }

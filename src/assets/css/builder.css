@@ -31,6 +31,10 @@
     padding: 15px 30px;
     width: 60%;
 }
+.builder-chessboard .hexagon.drag-over {
+    background: var(--champ-cost-6-background);
+    /* border: 2px solid #00ff00; */
+}
 
 .builder-chessboard .hexagon .hexagon-name {
     font-size: 1.2vmin;
@@ -717,6 +721,46 @@ button.btn-builder-show-name .fa-eye-slash {
     visibility: visible;
     transform: translateY(0);
 }
+
+/* New css */
+.builder-champions .builder-list,
+.builder-items .builder-list {
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-y;
+}
+
+/* .drag-preview {
+    position: absolute;
+    z-index: 1000;
+    width: 48px;
+    height: 48px;
+    background-size: cover;
+    border: 2px solid #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    pointer-events: none;
+}
+
+.hexagon.drag-over {
+    background-color: rgba(255, 255, 255, 0.2);
+    border: 2px solid #00ff00;
+} */
+
+.hexagon-icon {
+    touch-action: manipulation;
+}
+
+.item-span {
+    touch-action: manipulation;
+}
+
+
+/* .hexagon {
+    background: transparent;
+    border: 2px solid transparent;
+    transition: background-color 0.2s, border 0.2s;
+} */
 
 
 
