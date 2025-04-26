@@ -701,7 +701,7 @@ button.btn-builder-show-name .fa-eye-slash {
 .save-comp-menu {
     position: absolute;
     top: calc(100% + 5px);
-    left: 0;
+    right: 0;
     display: flex;
     flex-direction: column;
     width: 100%;
