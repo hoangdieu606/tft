@@ -312,8 +312,6 @@ export function renderBuilder(data, hexIndexData) {
         return `02${hexIndexes.join('')}TFTSet14`;
     }
 
-
-
     function renderBuilderTraits() {
         if (!shouldUpdateTraits) return;
         shouldUpdateTraits = false;
@@ -448,7 +446,11 @@ export function renderBuilder(data, hexIndexData) {
     function attachHexagonEvents(hexagons) {
         hexagons.forEach(hexagon => {
             hexagon.addEventListener('dragover', e => e.preventDefault());
-            hexagon.addEventListener('touchmove', e => e.preventDefault(), { passive: false });
+            hexagon.addEventListener('touchmove', e => {
+                if (hexagon.dataset.touchData) {
+                    e.preventDefault();
+                }
+            }, { passive: false });
 
             hexagon.addEventListener('drop', e => {
                 e.preventDefault();
@@ -825,6 +827,12 @@ export function renderBuilder(data, hexIndexData) {
                 champion.classList.add('dragging');
             });
 
+            champion.addEventListener('touchmove', e => {
+                if (champion.dataset.touchData) {
+                    e.preventDefault();
+                }
+            }, { passive: false });
+
             champion.addEventListener('touchend', e => {
                 const touch = e.changedTouches[0];
                 const targetElement = document.elementFromPoint(touch.clientX, touch.clientY);
@@ -938,6 +946,12 @@ export function renderBuilder(data, hexIndexData) {
             });
             item.classList.add('dragging');
         });
+
+        item.addEventListener('touchmove', e => {
+            if (item.dataset.touchData) {
+                e.preventDefault();
+            }
+        }, { passive: false });
 
         item.addEventListener('touchend', e => {
             const touch = e.changedTouches[0];
@@ -1064,6 +1078,12 @@ export function renderBuilder(data, hexIndexData) {
             itemSpan.classList.add('dragging');
         });
 
+        itemSpan.addEventListener('touchmove', e => {
+            if (itemSpan.dataset.touchData) {
+                e.preventDefault();
+            }
+        }, { passive: false });
+
         itemSpan.addEventListener('touchend', e => {
             const touch = e.changedTouches[0];
             const targetElement = document.elementFromPoint(touch.clientX, touch.clientY);
@@ -1106,7 +1126,6 @@ export function renderBuilder(data, hexIndexData) {
     }
 
     document.body.addEventListener('dragover', e => e.preventDefault());
-    document.body.addEventListener('touchmove', e => e.preventDefault(), { passive: false });
 
     document.body.addEventListener('drop', e => {
         if (!e.target.closest('.hexagon')) {
@@ -1237,14 +1256,13 @@ export function renderBuilder(data, hexIndexData) {
             localStorage.setItem('builder-show-name', isVisible);
         });
     }
-    
 
     function setupSaveCompButton() {
         const saveCompButton = document.querySelector('.builder-save-comp');
         const menu = document.querySelector('.save-comp-menu');
 
         saveCompButton.addEventListener('click', e => {
-            menu.classList.toggle('show')
+            menu.classList.toggle('show');
         });
 
         menu.addEventListener('click', e => {
@@ -1339,7 +1357,7 @@ export function renderBuilder(data, hexIndexData) {
                     selectedAugments.splice(index, 1);
                 } else if (selectedAugments.length < 8) {
                     selectedAugments.push(aug);
-                }else if (selectedAugments.length === 8) {
+                } else if (selectedAugments.length === 8) {
                     customTooltip('Đã đủ 8 Nâng Cấp', e.clientX, e.clientY);
                 }
                 renderSelectedAugments();
@@ -1433,7 +1451,7 @@ export function renderBuilder(data, hexIndexData) {
     filterInput('.builder-render-augs .augments-child', '.builder-list-augments input');
     builderOptionsBtn();
     setupSaveCompButton();
-    showNameChessBoard()
+    showNameChessBoard();
 
     const loadedFromUrl = loadCompFromUrl();
     if (!loadedFromUrl) {
