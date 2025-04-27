@@ -4,6 +4,7 @@
     gap: 25px;
     margin: 0 -22px;
     position: relative;
+    user-select: none;
 }
 
 .builder-section {
@@ -149,7 +150,9 @@
     cursor: pointer;
 }
 
-.builder-list .hexagon-tier-champ {
+.builder-list .hexagon-tier-champ,
+.drag-preview .hexagon-tier-champ
+ {
     clip-path: unset;
     border-radius: 50%;
 }
@@ -750,13 +753,41 @@ button.btn-builder-show-name .fa-eye-slash {
     border: 2px solid transparent;
     transition: background-color 0.2s, border 0.2s;
 } */
-
-
-
+.drag-preview {
+    position: absolute;
+    z-index: 1000;
+    pointer-events: none;
+    opacity: 0.8;
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    transition: transform 0.1s ease;
+}
+.drag-preview.item-child {
+    width: 24px !important;
+    height: 24px !important;
+}
+.drag-preview.tier-list {
+    width: 50px;
+    height: 50px;
+}
+.drag-preview .hexagon-title,
+.drag-preview.item-child>span {
+    display: none;
+}
 /* Media min-width 768px */
 @media (min-width: 768px) {
     .builder-chessboard .position-comp {
         margin-left: 0;
+    }
+    .drag-preview {
+        /* width: 100%; */
+        transform: none !important; /* Ngăn bất kỳ scale nào trên desktop */
+    }
+    .drag-preview .hexagon,
+    .drag-preview .tier-list,
+    .drag-preview .item-child,
+    .drag-preview .item-span {
+        /* transform: none !important; Đảm bảo các phần tử con không bị scale */
     }
 
 }
