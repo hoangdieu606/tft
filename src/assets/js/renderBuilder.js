@@ -102,8 +102,8 @@ export function renderBuilder(data, hexIndexData) {
                 const hexagon = document.querySelector(`.hexagon[data-index="${index}"]`);
                 const items = hexagon
                     ? Array.from(hexagon.querySelectorAll('.hexagon-items .item-span img')).map(
-                          img => itemMap.indexOf(img.dataset.apiName)
-                      )
+                        img => itemMap.indexOf(img.dataset.apiName)
+                    )
                     : [];
                 const stars = hexagon
                     ? parseInt(hexagon.querySelector('.hexagon-icon')?.dataset.starState || 0)
@@ -239,15 +239,15 @@ export function renderBuilder(data, hexIndexData) {
                 selectedAugments.push(...augmentsToRender);
                 builderAugments.innerHTML = augmentsToRender.length > 0
                     ? augmentsToRender
-                          .map(
-                              aug => `
+                        .map(
+                            aug => `
                               <div class="augments-child augs-tier-${aug.tier} tier-${aug.tier2}" data-api-name="${aug.apiName}">
                                   <img src="${aug.icon}" alt="${aug.name}">
                                   <span>${aug.name}</span>
                               </div>
                           `
-                          )
-                          .join('')
+                        )
+                        .join('')
                     : `
                       <span class="builder-title">Nâng Cấp</span>
                       <span class="builder-icon-augs"><img src="/assets/images/add-augs.png" alt=""></span>
@@ -423,9 +423,8 @@ export function renderBuilder(data, hexIndexData) {
                         const traitNumberHTML = minUnitsList
                             .map(minUnit => {
                                 const isActive = count >= minUnit && minUnit === activeMinUnits;
-                                return `<span style="opacity: ${
-                                    isActive ? 1 : 0.5
-                                }">${minUnit}</span>`;
+                                return `<span style="opacity: ${isActive ? 1 : 0.5
+                                    }">${minUnit}</span>`;
                             })
                             .join('<span>|</span>');
 
@@ -455,13 +454,13 @@ export function renderBuilder(data, hexIndexData) {
     function createDragPreview(element, type) {
         const preview = document.createElement('div');
         preview.className = 'drag-preview';
-    
+
         // Lấy kích thước thực tế của phần tử nguồn
         const rect = element.getBoundingClientRect();
         preview.style.width = `${rect.width}px`;
         preview.style.height = `${rect.height}px`;
         preview.style.visibility = 'hidden'; // Ẩn ban đầu
-    
+
         if (type === 'champion') {
             if (element.classList.contains('tier-list')) {
                 preview.classList.add('tier-list', element.classList[1]);
@@ -497,7 +496,7 @@ export function renderBuilder(data, hexIndexData) {
                 img.setAttribute('data-api-name', img.dataset.apiName);
             }
         }
-    
+
         document.body.appendChild(preview);
         return preview;
     }
@@ -555,6 +554,7 @@ export function renderBuilder(data, hexIndexData) {
                     if (itemSpan) return;
                     const hexagonIcon = hexagon.querySelector('.hexagon-icon');
                     if (hexagonIcon) {
+                        e.preventDefault(); // Ngăn hành vi mặc định (như cuộn trang)
                         touchStartTime = Date.now();
                         hexagon.dataset.touchData = JSON.stringify({
                             type: 'move-champion',
@@ -570,8 +570,97 @@ export function renderBuilder(data, hexIndexData) {
                         });
                     }
                 },
-                { passive: true }
+                { passive: false }
             );
+
+            hexagon.addEventListener('touchmove', e => {
+                if (dragPreview) {
+                    e.preventDefault(); // Ngăn cuộn trang khi kéo
+                    const touch = e.touches[0];
+                    updateDragPreview(dragPreview, touch.clientX, touch.clientY);
+                    const targetElement = document.elementFromPoint(touch.clientX, touch.clientY);
+                    const targetHexagon = targetElement?.closest('.hexagon');
+                    hexagons.forEach(h => h.classList.remove('drag-over'));
+                    if (targetHexagon) {
+                        targetHexagon.classList.add('drag-over');
+                    }
+                }
+            }, { passive: false });
+
+            hexagon.addEventListener('touchend', e => {
+                e.preventDefault();
+                const touchDuration = Date.now() - touchStartTime;
+                const hexagonIcon = hexagon.querySelector('.hexagon-icon');
+
+                hexagon.querySelectorAll('.item-span').forEach(span => {
+                    span.style.pointerEvents = 'auto';
+                });
+
+                if (touchDuration < 300 && hexagonIcon && !e.target.closest('.item-span')) {
+                    // Nhấn ngắn: thay đổi starState
+                    let starState = parseInt(hexagonIcon.dataset.starState) || 0;
+                    starState = (starState + 1) % 3;
+                    hexagonIcon.dataset.starState = starState;
+
+                    const existingStarChamp = hexagonIcon.querySelector('.star-champ');
+                    if (existingStarChamp) hexagonIcon.removeChild(existingStarChamp);
+
+                    if (starState === 1) {
+                        const starChamp = document.createElement('div');
+                        starChamp.classList.add('star-champ', 'three-stars');
+                        starChamp.innerHTML = `
+                            <span><i class="fa-solid fa-star"></i></span>
+                            <span><i class="fa-solid fa-star"></i></span>
+                            <span><i class="fa-solid fa-star"></i></span>
+                        `;
+                        hexagonIcon.insertAdjacentElement('afterbegin', starChamp);
+                    } else if (starState === 2) {
+                        const starChamp = document.createElement('div');
+                        starChamp.classList.add('star-champ', 'four-stars');
+                        starChamp.innerHTML = `
+                            <span><i class="fa-solid fa-star"></i></span>
+                            <span><i class="fa-solid fa-star"></i></span>
+                            <span><i class="fa-solid fa-star"></i></span>
+                            <span><i class="fa-solid fa-star"></i></span>
+                        `;
+                        hexagonIcon.insertAdjacentElement('afterbegin', starChamp);
+                    }
+                    updateTeamUrl();
+                    removeDragPreview(); // Xóa drag-preview khi thay đổi starState
+                } else {
+                    // Nhấn lâu: xử lý kéo thả hoặc xóa tướng
+                    handleTouchEnd(e, hexagon);
+                }
+
+                // Xóa touchData và trạng thái
+                if (hexagon.dataset.touchData) {
+                    delete hexagon.dataset.touchData;
+                    if (hexagonIcon) {
+                        hexagonIcon.classList.remove('dragging');
+                    }
+                }
+                removeDragPreview(); // Xóa drag-preview dự phòng
+                dragPreview = null;
+                isDragging = false;
+                hexagons.forEach(h => h.classList.remove('drag-over'));
+            }, { passive: false });
+
+            hexagon.addEventListener('touchcancel', () => {
+                const hexagonIcon = hexagon.querySelector('.hexagon-icon');
+                if (hexagonIcon) {
+                    hexagonIcon.classList.remove('dragging');
+                    hexagon.querySelectorAll('.item-span').forEach(span => {
+                        span.style.pointerEvents = 'auto';
+                    });
+                }
+                if (hexagon.dataset.touchData) {
+                    delete hexagon.dataset.touchData;
+                }
+                removeDragPreview();
+                dragPreview = null;
+                isDragging = false;
+                hexagons.forEach(h => h.classList.remove('drag-over'));
+            }, { passive: false });
 
             hexagon.addEventListener('dragover', e => {
                 e.preventDefault();
@@ -586,7 +675,7 @@ export function renderBuilder(data, hexIndexData) {
                 e.preventDefault();
                 handleDrop(e, hexagon);
                 hexagon.classList.remove('drag-over');
-                removeDragPreview(dragPreview);
+                removeDragPreview();
                 dragPreview = null;
             }, { passive: false });
 
@@ -627,59 +716,6 @@ export function renderBuilder(data, hexIndexData) {
                 }
             });
 
-            hexagon.addEventListener('touchend', e => {
-                e.preventDefault();
-                const touchDuration = Date.now() - touchStartTime;
-                const hexagonIcon = hexagon.querySelector('.hexagon-icon');
-
-                hexagon.querySelectorAll('.item-span').forEach(span => {
-                    span.style.pointerEvents = 'auto';
-                });
-
-                if (touchDuration < 300 && hexagonIcon && !e.target.closest('.item-span')) {
-                    let starState = parseInt(hexagonIcon.dataset.starState) || 0;
-                    starState = (starState + 1) % 3;
-                    hexagonIcon.dataset.starState = starState;
-
-                    const existingStarChamp = hexagonIcon.querySelector('.star-champ');
-                    if (existingStarChamp) hexagonIcon.removeChild(existingStarChamp);
-
-                    if (starState === 1) {
-                        const starChamp = document.createElement('div');
-                        starChamp.classList.add('star-champ', 'three-stars');
-                        starChamp.innerHTML = `
-                            <span><i class="fa-solid fa-star"></i></span>
-                            <span><i class="fa-solid fa-star"></i></span>
-                            <span><i class="fa-solid fa-star"></i></span>
-                        `;
-                        hexagonIcon.insertAdjacentElement('afterbegin', starChamp);
-                    } else if (starState === 2) {
-                        const starChamp = document.createElement('div');
-                        starChamp.classList.add('star-champ', 'four-stars');
-                        starChamp.innerHTML = `
-                            <span><i class="fa-solid fa-star"></i></span>
-                            <span><i class="fa-solid fa-star"></i></span>
-                            <span><i class="fa-solid fa-star"></i></span>
-                            <span><i class="fa-solid fa-star"></i></span>
-                        `;
-                        hexagonIcon.insertAdjacentElement('afterbegin', starChamp);
-                    }
-                    updateTeamUrl();
-                } else {
-                    handleTouchEnd(e, hexagon);
-                }
-
-                if (hexagon.dataset.touchData) {
-                    delete hexagon.dataset.touchData;
-                    if (hexagonIcon) {
-                        hexagonIcon.classList.remove('dragging');
-                    }
-                    removeDragPreview(dragPreview);
-                    dragPreview = null;
-                }
-                isDragging = false;
-            });
-
             hexagon.addEventListener('dragstart', e => {
                 const hexagonIcon = hexagon.querySelector('.hexagon-icon');
                 if (hexagonIcon && !e.target.closest('.item-span')) {
@@ -709,7 +745,7 @@ export function renderBuilder(data, hexIndexData) {
                 if (hexagonIcon) {
                     hexagonIcon.classList.remove('dragging');
                 }
-                removeDragPreview(dragPreview);
+                removeDragPreview();
                 dragPreview = null;
                 hexagons.forEach(h => h.classList.remove('drag-over'));
             });
@@ -729,26 +765,26 @@ export function renderBuilder(data, hexIndexData) {
             });
         });
 
-        chessboard.addEventListener(
-            'touchmove',
-            e => {
-                const source = document.querySelector('[data-touch-data]');
-                if (source) {
-                    e.preventDefault();
-                    const touch = e.touches[0];
-                    const dragPreview = document.querySelector('.drag-preview');
-                    updateDragPreview(dragPreview, touch.clientX, touch.clientY);
+        // Gắn sự kiện touchmove chỉ một lần trên chessboard
+        chessboard.removeEventListener('touchmove', handleTouchMove);
+        chessboard.addEventListener('touchmove', handleTouchMove, { passive: false });
 
-                    const targetElement = document.elementFromPoint(touch.clientX, touch.clientY);
-                    const targetHexagon = targetElement?.closest('.hexagon');
-                    hexagons.forEach(h => h.classList.remove('drag-over'));
-                    if (targetHexagon) {
-                        targetHexagon.classList.add('drag-over');
-                    }
+        function handleTouchMove(e) {
+            const source = document.querySelector('[data-touch-data]');
+            if (source) {
+                e.preventDefault();
+                const touch = e.touches[0];
+                const dragPreview = document.querySelector('.drag-preview');
+                updateDragPreview(dragPreview, touch.clientX, touch.clientY);
+
+                const targetElement = document.elementFromPoint(touch.clientX, touch.clientY);
+                const targetHexagon = targetElement?.closest('.hexagon');
+                hexagons.forEach(h => h.classList.remove('drag-over'));
+                if (targetHexagon) {
+                    targetHexagon.classList.add('drag-over');
                 }
-            },
-            { passive: false }
-        );
+            }
+        }
     }
 
     function handleDrop(e, hexagon) {
@@ -824,122 +860,128 @@ export function renderBuilder(data, hexIndexData) {
 
         hexagons.forEach(h => h.classList.remove('drag-over'));
 
-        if (data && targetHexagon && targetHexagon !== hexagon) {
-            if (data.type === 'champion') {
-                if (!targetHexagon.querySelector('.hexagon-icon')) {
-                    const championElement = document.querySelector(
-                        `.tier-list[data-api-name="${data.apiName}"]`
+        try {
+            if (data && targetHexagon && targetHexagon !== hexagon) {
+                if (data.type === 'champion') {
+                    if (!targetHexagon.querySelector('.hexagon-icon')) {
+                        const championElement = document.querySelector(
+                            `.tier-list[data-api-name="${data.apiName}"]`
+                        );
+                        const hexagonContent = createHexagonContent({
+                            apiName: data.apiName,
+                            icon: championElement.dataset.icon,
+                            name: championElement.dataset.name,
+                            cost: parseInt(championElement.classList[1].split('-')[1]),
+                        });
+                        targetHexagon.appendChild(hexagonContent);
+                        targetHexagon.classList.add('has-champ');
+                        championOrder.push({
+                            index: targetHexagon.dataset.index,
+                            timestamp: Date.now(),
+                            apiName: data.apiName,
+                        });
+                        shouldUpdateTraits = true;
+                        renderBuilderTraits();
+                        updateTeamUrl();
+                    }
+                } else if (data.type === 'move-champion') {
+                    const sourceHexagon = document.querySelector(
+                        `.hexagon[data-index="${data.hexagonIndex}"]`
                     );
-                    const hexagonContent = createHexagonContent({
-                        apiName: data.apiName,
-                        icon: championElement.dataset.icon,
-                        name: championElement.dataset.name,
-                        cost: parseInt(championElement.classList[1].split('-')[1]),
-                    });
-                    targetHexagon.appendChild(hexagonContent);
-                    targetHexagon.classList.add('has-champ');
-                    championOrder.push({
-                        index: targetHexagon.dataset.index,
-                        timestamp: Date.now(),
-                        apiName: data.apiName,
-                    });
-                    shouldUpdateTraits = true;
-                    renderBuilderTraits();
-                    updateTeamUrl();
+                    const sourceHexagonIcon = sourceHexagon?.querySelector('.hexagon-icon');
+                    const targetHexagonIcon = targetHexagon.querySelector('.hexagon-icon');
+
+                    if (sourceHexagon && sourceHexagonIcon) {
+                        if (targetHexagonIcon) {
+                            targetHexagon.removeChild(targetHexagonIcon);
+                            sourceHexagon.removeChild(sourceHexagonIcon);
+                            targetHexagon.appendChild(sourceHexagonIcon);
+                            sourceHexagon.appendChild(targetHexagonIcon);
+                            const sourceIndex = championOrder.findIndex(
+                                o => o.index === data.hexagonIndex
+                            );
+                            const targetIndex = championOrder.findIndex(
+                                o => o.index === targetHexagon.dataset.index
+                            );
+                            if (sourceIndex !== -1) championOrder[sourceIndex].index = targetHexagon.dataset.index;
+                            if (targetIndex !== -1)
+                                championOrder[targetIndex].index = data.hexagonIndex;
+                        } else {
+                            targetHexagon.appendChild(sourceHexagonIcon);
+                            sourceHexagon.classList.remove('has-champ');
+                            targetHexagon.classList.add('has-champ');
+                            const sourceIndex = championOrder.findIndex(
+                                o => o.index === data.hexagonIndex
+                            );
+                            if (sourceIndex !== -1) championOrder[sourceIndex].index = targetHexagon.dataset.index;
+                        }
+                        shouldUpdateTraits = true;
+                        renderBuilderTraits();
+                        updateTeamUrl();
+                    }
+                } else if (data.type === 'item') {
+                    if (targetHexagon.querySelector('.hexagon-icon')) {
+                        const itemElement = document.querySelector(
+                            `.item-child[data-api-name="${data.apiName}"]`
+                        );
+                        addItemToHexagon(targetHexagon, {
+                            apiName: data.apiName,
+                            icon: itemElement.dataset.icon,
+                            name: itemElement.dataset.name,
+                        });
+                        updateTeamUrl();
+                    }
                 }
-            } else if (data.type === 'move-champion') {
+            } else if (data && data.type === 'move-champion') {
+                const nearestHexagon = findNearestHexagon(touch.clientX, touch.clientY);
                 const sourceHexagon = document.querySelector(
                     `.hexagon[data-index="${data.hexagonIndex}"]`
                 );
-                const sourceHexagonIcon = sourceHexagon?.querySelector('.hexagon-icon');
-                const targetHexagonIcon = targetHexagon.querySelector('.hexagon-icon');
-
-                if (sourceHexagon && sourceHexagonIcon) {
-                    if (targetHexagonIcon) {
-                        targetHexagon.removeChild(targetHexagonIcon);
-                        sourceHexagon.removeChild(sourceHexagonIcon);
-                        targetHexagon.appendChild(sourceHexagonIcon);
-                        sourceHexagon.appendChild(targetHexagonIcon);
-                        const sourceIndex = championOrder.findIndex(
-                            o => o.index === data.hexagonIndex
-                        );
-                        const targetIndex = championOrder.findIndex(
-                            o => o.index === targetHexagon.dataset.index
-                        );
-                        if (sourceIndex !== -1) championOrder[sourceIndex].index = targetHexagon.dataset.index;
-                        if (targetIndex !== -1)
-                            championOrder[targetIndex].index = data.hexagonIndex;
-                    } else {
-                        targetHexagon.appendChild(sourceHexagonIcon);
+                if (sourceHexagon && nearestHexagon && nearestHexagon !== sourceHexagon && !nearestHexagon.querySelector('.hexagon-icon')) {
+                    const sourceHexagonIcon = sourceHexagon.querySelector('.hexagon-icon');
+                    if (sourceHexagonIcon) {
+                        nearestHexagon.appendChild(sourceHexagonIcon);
                         sourceHexagon.classList.remove('has-champ');
-                        targetHexagon.classList.add('has-champ');
-                        const sourceIndex = championOrder.findIndex(
-                            o => o.index === data.hexagonIndex
-                        );
-                        if (sourceIndex !== -1) championOrder[sourceIndex].index = targetHexagon.dataset.index;
+                        nearestHexagon.classList.add('has-champ');
+                        const sourceIndex = championOrder.findIndex(o => o.index === data.hexagonIndex);
+                        if (sourceIndex !== -1) championOrder[sourceIndex].index = nearestHexagon.dataset.index;
+                        shouldUpdateTraits = true;
+                        renderBuilderTraits();
+                        updateTeamUrl();
                     }
-                    shouldUpdateTraits = true;
-                    renderBuilderTraits();
-                    updateTeamUrl();
+                } else if (sourceHexagon) {
+                    const hexagonIcon = sourceHexagon.querySelector('.hexagon-icon');
+                    if (hexagonIcon) {
+                        sourceHexagon.removeChild(hexagonIcon);
+                        sourceHexagon.classList.remove('has-champ');
+                        const index = championOrder.findIndex(o => o.index === data.hexagonIndex);
+                        if (index !== -1) championOrder.splice(index, 1);
+                        shouldUpdateTraits = true;
+                        renderBuilderTraits();
+                        updateTeamUrl();
+                    }
                 }
-            } else if (data.type === 'item') {
-                if (targetHexagon.querySelector('.hexagon-icon')) {
-                    const itemElement = document.querySelector(
-                        `.item-child[data-api-name="${data.apiName}"]`
-                    );
-                    addItemToHexagon(targetHexagon, {
-                        apiName: data.apiName,
-                        icon: itemElement.dataset.icon,
-                        name: itemElement.dataset.name,
-                    });
-                    updateTeamUrl();
-                }
-            }
-        } else if (data && data.type === 'move-champion') {
-            const nearestHexagon = findNearestHexagon(touch.clientX, touch.clientY);
-            const sourceHexagon = document.querySelector(
-                `.hexagon[data-index="${data.hexagonIndex}"]`
-            );
-            if (sourceHexagon && nearestHexagon && nearestHexagon !== sourceHexagon && !nearestHexagon.querySelector('.hexagon-icon')) {
-                const sourceHexagonIcon = sourceHexagon.querySelector('.hexagon-icon');
-                if (sourceHexagonIcon) {
-                    nearestHexagon.appendChild(sourceHexagonIcon);
-                    sourceHexagon.classList.remove('has-champ');
-                    nearestHexagon.classList.add('has-champ');
-                    const sourceIndex = championOrder.findIndex(o => o.index === data.hexagonIndex);
-                    if (sourceIndex !== -1) championOrder[sourceIndex].index = nearestHexagon.dataset.index;
-                    shouldUpdateTraits = true;
-                    renderBuilderTraits();
-                    updateTeamUrl();
-                }
-            } else if (sourceHexagon) {
-                const hexagonIcon = sourceHexagon.querySelector('.hexagon-icon');
-                if (hexagonIcon) {
-                    sourceHexagon.removeChild(hexagonIcon);
-                    sourceHexagon.classList.remove('has-champ');
-                    const index = championOrder.findIndex(o => o.index === data.hexagonIndex);
-                    if (index !== -1) championOrder.splice(index, 1);
-                    shouldUpdateTraits = true;
-                    renderBuilderTraits();
-                    updateTeamUrl();
+            } else if (data && data.type === 'remove-item') {
+                const sourceHexagon = document.querySelector(
+                    `.hexagon[data-index="${data.hexagonIndex}"]`
+                );
+                if (sourceHexagon) {
+                    const hexagonItems = sourceHexagon.querySelector('.hexagon-items');
+                    const itemSpan = hexagonItems.querySelector(
+                        `.item-span img[data-api-name="${data.apiName}"]`
+                    )?.parentElement;
+                    if (itemSpan) {
+                        hexagonItems.removeChild(itemSpan);
+                        shouldUpdateTraits = true;
+                        renderBuilderTraits();
+                        updateTeamUrl();
+                    }
                 }
             }
-        } else if (data && data.type === 'remove-item') {
-            const sourceHexagon = document.querySelector(
-                `.hexagon[data-index="${data.hexagonIndex}"]`
-            );
-            if (sourceHexagon) {
-                const hexagonItems = sourceHexagon.querySelector('.hexagon-items');
-                const itemSpan = hexagonItems.querySelector(
-                    `.item-span img[data-api-name="${data.apiName}"]`
-                )?.parentElement;
-                if (itemSpan) {
-                    hexagonItems.removeChild(itemSpan);
-                    shouldUpdateTraits = true;
-                    renderBuilderTraits();
-                    updateTeamUrl();
-                }
-            }
+        } catch (error) {
+            console.warn('Lỗi trong handleTouchEnd:', error);
+        } finally {
+            removeDragPreview(); // Xóa drag-preview trong mọi trường hợp
         }
     }
 
@@ -958,25 +1000,22 @@ export function renderBuilder(data, hexIndexData) {
                         </div>
                         <div class="list-traits-champions">
                             ${champions
-                                .map(
-                                    ({ apiName, name }) => `
-                                    <div class="tier-list cost-${
-                                        apiNameAndIconCostRange[apiName][1]
+                            .map(
+                                ({ apiName, name }) => `
+                                    <div class="tier-list cost-${apiNameAndIconCostRange[apiName][1]
                                     }" draggable="true" 
-                                         data-api-name="${apiName}" data-range="${
-                                        apiNameAndIconCostRange[apiName][2]
+                                         data-api-name="${apiName}" data-range="${apiNameAndIconCostRange[apiName][2]
                                     }" 
                                          data-icon="${apiNameAndIconCostRange[apiName][0]}" data-name="${name}">
                                         <div class="hexagon-tier-champ">
-                                            <span style="background-image: url(${
-                                                apiNameAndIconCostRange[apiName][0]
-                                            })" title="${name}"></span>
+                                            <span style="background-image: url(${apiNameAndIconCostRange[apiName][0]
+                                    })" title="${name}"></span>
                                         </div>
                                         <div class="hexagon-title">${name}</div>
                                     </div>
                                 `
-                                )
-                                .join('')}
+                            )
+                            .join('')}
                         </div>
                     </div>
                 `
@@ -1500,16 +1539,16 @@ export function renderBuilder(data, hexIndexData) {
     document.body.addEventListener('dragover', e => {
         e.preventDefault(); // Cho phép thả trên toàn bộ trang
     }, { passive: false });
-    
+
     document.body.addEventListener('drop', e => {
         e.preventDefault(); // Ngăn hành vi mặc định của trình duyệt
-    
+
         // Nếu thả vào hexagon, chỉ xóa drag-preview và để handleDrop xử lý
         if (e.target.closest('.hexagon')) {
             removeDragPreview();
             return;
         }
-    
+
         try {
             const data = JSON.parse(e.dataTransfer.getData('text/plain'));
             if (data.type === 'move-champion') {
