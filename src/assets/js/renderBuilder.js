@@ -455,17 +455,12 @@ export function renderBuilder(data, hexIndexData) {
     function createDragPreview(element, type) {
         const preview = document.createElement('div');
         preview.className = 'drag-preview';
-        preview.style.position = 'absolute';
-        preview.style.zIndex = '1000';
-        preview.style.pointerEvents = 'none';
-        preview.style.opacity = '0.8';
-        preview.style.transition = 'transform 0.1s ease';
-        // preview.style.visibility = 'hidden'; // Ẩn ban đầu để tránh hiển thị ở (0,0)
     
         // Lấy kích thước thực tế của phần tử nguồn
         const rect = element.getBoundingClientRect();
         preview.style.width = `${rect.width}px`;
         preview.style.height = `${rect.height}px`;
+        preview.style.visibility = 'hidden'; // Ẩn ban đầu
     
         if (type === 'champion') {
             if (element.classList.contains('tier-list')) {
@@ -515,17 +510,16 @@ export function renderBuilder(data, hexIndexData) {
             const scrollY = window.scrollY || window.pageYOffset;
             preview.style.left = `${x + scrollX - (preview.offsetWidth / 2)}px`;
             preview.style.top = `${y + scrollY - (preview.offsetHeight / 2)}px`;
+            preview.style.visibility = 'visible';
         });
     }
 
-    function removeDragPreview(preview) {
-        if (preview && preview.parentNode) {
-            cancelAnimationFrame(rafId);
-            preview.parentNode.removeChild(preview);
-        }
-        // Xóa mọi drag-preview còn sót lại
+    function removeDragPreview() {
+        cancelAnimationFrame(rafId);
         document.querySelectorAll('.drag-preview').forEach(p => {
-            if (p.parentNode) p.parentNode.removeChild(p);
+            if (p.parentNode) {
+                p.parentNode.removeChild(p);
+            }
         });
     }
 
@@ -1078,7 +1072,7 @@ export function renderBuilder(data, hexIndexData) {
                     })
                 );
                 const img = new Image();
-                img.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
+                img.src = '/assets/images/transparent.png';
                 e.dataTransfer.setDragImage(img, 0, 0);
                 dragPreview = createDragPreview(champion, 'champion');
                 champion.classList.add('dragging');
@@ -1163,6 +1157,7 @@ export function renderBuilder(data, hexIndexData) {
             },
             { passive: false }
         );
+        setupTooltips();
     }
 
     function filterBuilderChampions() {
@@ -1502,57 +1497,68 @@ export function renderBuilder(data, hexIndexData) {
         renderBuilderTraits();
     }
 
-    document.body.addEventListener('dragover', e => e.preventDefault(), { passive: false });
-
+    document.body.addEventListener('dragover', e => {
+        e.preventDefault(); // Cho phép thả trên toàn bộ trang
+    }, { passive: false });
+    
     document.body.addEventListener('drop', e => {
-        if (!e.target.closest('.hexagon')) {
-            try {
-                const data = JSON.parse(e.dataTransfer.getData('text/plain'));
-                if (data.type === 'move-champion') {
-                    const nearestHexagon = findNearestHexagon(e.clientX, e.clientY);
-                    const hexagon = document.querySelector(`.hexagon[data-index="${data.hexagonIndex}"]`);
-                    if (hexagon && nearestHexagon && nearestHexagon !== hexagon && !nearestHexagon.querySelector('.hexagon-icon')) {
-                        const hexagonIcon = hexagon.querySelector('.hexagon-icon');
-                        if (hexagonIcon) {
-                            nearestHexagon.appendChild(hexagonIcon);
-                            hexagon.classList.remove('has-champ');
-                            nearestHexagon.classList.add('has-champ');
-                            const index = championOrder.findIndex(o => o.index === data.hexagonIndex);
-                            if (index !== -1) championOrder[index].index = nearestHexagon.dataset.index;
-                            shouldUpdateTraits = true;
-                            renderBuilderTraits();
-                            updateTeamUrl();
-                        }
-                    } else if (hexagon) {
-                        const hexagonIcon = hexagon.querySelector('.hexagon-icon');
-                        if (hexagonIcon) {
-                            hexagon.removeChild(hexagonIcon);
-                            hexagon.classList.remove('has-champ');
-                            const index = championOrder.findIndex(o => o.index === data.hexagonIndex);
-                            if (index !== -1) championOrder.splice(index, 1);
-                            shouldUpdateTraits = true;
-                            renderBuilderTraits();
-                            updateTeamUrl();
-                        }
+        e.preventDefault(); // Ngăn hành vi mặc định của trình duyệt
+    
+        // Nếu thả vào hexagon, chỉ xóa drag-preview và để handleDrop xử lý
+        if (e.target.closest('.hexagon')) {
+            removeDragPreview();
+            return;
+        }
+    
+        try {
+            const data = JSON.parse(e.dataTransfer.getData('text/plain'));
+            if (data.type === 'move-champion') {
+                const nearestHexagon = findNearestHexagon(e.clientX, e.clientY);
+                const hexagon = document.querySelector(`.hexagon[data-index="${data.hexagonIndex}"]`);
+                if (hexagon && nearestHexagon && nearestHexagon !== hexagon && !nearestHexagon.querySelector('.hexagon-icon')) {
+                    const hexagonIcon = hexagon.querySelector('.hexagon-icon');
+                    if (hexagonIcon) {
+                        nearestHexagon.appendChild(hexagonIcon);
+                        hexagon.classList.remove('has-champ');
+                        nearestHexagon.classList.add('has-champ');
+                        const index = championOrder.findIndex(o => o.index === data.hexagonIndex);
+                        if (index !== -1) championOrder[index].index = nearestHexagon.dataset.index;
+                        shouldUpdateTraits = true;
+                        renderBuilderTraits();
+                        updateTeamUrl();
                     }
-                } else if (data.type === 'remove-item') {
-                    const hexagon = document.querySelector(`.hexagon[data-index="${data.hexagonIndex}"]`);
-                    if (hexagon) {
-                        const hexagonItems = hexagon.querySelector('.hexagon-items');
-                        const itemSpan = hexagonItems.querySelector(
-                            `.item-span img[data-api-name="${data.apiName}"]`
-                        )?.parentElement;
-                        if (itemSpan) {
-                            hexagonItems.removeChild(itemSpan);
-                            shouldUpdateTraits = true;
-                            renderBuilderTraits();
-                            updateTeamUrl();
-                        }
+                } else if (hexagon) {
+                    const hexagonIcon = hexagon.querySelector('.hexagon-icon');
+                    if (hexagonIcon) {
+                        hexagon.removeChild(hexagonIcon);
+                        hexagon.classList.remove('has-champ');
+                        const index = championOrder.findIndex(o => o.index === data.hexagonIndex);
+                        if (index !== -1) championOrder.splice(index, 1);
+                        shouldUpdateTraits = true;
+                        renderBuilderTraits();
+                        updateTeamUrl();
                     }
                 }
-            } catch (error) {
-                console.warn('Lỗi xử lý thả ngoài hexagon:', error);
+                removeDragPreview(); // Xóa drag-preview
+            } else if (data.type === 'remove-item') {
+                const hexagon = document.querySelector(`.hexagon[data-index="${data.hexagonIndex}"]`);
+                if (hexagon) {
+                    const hexagonItems = hexagon.querySelector('.hexagon-items');
+                    const itemSpan = hexagonItems.querySelector(
+                        `.item-span img[data-api-name="${data.apiName}"]`
+                    )?.parentElement;
+                    if (itemSpan) {
+                        hexagonItems.removeChild(itemSpan);
+                        shouldUpdateTraits = true;
+                        renderBuilderTraits();
+                        updateTeamUrl();
+                    }
+                }
+                removeDragPreview(); // Xóa drag-preview
             }
+        } catch (error) {
+            console.warn('Lỗi xử lý thả ngoài hexagon:', error);
+            removeDragPreview(); // Xóa drag-preview ngay cả khi có lỗi
         }
     }, { passive: false });
 

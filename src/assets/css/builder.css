@@ -391,6 +391,14 @@ body[augs-btn-filter="category-3-active"] button[data-augs-category="3"] {
     gap: 15px;
     text-align: center;
 }
+.builder-augments span.builder-title {
+    position: absolute;
+    width: 100%;
+    top: 22px;
+    left: 50%;
+    transform: translate(-50%,0);
+    margin: 0;
+}
 
 .builder-augments .augments-child {
     display: flex;
@@ -646,8 +654,8 @@ span.count-augments {
 
 /* builder-extension */
 .dragging {
-    opacity: 0.7;
-    transform: scale(1.1);
+    opacity: 0.5;
+    /* transform: scale(1.1); */
     transition: all 0.2s ease;
 }
 .save-comp-wrapper {
@@ -757,9 +765,7 @@ button.btn-builder-show-name .fa-eye-slash {
     position: absolute;
     z-index: 1000;
     pointer-events: none;
-    opacity: 0.8;
-    transform: scale(1.05);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.3));
     transition: transform 0.1s ease;
 }
 .drag-preview.item-child {
@@ -770,6 +776,7 @@ button.btn-builder-show-name .fa-eye-slash {
     width: 50px;
     height: 50px;
 }
+.drag-preview .hexagon-name,
 .drag-preview .hexagon-title,
 .drag-preview.item-child>span {
     display: none;
@@ -779,23 +786,16 @@ button.btn-builder-show-name .fa-eye-slash {
     .builder-chessboard .position-comp {
         margin-left: 0;
     }
-    .drag-preview {
-        /* width: 100%; */
-        transform: none !important; /* Ngăn bất kỳ scale nào trên desktop */
-    }
-    .drag-preview .hexagon,
-    .drag-preview .tier-list,
-    .drag-preview .item-child,
-    .drag-preview .item-span {
-        /* transform: none !important; Đảm bảo các phần tử con không bị scale */
-    }
-
 }
 
 /* Media max-width 768px */
 @media (max-width: 768px) {
     .builder-container {
         margin: 0;
+    }
+    .builder-augments .builder-icon-augs img{
+        width: 55px;
+        height: 55px;
     }
 
     .builder-list-augments .builder-head {
@@ -865,11 +865,10 @@ button.btn-builder-show-name .fa-eye-slash {
     }
 
     .builder-augments span.builder-title {
-        position: absolute;
-        left: 10px;
+        left: 22px;
         top: 50%;
-        transform: translateY(-50%);
-        margin: 0;
+        transform: translate(0,-50%);
+        width: auto;
     }
 
     .builder-augments .augments-child {
@@ -895,15 +894,15 @@ button.btn-builder-show-name .fa-eye-slash {
     .builder-chessboard {
         padding: 8px;
     }
-    .builder-augments .builder-icon-augs img{
-        width: 55px;
-        height: 55px;
-    }
+   
     .builder-augments {
         gap: 8px;
         padding: 8px;
     }
     .builder-extension button {
         font-size: 9px;
+    }
+    .builder-list {
+        margin-right: 15px;
     }
 }
