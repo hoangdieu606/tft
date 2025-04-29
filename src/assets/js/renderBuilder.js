@@ -168,7 +168,7 @@ export function renderBuilder(data, hexIndexData) {
             const augments = (teamData.augments || [])
                 .map((augId, idx) => {
                     if (typeof augId !== 'number' || augId < 0 || augId >= augmentMap.length) {
-                        console.warn(`Nâng cấp không hợp lệ tại vị trí ${idx}: augId=${augId}`);
+                        console.warn(`Augments không hợp lệ tại vị trí ${idx}: augId=${augId}`);
                         return null;
                     }
                     return { apiName: augmentMap[augId] };
@@ -249,7 +249,7 @@ export function renderBuilder(data, hexIndexData) {
                         )
                         .join('')
                     : `
-                      <span class="builder-title">Nâng Cấp</span>
+                      <span class="builder-title">Augments</span>
                       <span class="builder-icon-augs"><img src="/assets/images/add-augs.png" alt=""></span>
                   `;
                 countAugments.textContent = augmentsToRender.length;
@@ -412,7 +412,7 @@ export function renderBuilder(data, hexIndexData) {
         });
 
         if (traitList.length === 0) {
-            builderTraits.innerHTML = `<span class="builder-title">Đặc điểm</span>`;
+            builderTraits.innerHTML = `<span class="builder-title">Traits</span>`;
         } else {
             builderTraits.innerHTML = traitList
                 .map(
@@ -949,7 +949,7 @@ export function renderBuilder(data, hexIndexData) {
                         renderBuilderTraits();
                         updateTeamUrl();
                     }
-                } else if (sourceHexagon) {
+                } else if (sourceHexagon && (!nearestHexagon || (nearestHexagon !== sourceHexagon && targetHexagon !== hexagon))) {
                     const hexagonIcon = sourceHexagon.querySelector('.hexagon-icon');
                     if (hexagonIcon) {
                         sourceHexagon.removeChild(hexagonIcon);
@@ -1172,6 +1172,7 @@ export function renderBuilder(data, hexIndexData) {
                     champion.classList.remove('dragging');
                     removeDragPreview(dragPreview);
                     dragPreview = null;
+                    hexagons.forEach(h => h.classList.remove('drag-over'));
                 }
             });
         });
@@ -1324,6 +1325,7 @@ export function renderBuilder(data, hexIndexData) {
                 item.classList.remove('dragging');
                 removeDragPreview(dragPreview);
                 dragPreview = null;
+                hexagons.forEach(h => h.classList.remove('drag-over'));
             }
         });
     });
@@ -1612,7 +1614,7 @@ export function renderBuilder(data, hexIndexData) {
         championOrder.length = 0;
         selectedAugments.length = 0;
         builderAugments.innerHTML = `
-            <span class="builder-title">Nâng Cấp</span>
+            <span class="builder-title">Augments</span>
             <span class="builder-icon-augs"><img src="/assets/images/add-augs.png" alt=""></span>
         `;
         countAugments.textContent = '0';
@@ -1724,7 +1726,7 @@ export function renderBuilder(data, hexIndexData) {
 
         if (selectedAugments.length === 0) {
             builderAugments.innerHTML = `
-                <span class="builder-title">Nâng Cấp</span>
+                <span class="builder-title">Augments</span>
                 <span class="builder-icon-augs"><img src="/assets/images/add-augs.png" alt=""></span>
             `;
         }
@@ -1756,7 +1758,7 @@ export function renderBuilder(data, hexIndexData) {
                 } else if (selectedAugments.length < 8) {
                     selectedAugments.push(aug);
                 } else if (selectedAugments.length === 8) {
-                    customTooltip('Đã đủ 8 Nâng Cấp', e.clientX, e.clientY);
+                    customTooltip('Đã đủ 8 Augments', e.clientX, e.clientY);
                 }
                 renderSelectedAugments();
             });
@@ -1800,7 +1802,7 @@ export function renderBuilder(data, hexIndexData) {
     selectedAugsOk.addEventListener('click', () => {
         if (selectedAugments.length === 0) {
             builderAugments.innerHTML = `
-                <span class="builder-title">Nâng Cấp</span>
+                <span class="builder-title">Augments</span>
                 <span class="builder-icon-augs"><img src="/assets/images/add-augs.png" alt=""></span>
             `;
         } else {

@@ -18,6 +18,7 @@
     width: 180px;
     border: var(--border-tier-list);
     border-radius: 5px;
+    position: relative;
 }
 
 .builder-chessboard {
@@ -32,6 +33,7 @@
     padding: 15px 30px;
     width: 60%;
 }
+
 .builder-chessboard .hexagon.drag-over {
     background: var(--champ-cost-6-background);
     /* border: 2px solid #00ff00; */
@@ -41,10 +43,12 @@
     font-size: 1.2vmin;
     display: none;
 }
+
 .builder-chessboard.builder-show-name .hexagon .hexagon-name {
     display: flex;
 }
 
+.drag-preview .star-champ,
 .builder-chessboard .star-champ {
     font-size: 9px;
 }
@@ -61,30 +65,30 @@
 
 .builder-head {
     display: flex;
-    gap: 15px;
+    gap: 10px;
     justify-content: space-between;
 }
 
 .builder-filter {
     display: flex;
-    gap: 5px;
+    gap: 10px;
 }
 
 .builder-filter button {
     background: transparent;
     color: #fff;
-    border-radius: 999px;
-    font-size: 12px;
-    padding: 2px 8px;
-    font-weight: 700;
+    font: 700 10px 'Nunito', sans-serif;
+    text-transform: uppercase;
+    transition: transform 0.3s ease;
 }
 
 .builder-search {
     display: flex;
     height: 30px;
     background: #1d1d1d;
-    border-radius: 999px;
+    border-radius: 5px;
     overflow: hidden;
+    max-width: 50%;
 }
 
 .builder-search input {
@@ -111,6 +115,7 @@
 .builder-chessboard .hexagon.has-champ {
     clip-path: unset;
     background-color: unset;
+    filter: drop-shadow(0px 0px 10px #b0e5ff23);
 }
 
 .builder-chessboard .position-comp {
@@ -151,10 +156,9 @@
 }
 
 .builder-list .hexagon-tier-champ,
-.drag-preview .hexagon-tier-champ
- {
+.drag-preview .hexagon-tier-champ {
     clip-path: unset;
-    border-radius: 50%;
+    border-radius: 5px;
 }
 
 .hexagon-tier-champ>span {
@@ -168,7 +172,7 @@
     overflow: hidden;
     position: relative;
     transition: transform 0.3s ease;
-    border-radius: 50%;
+    border-radius: 5px;
 }
 
 .builder-champions .hexagon-title {
@@ -179,6 +183,7 @@
 
 .builder-items .item-child>span {
     pointer-events: none;
+    display: none;
 }
 
 .tier-list:has(.hexagon-tier-champ span.active) {
@@ -190,9 +195,13 @@
     transform: scale(1.1);
 }
 
+.builder-items .builder-list {
+    grid-template-columns: repeat(auto-fill, minmax(40px, 1fr));
+}
+
 .builder-items .item-child {
     flex-direction: column;
-    width: 50px;
+    width: 40px;
     gap: 10px;
     text-align: center;
     font-size: 9px;
@@ -223,14 +232,13 @@ body[augs-btn-filter="category-0-active"] button[data-augs-category="0"],
 body[augs-btn-filter="category-1-active"] button[data-augs-category="1"],
 body[augs-btn-filter="category-2-active"] button[data-augs-category="2"],
 body[augs-btn-filter="category-3-active"] button[data-augs-category="3"] {
-    background-color: var(--btn-builder-bg, #16dc4c);
-    color: #000;
+    color: var(--btn-builder-bg);
+    border-bottom: 2px solid var(--btn-builder-bg);
 }
 
 .builder-champions .builder-filter button.active {
-    background: var(--btn-builder-bg, #16dc4c);
-    color: #000;
-
+    color: var(--btn-builder-bg);
+    border-bottom: 2px solid var(--btn-builder-bg);
 }
 
 .builder-list-traits {
@@ -391,12 +399,14 @@ body[augs-btn-filter="category-3-active"] button[data-augs-category="3"] {
     gap: 15px;
     text-align: center;
 }
-.builder-augments span.builder-title {
+
+span.builder-title {
+    font: 900 18px 'Nunito', sans-serif;
+    text-transform: uppercase;
     position: absolute;
-    width: 100%;
     top: 22px;
     left: 50%;
-    transform: translate(-50%,0);
+    transform: translate(-50%, 0);
     margin: 0;
 }
 
@@ -414,13 +424,6 @@ body[augs-btn-filter="category-3-active"] button[data-augs-category="3"] {
     display: flex !important;
 }
 
-span.builder-title {
-    font: 900 18px 'Nunito', sans-serif;
-    text-transform: uppercase;
-    display: flex;
-    justify-content: center;
-    margin: 15px;
-}
 
 .builder-augments .builder-icon-augs img {
     width: 80px;
@@ -436,7 +439,7 @@ span.builder-title {
 }
 
 .builder-augments .builder-icon-augs img:hover {
-    transform: scale(105%,105%);
+    transform: scale(105%, 105%);
 }
 
 .builder-list-augments {
@@ -632,24 +635,24 @@ span.count-augments {
 /* Builder section */
 .builder-options {
     display: flex;
-    gap: 15px;
+    gap: 20px;
     display: none;
+    position: absolute;
+    top: 22px;
+    right: 20px;
 }
 
 .builder-options button {
-    display: flex;
-    width: 80px;
-    justify-content: center;
-    align-items: center;
-    height: 30px;
-    border-radius: 5px;
     background: transparent;
     color: #fff;
+    font: 700 12px 'Nunito', sans-serif;
+    text-transform: uppercase;
+    transition: transform 0.3s ease;
 }
 
 .builder-options button.active {
-    background: var(--btn-builder-bg);
-    color: #0b141e;
+    color: var(--btn-builder-bg);
+    border-bottom: 2px solid var(--btn-builder-bg);
 }
 
 /* builder-extension */
@@ -658,6 +661,7 @@ span.count-augments {
     /* transform: scale(1.1); */
     transition: all 0.2s ease;
 }
+
 .save-comp-wrapper {
     position: relative;
     user-select: none;
@@ -674,6 +678,7 @@ span.count-augments {
     display: flex;
     gap: 15px;
 }
+
 .save-comp-menu .save-comp-option:hover {
     background: var(--button-color);
     color: black;
@@ -682,33 +687,39 @@ span.count-augments {
 .builder-extension button:hover {
     background-color: #45a049;
 }
+
 button.btn-builder-show-name {
     justify-content: flex-end;
 }
+
 button.btn-builder-show-name .fa-eye {
     display: none;
 }
+
 button.btn-builder-show-name .fa-eye-slash {
     display: inline-block;
 }
+
 .builder-show-name button.btn-builder-show-name .fa-eye {
     display: inline-block;
 }
+
 .builder-show-name button.btn-builder-show-name .fa-eye-slash {
     display: none;
 }
+
 .btn-builder-show-name .hide-text {
     display: none;
-  }
-  
-  .builder-show-name .btn-builder-show-name .show-text {
+}
+
+.builder-show-name .btn-builder-show-name .show-text {
     display: none;
-  }
-  
-  .builder-show-name .btn-builder-show-name .hide-text {
+}
+
+.builder-show-name .btn-builder-show-name .hide-text {
     display: inline;
-  }
-  
+}
+
 .save-comp-menu {
     position: absolute;
     top: calc(100% + 5px);
@@ -726,8 +737,9 @@ button.btn-builder-show-name .fa-eye-slash {
     transform: translateY(-10px);
     transition: all 0.3s ease;
     z-index: 100;
-  }
-  .save-comp-menu.show {
+}
+
+.save-comp-menu.show {
     opacity: 1;
     visibility: visible;
     transform: translateY(0);
@@ -740,6 +752,7 @@ button.btn-builder-show-name .fa-eye-slash {
     -webkit-overflow-scrolling: touch;
     touch-action: pan-y;
 }
+
 .builder-chessboard.dragging,
 .builder-champions.dragging,
 .builder-items.dragging,
@@ -768,19 +781,23 @@ button.btn-builder-show-name .fa-eye-slash {
     filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.3));
     transition: transform 0.1s ease;
 }
+
 .drag-preview.item-child {
     width: 24px !important;
     height: 24px !important;
 }
+
 .drag-preview.tier-list {
     width: 50px;
     height: 50px;
 }
+
 .drag-preview .hexagon-name,
 .drag-preview .hexagon-title,
 .drag-preview.item-child>span {
     display: none;
 }
+
 /* Media min-width 768px */
 @media (min-width: 768px) {
     .builder-chessboard .position-comp {
@@ -793,7 +810,8 @@ button.btn-builder-show-name .fa-eye-slash {
     .builder-container {
         margin: 0;
     }
-    .builder-augments .builder-icon-augs img{
+
+    .builder-augments .builder-icon-augs img {
         width: 55px;
         height: 55px;
     }
@@ -825,6 +843,7 @@ button.btn-builder-show-name .fa-eye-slash {
     .builder-section {
         flex-direction: column;
         height: auto;
+        position: relative;
     }
 
     .builder-traits,
@@ -841,6 +860,12 @@ button.btn-builder-show-name .fa-eye-slash {
     /*  */
     .builder-traits {
         flex-direction: row;
+        min-height: 45px;
+    }
+    .builder-traits span.builder-title {
+        top: 50%;
+        left: 22px;
+        transform: translate(0, -50%);
     }
 
     .trait-item {
@@ -867,7 +892,7 @@ button.btn-builder-show-name .fa-eye-slash {
     .builder-augments span.builder-title {
         left: 22px;
         top: 50%;
-        transform: translate(0,-50%);
+        transform: translate(0, -50%);
         width: auto;
     }
 
@@ -887,6 +912,32 @@ button.btn-builder-show-name .fa-eye-slash {
         display: none;
     }
 
+    .builder-head {
+        flex-direction: column;
+    }
+
+    .builder-champions .tier-list,
+    .builder-items .item-child {
+        width: 30px;
+    }
+    
+    .builder-champions .hexagon-title,
+    .builder-items .item-child>span {
+        display: none;
+    }
+    .list-traits-champions,
+    .builder-champions .builder-list,
+    .builder-items .builder-list {
+        grid-template-columns: repeat(auto-fill, minmax(30px, 1fr));
+    }
+    .list-traits-title>span>img {
+        width: 24px;
+        height: auto;
+    }
+    .list-traits-title span {
+        font-size: 8px;
+    }
+
 }
 
 /* 📱 Mobile nhỏ */
@@ -894,15 +945,28 @@ button.btn-builder-show-name .fa-eye-slash {
     .builder-chessboard {
         padding: 8px;
     }
-   
+
     .builder-augments {
         gap: 8px;
         padding: 8px;
     }
+
     .builder-extension button {
         font-size: 9px;
     }
+
     .builder-list {
         margin-right: 15px;
     }
+
+    .drag-preview .star-champ,
+    .builder-chessboard .star-champ {
+        gap: 0;
+    }
+    .builder-augments {min-height: 45px;}
+    .builder-augments .builder-icon-augs img {
+        width: 30px;
+        height: 30px;
+    }
+    span.builder-title {font-size: 14px;}
 }

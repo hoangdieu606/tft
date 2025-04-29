@@ -341,17 +341,17 @@ export function renderPostComp(guideData, champAndIconCost, itemAndIcon, augsAnd
             <i class="fa-solid fa-ellipsis"></i>
             </button>
             <div class="copy-dropdown">
-            <button class="copy-option" data-action="open-in-builder">
-            <i class="fa-solid fa-tools"></i>
-            <span>Open in builder</span>
-            </button>
-            <button class="copy-option" data-action="teamCode">
-            <i class="fa-solid fa-copy"></i>
+              <button class="copy-option" data-action="teamCode">
+                <i class="fa-solid fa-copy"></i>
                 <span>Copy TeamCode</span>
               </button>
               <button class="copy-option" data-action="link">
                 <i class="fa-solid fa-link"></i>
                 <span>Copy Link</span>
+              </button>
+              <button class="copy-option" data-action="open-in-builder">
+                 <i class="fa-solid fa-tools"></i>
+                 <span>Open in builder</span>
               </button>
             </div>
           </div>
