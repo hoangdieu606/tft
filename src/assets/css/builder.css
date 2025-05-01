@@ -395,7 +395,7 @@ body[augs-btn-filter="category-3-active"] button[data-augs-category="3"] {
     padding: 15px;
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    grid-template-rows: repeat(4, 90px);
+    grid-template-rows: repeat(4, auto);
     gap: 15px;
     text-align: center;
 }

@@ -151,7 +151,7 @@ export function renderTooltipContent(data) {
                 `<span class="item-composition">
                     <span><img src="${itemAndIcon[composition[0]][0]}"></span>
                     <span>+</span>
-                    <span><img src="${itemAndIcon[composition[1][0]]}"></span>
+                    <span><img src="${itemAndIcon[composition[1]][0]}"></span>
                 </span>` : "";
         }
 

@@ -51,6 +51,12 @@ jobs:
           # Kiểm tra các file JSON tải về có hợp lệ không và không chứa lỗi
           for file in public/data/auto/*.json; do
             if [ -f "$file" ]; then
+              # Kiểm tra file rỗng
+              if [ ! -s "$file" ]; then
+                echo "File $file is empty, removing..."
+                rm "$file"
+                continue
+              fi
               # Kiểm tra cú pháp JSON
               jq . "$file" > /dev/null || { echo "Invalid JSON in $file"; exit 1; }
               # Kiểm tra xem file có chứa lỗi không (ví dụ: {"error": "File not found"})
@@ -69,14 +75,24 @@ jobs:
           echo "Files before cleanup:"
           ls -l public/data/auto/
 
-          # Sắp xếp và giữ lại 2 file data-*.json mới nhất dựa trên tên file (ngày trong tên)
+          # Sắp xếp và giữ lại 2 file data-*.json mới nhất dựa trên ngày
           echo "Cleaning old data-*.json files..."
-          ls public/data/auto/data-*.json 2>/dev/null | sort -t '-' -k 2 -r | tail -n +3 | xargs -I {} rm -v {}
-          
-          # Sắp xếp và giữ lại 2 file guides-*.json mới nhất dựa trên tên file (ngày trong tên)
+          ls public/data/auto/data-*.json 2>/dev/null | while read -r file; do
+            # Lấy phần ngày từ tên file (DD-MM-YYYY) và chuyển sang YYYY-MM-DD để so sánh
+            date_part=$(echo "$file" | grep -o '[0-9]\{2\}-[0-9]\{2\}-[0-9]\{4\}')
+            sortable_date=$(echo "$date_part" | awk -F- '{print $3"-"$2"-"$1}')
+            echo "$sortable_date $file"
+          done | sort -r | tail -n +3 | awk '{print $2}' | xargs -I {} rm -v {}
+
+          # Sắp xếp và giữ lại 2 file guides-*.json mới nhất dựa trên ngày
           echo "Cleaning old guides-*.json files..."
-          ls public/data/auto/guides-*.json 2>/dev/null | sort -t '-' -k 2 -r | tail -n +3 | xargs -I {} rm -v {}
-          
+          ls public/data/auto/guides-*.json 2>/dev/null | while read -r file; do
+            # Lấy phần ngày từ tên file (DD-MM-YYYY) và chuyển sang YYYY-MM-DD để so sánh
+            date_part=$(echo "$file" | grep -o '[0-9]\{2\}-[0-9]\{2\}-[0-9]\{4\}')
+            sortable_date=$(echo "$date_part" | awk -F- '{print $3"-"$2"-"$1}')
+            echo "$sortable_date $file"
+          done | sort -r | tail -n +3 | awk '{print $2}' | xargs -I {} rm -v {}
+
           # Log các file sau khi xóa
           echo "Files after cleanup:"
           ls -l public/data/auto/

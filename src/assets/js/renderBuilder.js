@@ -1216,10 +1216,17 @@ export function renderBuilder(data, hexIndexData) {
     function filterBuilderItems() {
         const allItemButtons = document.querySelectorAll('.builder-items .builder-filter button');
         allItemButtons.forEach((btn, index) => {
+            let numberActive = index + 1
+            if (numberActive === allItemButtons.length) {
+                numberActive = 'other'
+            }
+            if (numberActive === 4) {
+                numberActive = 5
+            }
             btn.addEventListener('click', () => {
                 document.body.setAttribute(
                     'btn-filter',
-                    `category-${index + 1 === allItemButtons.length ? 'other' : index + 1}-active`
+                    `category-${numberActive}-active`
                 );
             });
         });
@@ -1772,8 +1779,23 @@ export function renderBuilder(data, hexIndexData) {
             '.builder-list-augments .builder-filter button'
         );
         allItemButtons.forEach((btn, index) => {
+            let numberActive
+            switch (index) {
+                case 0:
+                    numberActive = 0
+                    break;
+                case 1:
+                    numberActive = 3
+                    break;
+                case 2:
+                    numberActive = 2
+                    break;
+                case 3:
+                    numberActive = 1
+                    break;
+            }
             btn.addEventListener('click', () => {
-                document.body.setAttribute('augs-btn-filter', `category-${index}-active`);
+                document.body.setAttribute('augs-btn-filter', `category-${numberActive}-active`);
             });
         });
     }

@@ -371,7 +371,6 @@ footer a:hover {
 /* Nhóm Chung Filter active: category-4-active,... */
 [btn-filter="category-other-active"] {
     --btn-filter-category-4: flex;
-    --btn-filter-category-5: flex;
     --btn-filter-category-6: flex;
     --btn-filter-category-7: flex;
 }
