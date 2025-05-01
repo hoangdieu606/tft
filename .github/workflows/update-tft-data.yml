@@ -18,20 +18,17 @@ jobs:
           # Tạo thư mục public/data/auto nếu chưa có
           mkdir -p public/data/auto
 
-          # Tạo danh sách file dựa trên ngày hiện tại và ngày trước đó
+          # Tạo danh sách file chỉ cho ngày hiện tại
           TODAY=$(date +%d-%m-%Y)
-          YESTERDAY=$(date -d "yesterday" +%d-%m-%Y)
 
-          # Worker 1 (tftdata): Tạo danh sách file data-DD-MM-YYYY.json
+          # Worker 1 (tftdata): File data-DD-MM-YYYY.json
           DATA_FILES=(
             "data-${TODAY}.json"
-            "data-${YESTERDAY}.json"
           )
 
-          # Worker 2 (tftguides): Tạo danh sách file guides-DD-MM-YYYY.json
+          # Worker 2 (tftguides): File guides-DD-MM-YYYY.json
           GUIDES_FILES=(
             "guides-${TODAY}.json"
-            "guides-${YESTERDAY}.json"
           )
 
           # Tải file từ Worker 1 (tftdata)
