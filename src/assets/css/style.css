@@ -256,12 +256,9 @@ footer a:hover {
 
 
 /* tooltip */
-/* Ngăn bubbling từ phần tử con của [data-api-name] */
-/* [data-api-name] * {
-    pointer-events: none;
-} */
 
-.augments-child>* {
+/* Ngăn bubbling từ phần tử con của [data-api-name] */
+.builder-list-augments .augments-child>* {
     pointer-events: none;
 }
 .tooltip {

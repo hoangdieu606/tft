@@ -1,4 +1,4 @@
-import { apiNameAndData, filterInput, setupTooltips, customTooltip } from '/src/assets/js/global-defer.js';
+import { apiNameAndData, filterInput, setupTooltips, customTooltip, initToggle } from '/src/assets/js/global.js';
 
 export function renderBuilder(data, hexIndexData) {
     const builderChampions = document.querySelector('.builder-champions .builder-list');
@@ -1635,7 +1635,7 @@ export function renderBuilder(data, hexIndexData) {
 
     function showNameChessBoard() {
         const nameChessboard = document.querySelector('.builder-chessboard');
-        const showNameButton = document.querySelector('.btn-builder-show-name');
+        const showNameButton = document.querySelector('.name-chessboard');
 
         const savedState = localStorage.getItem('builder-show-name');
         if (savedState === 'true') {
@@ -1851,7 +1851,7 @@ export function renderBuilder(data, hexIndexData) {
     filterInput('.builder-render-augs .augments-child', '.builder-list-augments input');
     builderOptionsBtn();
     setupSaveCompButton();
-    showNameChessBoard();
+    initToggle('name-chessboard', false)
 
     const loadedFromUrl = loadCompFromUrl();
     if (!loadedFromUrl) {

@@ -1,7 +1,7 @@
 import { renderComp } from '/src/assets/js/tierlist.js';
 import { renderChampions, renderAugments, renderItems, renderTraits, renderTierlistAugments, renderTierlistItems } from '/src/assets/js/renders.js';
 import { renderBuilder } from '/src/assets/js/renderBuilder.js'
-import { setupTooltips, setIndexer } from '/src/assets/js/global-defer.js';
+import { setupTooltips, setIndexer } from '/src/assets/js/global.js';
 
 // Định nghĩa các route với chú thích
 export const routes = {

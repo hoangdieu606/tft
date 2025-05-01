@@ -1,6 +1,6 @@
 import { generateStatsHTML } from '/src/assets/js/global.js';
-import { setupStyleMenu, formatDateLocale, apiNameAndData, filterInput } from '/src/assets/js/global-defer.js'
-import { syncNameDisplayState, createTierHead } from '/src/assets/js/tierlist.js'
+import { setupStyleMenu, formatDateLocale, apiNameAndData, filterInput, initToggle } from '/src/assets/js/global.js'
+import { createTierHead } from '/src/assets/js/tierlist.js'
 
 
 // Render danh sách champions
@@ -245,20 +245,11 @@ export function renderTierlistAugments(mainAugs) {
         createTierTemplate("B", tierGroups.groupB) +
         createTierTemplate("C", tierGroups.groupC);
 
-    // // Sử dụng hàm createTierHead để thêm nút toggle và last update
-    const { fragment, toggleContainer } = createTierHead(formatDateLocale);
+    // Sử dụng hàm createTierHead để thêm nút toggle và last update
+    // Sử dụng hàm initToggle để thiết lập trạng thái ẩn hiện tên
+    const { fragment} = createTierHead(formatDateLocale, 'tier-aug');
     augmentsList.prepend(fragment);
-
-    // Thiết lập trạng thái hiện/ẩn tên
-    const toggle = toggleContainer.querySelector(".toggle");
-    const body = document.body;
-    const savedState = (localStorage.getItem("nameDisplay") ?? "flex") === "flex";
-    syncNameDisplayState(savedState);
-
-    toggle.addEventListener("click", function () {
-        const isActive = body.classList.contains("name-active");
-        syncNameDisplayState(!isActive);
-    });
+    initToggle('tier-aug')
 
     setupStyleMenu('.style-btn.champ-link', '.style-menu.champ-link', '.style-menu.champ-link a');
     setupStyleMenu('.style-btn.champ-btn', '.style-menu.champ-btn', '.style-menu.champ-btn button');
@@ -314,20 +305,11 @@ export function renderTierlistItems(mainItems) {
         createTierTemplate("C", tierGroups.groupC) +
         createTierTemplate("X", tierGroups.groupSynergy);
 
-    // // Sử dụng hàm createTierHead để thêm nút toggle và last update
-    const { fragment, toggleContainer } = createTierHead(formatDateLocale);
-    itemsList.prepend(fragment);
-
-    // Thiết lập trạng thái hiện/ẩn tên
-    const toggle = toggleContainer.querySelector(".toggle");
-    const body = document.body;
-    const savedState = (localStorage.getItem("nameDisplay") ?? "flex") === "flex";
-    syncNameDisplayState(savedState);
-
-    toggle.addEventListener("click", function () {
-        const isActive = body.classList.contains("name-active");
-        syncNameDisplayState(!isActive);
-    });
+   // Sử dụng hàm createTierHead để thêm nút toggle và last update
+  // Sử dụng hàm initToggle để thiết lập trạng thái ẩn hiện tên
+   const { fragment} = createTierHead(formatDateLocale, 'tier-item');
+   itemsList.prepend(fragment);
+   initToggle('tier-item')
 
     setupStyleMenu('.style-btn.champ-link', '.style-menu.champ-link', '.style-menu.champ-link a');
     setupStyleMenu('.style-btn.champ-btn', '.style-menu.champ-btn', '.style-menu.champ-btn button');

@@ -40,11 +40,11 @@
 }
 
 .builder-chessboard .hexagon .hexagon-name {
-    font-size: 1.2vmin;
-    display: none;
+    font-size: 1.6vmin;
+    display: var(--an-name-chessboard, none);
 }
 
-.builder-chessboard.builder-show-name .hexagon .hexagon-name {
+.active-name-chessboard .hexagon .hexagon-name {
     display: flex;
 }
 
@@ -688,35 +688,35 @@ span.count-augments {
     background-color: #45a049;
 }
 
-button.btn-builder-show-name {
+button#name-chessboard {
     justify-content: flex-end;
 }
 
-button.btn-builder-show-name .fa-eye {
+button#name-chessboard .fa-eye {
     display: none;
 }
 
-button.btn-builder-show-name .fa-eye-slash {
+button#name-chessboard .fa-eye-slash {
     display: inline-block;
 }
 
-.builder-show-name button.btn-builder-show-name .fa-eye {
+button#name-chessboard.active .fa-eye {
     display: inline-block;
 }
 
-.builder-show-name button.btn-builder-show-name .fa-eye-slash {
+button#name-chessboard.active .fa-eye-slash {
     display: none;
 }
 
-.btn-builder-show-name .hide-text {
+#name-chessboard .hide-text {
     display: none;
 }
 
-.builder-show-name .btn-builder-show-name .show-text {
+#name-chessboard.active .show-text {
     display: none;
 }
 
-.builder-show-name .btn-builder-show-name .hide-text {
+#name-chessboard.active .hide-text {
     display: inline;
 }
 

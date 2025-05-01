@@ -1,12 +1,11 @@
-import { apiNameAndIcon } from '/src/assets/js/global.js';
-import { setupTooltips, setupStyleMenu, apiNameAndData, formatDateLocale } from '/src/assets/js/global-defer.js';
+import { setupTooltips, setupStyleMenu, apiNameAndData, formatDateLocale, initToggle } from '/src/assets/js/global.js';
 
 
 export function renderComp(data, guidesData, hexIndexData) {
   const tierCompContainer = document.querySelector(".tier-comp-container");
   if (!tierCompContainer) return;
 
-  const itemAndIcon = apiNameAndIcon(data.items.mainItems);
+  const itemAndIcon = apiNameAndData(data.items.mainItems, ['icon']);
   const augsAndIconTier = apiNameAndData(data.augments.mainAugs, ['icon', 'tier2']);
   const champAndIconCost = apiNameAndData(data.champions.mainChampions, ['icon', 'cost', 'name', 'traits']);
 
@@ -96,8 +95,8 @@ export function tierList(guidesData, champAndIconCost, itemAndIcon, augsAndIconT
       <div class="hexagon-tier-champ">
         <a href="${hashtag}" style="background-image: url(${iconChamp})" title="${title}" data-index="${index}" data-style="${style}" data-name="${champName}"></a>
       </div>
-      ${itemApiName && itemAndIcon[itemApiName] ? `<div class="hexagon-item"> 
-        <div class="hexagon-icon" style="background-image: url(${itemAndIcon[itemApiName]})" data-api-name="${itemApiName}"></div>
+      ${itemApiName && itemAndIcon[itemApiName][0] ? `<div class="hexagon-item"> 
+        <div class="hexagon-icon" style="background-image: url(${itemAndIcon[itemApiName][0]})" data-api-name="${itemApiName}"></div>
       </div>` : ""}
       ${augsApiName && augsAndIconTier[augsApiName] ? `<div class="hexagon-item"> 
         <div class="hexagon-icon" style="background-image: url(${augsAndIconTier[augsApiName][0]})" data-api-name="${augsApiName}"></div>
@@ -158,26 +157,17 @@ export function tierList(guidesData, champAndIconCost, itemAndIcon, augsAndIconT
 
 
   // Sử dụng hàm createTierHead để thêm nút toggle và last update
-  const { fragment, toggleContainer } = createTierHead(formatDateLocale);
+  // Sử dụng hàm initToggle để thiết lập trạng thái ẩn hiện tên
+  const { fragment} = createTierHead(formatDateLocale, 'tierlist');
   tierContainer.prepend(fragment);
+  initToggle('tierlist')
 
   // Khởi tạo các phần tử UI
-  const toggle = toggleContainer.querySelector(".toggle");
   const tierLists = document.querySelectorAll('.tier-list');
   const searchInput = document.querySelector('.search-input');
   const styleBtn = document.querySelector('.style-btn.tierlist-btn');
   const styleMenu = document.querySelector('.style-menu.tierlist-menu');
   const styleOptions = document.querySelectorAll('.tierlist-menu .style-option');
-  const body = document.body;
-
-  // Thiết lập trạng thái hiện/ẩn tên
-  const savedState = (localStorage.getItem("nameDisplay") ?? "flex") === "flex";
-  syncNameDisplayState(savedState);
-
-  toggle.addEventListener("click", function () {
-    const isActive = body.classList.contains("name-active");
-    syncNameDisplayState(!isActive);
-  });
 
   // Xử lý đóng/mở menu phong cách
   if (styleBtn && styleMenu) {
@@ -292,7 +282,7 @@ export function renderPostComp(guideData, champAndIconCost, itemAndIcon, augsAnd
       if (item.includes("Emblem")) {
         finalEmblem.push({ "apiName": item });
       }
-      return `<span><img src="${itemAndIcon[item]}" width="24" height="24" data-api-name="${item}"></span>`;
+      return `<span><img src="${itemAndIcon[item][0]}" width="24" height="24" data-api-name="${item}"></span>`;
     }).join('');
 
     return `
@@ -321,7 +311,7 @@ export function renderPostComp(guideData, champAndIconCost, itemAndIcon, augsAnd
           <div class="comp-champ-icon">
             <div style="background-image: url(${champAndIconCost[mainChampion.apiName][0]})" data-api-name="${mainChampion.apiName}"></div>
           </div>
-          ${mainItem && itemAndIcon[mainItem.apiName] ? `<div class="comp-champ-trait"><img src="${itemAndIcon[mainItem.apiName]}" data-api-name="${mainItem.apiName}"></div>` : ""}
+          ${mainItem && itemAndIcon[mainItem.apiName][0] ? `<div class="comp-champ-trait"><img src="${itemAndIcon[mainItem.apiName][0]}" data-api-name="${mainItem.apiName}"></div>` : ""}
           ${mainAugment && augsAndIconTier[mainAugment.apiName][0] ? `<div class="comp-champ-trait"><img src="${augsAndIconTier[mainAugment.apiName][0]}" data-api-name="${mainAugment.apiName}"></div>` : ""}
         </div>
         <div class="comp-title">
@@ -395,7 +385,7 @@ export function renderPostComp(guideData, champAndIconCost, itemAndIcon, augsAnd
                 <img src="${champAndIconCost[apiName][0]}" width="58" height="58" data-api-name="${apiName}">
               </div>
               <div class="hexagon-items">
-                ${items ? items.map(item => `<span><img src="${itemAndIcon[item]}" width="20" height="20" data-api-name="${item}"></span>`).join('') : ""}
+                ${items ? items.map(item => `<span><img src="${itemAndIcon[item][0]}" width="20" height="20" data-api-name="${item}"></span>`).join('') : ""}
               </div>
               <div class="hexagon-name">${champAndIconCost[apiName][2]}</div>
             </div>
@@ -407,11 +397,11 @@ export function renderPostComp(guideData, champAndIconCost, itemAndIcon, augsAnd
       <div class="title-comp">Ưu tiên mảnh trang bị</div>
       <div class="item-priority">
         ${carousel.map(({ apiName }) => {
-    if (!itemAndIcon[apiName]) return '';
+    if (!itemAndIcon[apiName][0]) return '';
     return `
             <div class="hexagon-icon">
               <div class="hexagon-champ">
-                <img src="${itemAndIcon[apiName]}" width="58" height="58" data-api-name="${apiName}">
+                <img src="${itemAndIcon[apiName][0]}" width="58" height="58" data-api-name="${apiName}">
               </div>
             </div>
           `;
@@ -429,7 +419,7 @@ export function renderPostComp(guideData, champAndIconCost, itemAndIcon, augsAnd
                 <img src="${champAndIconCost[apiName][0]}" width="80" height="80" data-api-name="${apiName}">
               </div>
               <div class="hexagon-items">
-                ${items ? items.map(item => `<span><img src="${itemAndIcon[item]}" width="24" height="24" data-api-name="${item}"></span>`).join('') : ""}
+                ${items ? items.map(item => `<span><img src="${itemAndIcon[item][0]}" width="24" height="24" data-api-name="${item}"></span>`).join('') : ""}
               </div>
               <div class="hexagon-name">${champAndIconCost[apiName][2]}</div>
             </div>
@@ -438,7 +428,7 @@ export function renderPostComp(guideData, champAndIconCost, itemAndIcon, augsAnd
       </div>
     </div>
     <div class="row-comp">
-      <div class="toggle-container">
+      <div class="toggle-container" id="tier-post">
         <span class="toggle-label">Hiện Tên</span>
         <div class="toggle"></div>
       </div>
@@ -516,7 +506,7 @@ export function renderPostComp(guideData, champAndIconCost, itemAndIcon, augsAnd
     });
   });
 
-  setupToggle(postCompTag);
+  initToggle('tier-post',false);
   setupTooltips();
 }
 
@@ -565,7 +555,7 @@ function placeChampions(finalCompData, champAndIconCost, itemAndIcon, board) {
     if (!hexagon) return;
 
     const itemsHTML = items ? items.map(item =>
-      itemAndIcon[item] ? `<span><img src="${itemAndIcon[item]}" width="24" height="24" data-api-name="${item}"></span>` : ''
+      itemAndIcon[item][0] ? `<span><img src="${itemAndIcon[item][0]}" width="24" height="24" data-api-name="${item}"></span>` : ''
     ).join('') : '';
 
 
@@ -656,27 +646,6 @@ function processTraits(traits) {
     .sort((a, b) => b.maxTraits - a.maxTraits);
 }
 
-function setupToggle(postCompTag) {
-  const toggleContainer = postCompTag.querySelector(".toggle-container");
-  if (!toggleContainer) return;
-
-  const toggle = toggleContainer.querySelector(".toggle");
-  const label = toggleContainer.querySelector(".toggle-label");
-  if (!toggle || !label) return;
-
-  const body = document.body;
-  const root = document.documentElement;
-
-  // Thiết lập trạng thái hiện/ẩn tên
-  const savedState = (localStorage.getItem("nameDisplay") ?? "flex") === "flex";
-  syncNameDisplayState(savedState);
-
-  toggle.addEventListener("click", function () {
-    const isActive = body.classList.contains("name-active");
-    syncNameDisplayState(!isActive);
-  });
-}
-
 function toHashtag(str) {
   if (!str) return '#';
 
@@ -716,7 +685,7 @@ function handleHashURL(data, guidesData, hexIndexData) {
   tierContainer.classList.remove("hide-post-comp");
   targetLink.classList.add("active");
 
-  const itemAndIcon = apiNameAndIcon(data.items.mainItems);
+  const itemAndIcon = apiNameAndData(data.items.mainItems, ['icon']);
   const augsAndIconTier = apiNameAndData(data.augments.mainAugs, ['icon', 'tier2']);
   const champAndIconCost = Object.fromEntries(data.champions.mainChampions.map(obj => [obj.apiName, [obj.icon, obj.cost, obj.name, obj.traits]]));
 
@@ -767,46 +736,15 @@ function showTooltip(message, element) {
   // Tooltip sẽ tự động biến mất sau 2s nhờ animation CSS
 }
 
-// Thêm hàm chung để đồng bộ trạng thái hiển thị tên
-export function syncNameDisplayState(isActive) {
-  const body = document.body;
-  const root = document.documentElement;
-  // Cập nhật class và CSS variable
-  if (isActive) {
-    body.classList.add("name-active");
-  } else {
-    body.classList.remove("name-active");
-  }
-  root.style.setProperty('--name-display', isActive ? "flex" : "none");
 
-  // Cập nhật tất cả các nút toggle
-  const allToggles = document.querySelectorAll(".toggle");
-  const allLabels = document.querySelectorAll(".toggle-label");
-
-  allToggles.forEach(toggle => {
-    if (isActive) {
-      toggle.classList.add("active");
-    } else {
-      toggle.classList.remove("active");
-    }
-  });
-
-  allLabels.forEach(label => {
-    label.textContent = isActive ? "Ẩn Tên" : "Hiện Tên";
-  });
-
-  // Lưu trạng thái vào localStorage
-  localStorage.setItem("nameDisplay", isActive ? "flex" : "none");
-}
-
-
-export function createTierHead(dateFormatter) {
+export function createTierHead(dateFormatter, toggleId='toggleId') {
   const fragment = document.createDocumentFragment();
   const tierHead = document.createElement("div");
   tierHead.className = "tier-head";
 
   // Toggle container
   const toggleContainer = document.createElement("div");
+  toggleContainer.id = toggleId
   toggleContainer.className = "toggle-container tierlist-toggle";
   const toggleLabel = document.createElement("span");
   toggleLabel.className = "toggle-label";
