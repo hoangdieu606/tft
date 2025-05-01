@@ -22,28 +22,28 @@ jobs:
           TODAY=$(date +%d-%m-%Y)
           YESTERDAY=$(date -d "yesterday" +%d-%m-%Y)
 
-          # Worker 1 (hocvientft): Tạo danh sách file data-DD-MM-YYYY.json
+          # Worker 1 (tftdata): Tạo danh sách file data-DD-MM-YYYY.json
           DATA_FILES=(
             "data-${TODAY}.json"
             "data-${YESTERDAY}.json"
           )
 
-          # Worker 2 (comp-hocvientft): Tạo danh sách file guides-DD-MM-YYYY.json
+          # Worker 2 (tftguides): Tạo danh sách file guides-DD-MM-YYYY.json
           GUIDES_FILES=(
             "guides-${TODAY}.json"
             "guides-${YESTERDAY}.json"
           )
 
-          # Tải file từ Worker 1 (hocvientft)
+          # Tải file từ Worker 1 (tftdata)
           for filename in "${DATA_FILES[@]}"; do
-            echo "Attempting to download $filename from hocvientft..."
-            curl -X GET "https://hocvientft.hoquocdieu.workers.dev/?file=$filename" -o "public/data/auto/$filename" || echo "File $filename not found in hocvientft, skipping..."
+            echo "Attempting to download $filename from tftdata..."
+            curl -X GET "https://tftdata.hoquocdieu.workers.dev/?file=$filename" -o "public/data/auto/$filename" || echo "File $filename not found in tftdata, skipping..."
           done
 
-          # Tải file từ Worker 2 (comp-hocvientft)
+          # Tải file từ Worker 2 (tftguides)
           for filename in "${GUIDES_FILES[@]}"; do
-            echo "Attempting to download $filename from comp-hocvientft..."
-            curl -X GET "https://comp-hocvientft.hoquocdieu.workers.dev/?file=$filename" -o "public/data/auto/$filename" || echo "File $filename not found in comp-hocvientft, skipping..."
+            echo "Attempting to download $filename from tftguides..."
+            curl -X GET "https://tftguides.hoquocdieu.workers.dev/?file=$filename" -o "public/data/auto/$filename" || echo "File $filename not found in tftguides, skipping..."
           done
 
       - name: Validate JSON Files
