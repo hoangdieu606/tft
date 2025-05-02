@@ -1,7 +1,8 @@
 import { renderComp } from '/src/assets/js/tierlist.js';
 import { renderChampions, renderAugments, renderItems, renderTraits, renderTierlistAugments, renderTierlistItems } from '/src/assets/js/renders.js';
-import { renderBuilder } from '/src/assets/js/renderBuilder.js'
+import { renderBuilder } from '/src/assets/js/renderBuilder.js';
 import { setupTooltips, setIndexer } from '/src/assets/js/global.js';
+import { metaTags } from '/src/assets/js/metaTags.js';
 
 // Định nghĩa các route với chú thích
 export const routes = {
@@ -19,11 +20,10 @@ export const routes = {
 
 // Hàm loadPage để tải nội dung HTML và hiển thị
 export async function loadPage(page, { data = {}, guidesData = {}, hexIndexData = {} } = {}) {
-  let normalizedPage; // Định nghĩa ở ngoài try để tránh ReferenceError
+  let normalizedPage;
   try {
     // Nếu data hoặc guidesData rỗng, thử lấy từ localStorage
     if (Object.keys(data).length === 0 || Object.keys(guidesData).length === 0) {
-
       const storedData = localStorage.getItem("postData");
       const storedGuidesData = localStorage.getItem("guidesData");
       const storedHexIndexData = localStorage.getItem("hexIndexData");
@@ -58,6 +58,35 @@ export async function loadPage(page, { data = {}, guidesData = {}, hexIndexData 
     const html = await response.text();
     document.getElementById("content").innerHTML = html;
 
+    // Cập nhật tiêu đề và meta tags
+    const meta = metaTags[normalizedPage] || metaTags.home;
+    document.title = meta.title;
+
+    // Cập nhật meta tags
+    if (meta.description) {
+      document.querySelector('meta[name="description"]').setAttribute("content", meta.description);
+    }
+    if (meta.keywords) {
+      document.querySelector('meta[name="keywords"]').setAttribute("content", meta.keywords);
+    }
+    if (meta.ogTitle) {
+      document.querySelector('meta[property="og:title"]').setAttribute("content", meta.ogTitle);
+    }
+    if (meta.ogDescription) {
+      document.querySelector('meta[property="og:description"]').setAttribute("content", meta.ogDescription);
+    }
+    if (meta.ogImage) {
+      document.querySelector('meta[property="og:image"]').setAttribute("content", meta.ogImage);
+    }
+    if (meta.twitterTitle) {
+      document.querySelector('meta[name="twitter:title"]').setAttribute("content", meta.twitterTitle);
+    }
+    if (meta.twitterDescription) {
+      document.querySelector('meta[name="twitter:description"]').setAttribute("content", meta.twitterDescription);
+    }
+    if (meta.twitterImage) {
+      document.querySelector('meta[name="twitter:image"]').setAttribute("content", meta.twitterImage);
+    }
 
     switch (page) {
       case 'champions':
@@ -82,21 +111,21 @@ export async function loadPage(page, { data = {}, guidesData = {}, hexIndexData 
         renderTierlistItems(data.items.mainItems);
         break;
       case 'builder':
-        renderBuilder(data, hexIndexData)
+        renderBuilder(data, hexIndexData);
         break;
       case 'home':
-        // Thêm case cho home để tránh cảnh báo
         break;
       default:
         console.warn(`⚠️ No render function for page: ${page}`);
     }
-    if(page === "builder") {
+
+    if (page === "builder") {
       document.body.setAttribute("btn-filter", `category-1-active`);
       document.body.setAttribute("augs-btn-filter", "category-0-active");
-
     } else {
       document.body.setAttribute("btn-filter", `category-0-active`);
     }
+
     setIndexer(data || {});
     setupTooltips();
   } catch (error) {
@@ -105,6 +134,33 @@ export async function loadPage(page, { data = {}, guidesData = {}, hexIndexData 
       return loadPage("commingsoon", { data, guidesData, hexIndexData });
     } else {
       document.getElementById("content").innerHTML = "<h1>Error: Unable to load page</h1>";
+      const meta = metaTags.commingsoon || metaTags.home;
+      document.title = meta.title;
+      // Cập nhật meta tags cho trang commingsoon
+      if (meta.description) {
+        document.querySelector('meta[name="description"]').setAttribute("content", meta.description);
+      }
+      if (meta.keywords) {
+        document.querySelector('meta[name="keywords"]').setAttribute("content", meta.keywords);
+      }
+      if (meta.ogTitle) {
+        document.querySelector('meta[property="og:title"]').setAttribute("content", meta.ogTitle);
+      }
+      if (meta.ogDescription) {
+        document.querySelector('meta[property="og:description"]').setAttribute("content", meta.ogDescription);
+      }
+      if (meta.ogImage) {
+        document.querySelector('meta[property="og:image"]').setAttribute("content", meta.ogImage);
+      }
+      if (meta.twitterTitle) {
+        document.querySelector('meta[name="twitter:title"]').setAttribute("content", meta.twitterTitle);
+      }
+      if (meta.twitterDescription) {
+        document.querySelector('meta[name="twitter:description"]').setAttribute("content", meta.twitterDescription);
+      }
+      if (meta.twitterImage) {
+        document.querySelector('meta[name="twitter:image"]').setAttribute("content", meta.twitterImage);
+      }
     }
   }
 }

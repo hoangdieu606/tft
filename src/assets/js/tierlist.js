@@ -508,6 +508,7 @@ export function renderPostComp(guideData, champAndIconCost, itemAndIcon, augsAnd
 
   initToggle('tier-post',false);
   setupTooltips();
+  document.title = title;
 }
 
 function createBoard(finalCompData, champAndIconCost, itemAndIcon, postCompTag) {
