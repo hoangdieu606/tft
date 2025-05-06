@@ -306,7 +306,7 @@ export function renderPostComp(guideData, champAndIconCost, itemAndIcon, augsAnd
       <div class="left-one">
         <div class="comp-shadow"></div>
         <div class="comp-main-champ">
-          ${tier === "X" ? `<div class="hero-tier tier-${augsAndIconTier[mainAugment.apiName][1]}">${augsAndIconTier[mainAugment.apiName][1]}</div>` : ""}
+          ${tier === "X" ? `<div class="hero-tier tier-${augsAndIconTier[mainAugment?.apiName]?.[1]}">${augsAndIconTier[mainAugment?.apiName]?.[1] || ""}</div>` : ""}
           <div class="comp-champ-tier">${tier}</div>
           <div class="comp-champ-icon">
             <div style="background-image: url(${champAndIconCost[mainChampion.apiName][0]})" data-api-name="${mainChampion.apiName}"></div>
