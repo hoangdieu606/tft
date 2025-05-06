@@ -1723,7 +1723,7 @@ export function renderBuilder(data, hexIndexData) {
         countAugments.textContent = selectedAugments.length;
 
         document.querySelectorAll('.builder-render-augs .augments-child').forEach(augElement => {
-            const apiName = augElement.querySelector('img').dataset.apiName;
+            const apiName = augElement.dataset.apiName;
             if (selectedAugments.some(aug => aug.apiName === apiName)) {
                 augElement.classList.add('active');
             } else {
@@ -1746,7 +1746,7 @@ export function renderBuilder(data, hexIndexData) {
             .map(
                 ({ name, icon, tier, tier2, apiName }) => `
                 <div class="augments-child augs-tier-${tier} tier-${tier2}" data-api-name="${apiName}">
-                    <img src="${icon}" alt="${name}" data-api-name="${apiName}">
+                    <img src="${icon}" alt="${name}">
                     <span>${name}</span>
                 </div>
             `
@@ -1755,7 +1755,7 @@ export function renderBuilder(data, hexIndexData) {
 
         document.querySelectorAll('.builder-render-augs .augments-child').forEach(augElement => {
             augElement.addEventListener('click', e => {
-                const apiName = augElement.querySelector('img').dataset.apiName;
+                const apiName = augElement.dataset.apiName;
                 const aug = augments.find(a => a.apiName === apiName);
                 if (!aug) return;
 

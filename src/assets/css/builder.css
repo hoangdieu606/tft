@@ -395,7 +395,7 @@ body[augs-btn-filter="category-3-active"] button[data-augs-category="3"] {
     padding: 15px;
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    grid-template-rows: repeat(4, auto);
+    grid-template-rows: repeat(4, 90px);
     gap: 15px;
     text-align: center;
 }
@@ -798,6 +798,12 @@ button#name-chessboard.active .fa-eye-slash {
     display: none;
 }
 
+/* Tooltip */
+.builder-augments .augments-child>*,
+.builder-list-augments .augments-child>* {
+    pointer-events: none;
+}
+
 /* Media min-width 768px */
 @media (min-width: 768px) {
     .builder-chessboard .position-comp {
@@ -807,6 +813,10 @@ button#name-chessboard.active .fa-eye-slash {
 
 /* Media max-width 768px */
 @media (max-width: 768px) {
+    .builder-augments .augments-child>*,
+    .builder-list-augments .augments-child>* {
+        pointer-events: auto;
+    }
     .builder-container {
         margin: 0;
     }

@@ -258,9 +258,6 @@ footer a:hover {
 /* tooltip */
 
 /* Ngăn bubbling từ phần tử con của [data-api-name] */
-.builder-list-augments .augments-child>* {
-    pointer-events: none;
-}
 .tooltip {
     position: fixed;
     max-width: 300px;
