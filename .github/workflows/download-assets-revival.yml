@@ -2,7 +2,7 @@ name: Download TFT Academy Assets
 
 on:
   schedule:
-    - cron: '0 1 * * *' # Chạy lúc 00:00 UTC (07:00 +7)
+    - cron: '0 00 * * *' # Chạy lúc 00:00 UTC (07:00 +7)
   workflow_dispatch:
 
 permissions:
@@ -77,7 +77,7 @@ jobs:
           const path = require('path');
           const { default: PQueue } = require('p-queue');
 
-          const SET_NUMBER = 11;
+          const SET_NUMBER = 10;
 
           async function getCurrentSet() {
             try {
@@ -89,7 +89,7 @@ jobs:
           }
 
           async function saveCurrentSet(set) {
-            await fs.writeFile('set-revival.json', JSON.stringify({ set }));
+            await fs.writeFile('set-revival.json', JSON.stringify({ set }, null, 2)); // Định dạng JSON nhất quán
           }
 
           async function downloadImageWithRetry(imageUrl, savePath, retries = 3, delay = 10000) {
@@ -181,11 +181,15 @@ jobs:
             const currentSet = await getCurrentSet();
             const newSet = `${SET_NUMBER}`;
 
-            // Kiểm tra set ngay đầu để tối ưu
             if (newSet === currentSet) {
               console.log('Set không thay đổi, bỏ qua tải assets');
-              return;
+              return; // Thoát sớm, không ghi đè set-revival.json
             }
+
+            console.log(`Phát hiện set: ${newSet}. Bắt đầu tải assets...`);
+            const baseDir = `public/assets/images/set${SET_NUMBER}`;
+            await fs.rm(baseDir, { recursive: true, force: true }).catch(() => {});
+            await fs.mkdir(baseDir, { recursive: true });
 
             const apiConfigs = [
               {
@@ -234,12 +238,6 @@ jobs:
             });
             if (!response) return;
 
-            console.log(`Bắt đầu tải assets cho set ${SET_NUMBER}...`);
-            const baseDir = `public/assets/images/set${SET_NUMBER}`;
-            // Chỉ xóa thư mục của SET_NUMBER hiện tại nếu tồn tại
-            await fs.rm(baseDir, { recursive: true, force: true }).catch(() => {});
-            await fs.mkdir(baseDir, { recursive: true });
-
             let totalSuccess = 0;
             let totalFail = 0;
             for (const config of apiConfigs) {
@@ -269,16 +267,21 @@ jobs:
       - name: Kiểm tra số lượng ảnh và kích thước thư mục
         run: |
           echo "Số lượng ảnh tải được trong mỗi thư mục:"
-          for dir in public/assets/images/set${{ env.SET }}/champions public/assets/images/set${{ env.SET }}/traits public/assets/images/set${{ env.SET }}/augments public/assets/images/set${{ env.SET }}/items; do
-            if [ -d "$dir" ]; then
-              count=$(find "$dir" -type f | wc -l)
-              echo "$dir: $count ảnh"
-            fi
-          done
-          echo "Tổng số ảnh tải được:"
-          find public/assets/images/set${{ env.SET }} -type f | wc -l
-          echo "Kích thước thư mục:"
-          du -sh public/assets/images/set${{ env.SET }}
+          base_dir="public/assets/images/set${{ env.SET }}"
+          if [ -d "$base_dir" ]; then
+            for dir in "$base_dir/champions" "$base_dir/traits" "$base_dir/augments" "$base_dir/items"; do
+              if [ -d "$dir" ]; then
+                count=$(find "$dir" -type f | wc -l)
+                echo "$dir: $count ảnh"
+              fi
+            done
+            echo "Tổng số ảnh tải được:"
+            find "$base_dir" -type f | wc -l
+            echo "Kích thước thư mục:"
+            du -sh "$base_dir"
+          else
+            echo "Thư mục $base_dir không tồn tại, có thể do set không thay đổi hoặc chưa tải lần nào."
+          fi
 
       - name: Commit và push thay đổi
         run: |
