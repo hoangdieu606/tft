@@ -2,7 +2,7 @@ name: Update TFT Data
 
 on:
   schedule:
-    - cron: '30 00 * * *' # 00:30 UTC mỗi ngày
+    - cron: '30 0 * * *'  # 00:30 UTC mỗi ngày
     - cron: '30 12 * * *' # 12:30 UTC mỗi ngày
   workflow_dispatch:
 
@@ -12,25 +12,17 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          fetch-depth: 0 # Để pull các thay đổi mới nhất, tránh xung đột
+          fetch-depth: 0
 
       - name: Fetch Data from Workers
         run: |
-          # Tạo thư mục public/data/auto nếu chưa có
           mkdir -p public/data/auto
-
-          # Tạo danh sách file chỉ cho ngày hiện tại
-          TODAY=$(date +%d-%m-%Y)
-
-          # Worker 1 (tftdata): File data-DD-MM-YYYY.json
-          DATA_FILES=(
-            "data-${TODAY}.json"
-          )
-
-          # Worker 2 (tftguides): File guides-DD-MM-YYYY.json
-          GUIDES_FILES=(
-            "guides-${TODAY}.json"
-          )
+          TODAY=$(date +%Y-%m-%d)
+          
+          DATA_FILES=("data-${TODAY}.json")
+          GUIDES_FILES=("guides-${TODAY}.json")
+          REVIVAL_FILES=("set-10-revival-${TODAY}.json")
+          REVIVAL_GUIDES_FILES=("revival-guides-${TODAY}.json")
 
           # Tải file từ Worker 1 (tftdata)
           for filename in "${DATA_FILES[@]}"; do
@@ -44,20 +36,28 @@ jobs:
             curl -X GET "https://tftguides.hoquocdieu.workers.dev/?file=$filename" -o "public/data/auto/$filename" || echo "File $filename not found in tftguides, skipping..."
           done
 
+          # Tải file từ Worker 3 (tft-data-revival)
+          for filename in "${REVIVAL_FILES[@]}"; do
+            echo "Attempting to download $filename from tft-data-revival..."
+            curl -X GET "https://tft-data-revival.hoquocdieu.workers.dev/?file=$filename" -o "public/data/auto/$filename" || echo "File $filename not found in tft-data-revival, skipping..."
+          done
+
+          # Tải file từ Worker 4 (tft-guides-revival)
+          for filename in "${REVIVAL_GUIDES_FILES[@]}"; do
+            echo "Attempting to download $filename from tft-guides-revival..."
+            curl -X GET "https://tft-guides-revival.hoquocdieu.workers.dev/?file=$filename" -o "public/data/auto/$filename" || echo "File $filename not found in tft-guides-revival, skipping..."
+          done
+
       - name: Validate JSON Files
         run: |
-          # Kiểm tra các file JSON tải về có hợp lệ không và không chứa lỗi
           for file in public/data/auto/*.json; do
             if [ -f "$file" ]; then
-              # Kiểm tra file rỗng
               if [ ! -s "$file" ]; then
                 echo "File $file is empty, removing..."
                 rm "$file"
                 continue
               fi
-              # Kiểm tra cú pháp JSON
               jq . "$file" > /dev/null || { echo "Invalid JSON in $file"; exit 1; }
-              # Kiểm tra xem file có chứa lỗi không (ví dụ: {"error": "File not found"})
               if jq -e '.error' "$file" > /dev/null; then
                 echo "File $file contains an error, removing..."
                 rm "$file"
@@ -69,29 +69,21 @@ jobs:
 
       - name: Clean Old Files in public/data/auto
         run: |
-          # Log các file trước khi xóa
           echo "Files before cleanup:"
           ls -l public/data/auto/
 
-          # Sắp xếp và giữ lại 2 file data-*.json mới nhất dựa trên ngày
           echo "Cleaning old data-*.json files..."
-          ls public/data/auto/data-*.json 2>/dev/null | while read -r file; do
-            # Lấy phần ngày từ tên file (DD-MM-YYYY) và chuyển sang YYYY-MM-DD để so sánh
-            date_part=$(echo "$file" | grep -o '[0-9]\{2\}-[0-9]\{2\}-[0-9]\{4\}')
-            sortable_date=$(echo "$date_part" | awk -F- '{print $3"-"$2"-"$1}')
-            echo "$sortable_date $file"
-          done | sort -r | tail -n +3 | awk '{print $2}' | xargs -I {} rm -v {}
+          ls public/data/auto/data-*.json 2>/dev/null | sort -r | tail -n +3 | xargs -I {} rm -v {}
 
-          # Sắp xếp và giữ lại 2 file guides-*.json mới nhất dựa trên ngày
           echo "Cleaning old guides-*.json files..."
-          ls public/data/auto/guides-*.json 2>/dev/null | while read -r file; do
-            # Lấy phần ngày từ tên file (DD-MM-YYYY) và chuyển sang YYYY-MM-DD để so sánh
-            date_part=$(echo "$file" | grep -o '[0-9]\{2\}-[0-9]\{2\}-[0-9]\{4\}')
-            sortable_date=$(echo "$date_part" | awk -F- '{print $3"-"$2"-"$1}')
-            echo "$sortable_date $file"
-          done | sort -r | tail -n +3 | awk '{print $2}' | xargs -I {} rm -v {}
+          ls public/data/auto/guides-*.json 2>/dev/null | sort -r | tail -n +3 | xargs -I {} rm -v {}
 
-          # Log các file sau khi xóa
+          echo "Cleaning old set-10-revival-*.json files..."
+          ls public/data/auto/set-10-revival-*.json 2>/dev/null | sort -r | tail -n +3 | xargs -I {} rm -v {}
+
+          echo "Cleaning old revival-guides-*.json files..."
+          ls public/data/auto/revival-guides-*.json 2>/dev/null | sort -r | tail -n +3 | xargs -I {} rm -v {}
+
           echo "Files after cleanup:"
           ls -l public/data/auto/
 
@@ -100,46 +92,37 @@ jobs:
           git config --global user.name "GitHub Action"
           git config --global user.email "action@github.com"
 
-          # Kiểm tra trạng thái repository và xử lý các thay đổi chưa commit
           if [ -n "$(git status --porcelain)" ]; then
             echo "Unstaged changes detected, stashing them..."
             git add .
             git stash
           fi
 
-          # Pull với rebase để cập nhật từ remote
           git pull origin main --rebase || { echo "Pull failed"; exit 1; }
 
-          # Nếu có stash, áp dụng lại
           if git stash list | grep -q "stash"; then
             echo "Applying stashed changes..."
             git stash pop || { echo "Stash pop failed, resolving conflicts may be needed"; exit 1; }
           fi
 
-          # Log trạng thái trước khi staged
           echo "Git status before staging:"
           git status
 
-          # Staged tất cả các thay đổi, bao gồm việc xóa file
           echo "Staging all changes, including deletions..."
           git add -A
 
-          # Log trạng thái sau khi staged
           echo "Git status after staging:"
           git status
 
-          # Kiểm tra xem có thay đổi nào để commit không
           if git diff --staged --quiet; then
             echo "No changes to commit"
             exit 0
           fi
 
-          # Commit và push
           echo "Committing changes..."
-          git commit -m "Update TFT data on $(date +'%d-%m-%Y')"
+          git commit -m "Update TFT data on $(date +'%Y-%m-%d')"
           git push
 
-          # Log các file còn lại trong thư mục
           echo "Files remaining in public/data/auto after commit:"
           ls -l public/data/auto/
         env:
