@@ -7,6 +7,7 @@ import { metaTags } from '/src/assets/js/metaTags.js';
 // Định nghĩa các route với chú thích
 export const routes = {
   tierlist: import.meta.env.DEV ? "src/pages/tierlist.html" : "/pages/tierlist.html",
+  "tierlist-revival": import.meta.env.DEV ? "src/pages/tierlist-revival.html" : "/pages/tierlist-revival.html",
   "tierlist-augments": import.meta.env.DEV ? "src/pages/tierlist-augments.html" : "/pages/tierlist-augments.html",
   "tierlist-items": import.meta.env.DEV ? "src/pages/tierlist-items.html" : "/pages/tierlist-items.html",
   champions: import.meta.env.DEV ? "src/pages/champions.html" : "/pages/champions.html",
@@ -19,7 +20,7 @@ export const routes = {
 };
 
 // Hàm loadPage để tải nội dung HTML và hiển thị
-export async function loadPage(page, { data = {}, guidesData = {}, hexIndexData = {} } = {}) {
+export async function loadPage(page, { data = {}, guidesData = {}, hexIndexData = {}, revivalData = {}, revivalGuides = {} } = {}) {
   let normalizedPage;
   try {
     // Nếu data hoặc guidesData rỗng, thử lấy từ localStorage
@@ -27,6 +28,9 @@ export async function loadPage(page, { data = {}, guidesData = {}, hexIndexData 
       const storedData = localStorage.getItem("postData");
       const storedGuidesData = localStorage.getItem("guidesData");
       const storedHexIndexData = localStorage.getItem("hexIndexData");
+      const storedRevivalData = localStorage.getItem("revivalData");
+      const storedRevivalGuides = localStorage.getItem("revivalGuides");
+
 
       if (storedData) {
         data = JSON.parse(storedData);
@@ -36,6 +40,12 @@ export async function loadPage(page, { data = {}, guidesData = {}, hexIndexData 
       }
       if (storedHexIndexData) {
         hexIndexData = JSON.parse(storedHexIndexData);
+      }
+      if (storedRevivalData) {
+        revivalData = JSON.parse(storedRevivalData);
+      }
+      if (storedRevivalGuides) {
+        revivalGuides = JSON.parse(storedRevivalGuides);
       }
     }
 
@@ -103,6 +113,9 @@ export async function loadPage(page, { data = {}, guidesData = {}, hexIndexData 
         break;
       case 'tierlist':
         renderComp(data, guidesData, hexIndexData);
+        break;
+        case 'tierlist-revival':
+        renderComp(revivalData, revivalGuides, revivalData.champions);
         break;
       case 'tierlist-augments':
         renderTierlistAugments(data.augments.mainAugs);

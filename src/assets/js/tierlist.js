@@ -5,9 +5,10 @@ export function renderComp(data, guidesData, hexIndexData) {
   const tierCompContainer = document.querySelector(".tier-comp-container");
   if (!tierCompContainer) return;
 
-  const itemAndIcon = apiNameAndData(data.items.mainItems, ['icon']);
-  const augsAndIconTier = apiNameAndData(data.augments.mainAugs, ['icon', 'tier2']);
-  const champAndIconCost = apiNameAndData(data.champions.mainChampions, ['icon', 'cost', 'name', 'traits']);
+  const titleInit = document.title
+  const itemAndIcon = apiNameAndData(data.items?.mainItems ?? data.items, ['icon'], 'items');
+  const augsAndIconTier = apiNameAndData(data.augments?.mainAugs ?? data.augments, ['icon', 'tier2'], 'augments');
+  const champAndIconCost = apiNameAndData(data.champions?.mainChampions ?? data.champions, ['icon', 'cost', 'name', 'traits'], 'champions');
 
   // tierList
   tierList(guidesData.guides, champAndIconCost, itemAndIcon, augsAndIconTier);
@@ -32,6 +33,7 @@ export function renderComp(data, guidesData, hexIndexData) {
       tierContainer.classList.toggle("hide-post-comp");
       clickedLink.classList.toggle("active");
       history.pushState(null, '', tierContainer.classList.contains("hide-post-comp") ? window.location.pathname : `#${hashtag}`);
+      document.title = titleInit
       return;
     }
 
@@ -43,7 +45,7 @@ export function renderComp(data, guidesData, hexIndexData) {
 
     tierContainer.classList.remove("hide-post-comp");
     clickedLink.classList.add("active");
-    renderPostComp(guidesData.guides[index], champAndIconCost, itemAndIcon, augsAndIconTier, postCompTag, hexIndexData);
+    renderPostComp(guidesData.guides[index], champAndIconCost, itemAndIcon, augsAndIconTier, postCompTag, hexIndexData, titleInit);
 
     requestAnimationFrame(() => {
       scrollToPost(tierContainer, postCompTag);
@@ -53,7 +55,7 @@ export function renderComp(data, guidesData, hexIndexData) {
   }
 
   // Xử lý hash URL ngay sau khi render xong
-  handleHashURL(data, guidesData, hexIndexData);
+  handleHashURL(data, guidesData, hexIndexData, titleInit);
 
   // Xử lý sự kiện loadPage khi nhấn vào link
   setupStyleMenu('.style-btn.champ-link', '.style-menu.champ-link', '.style-menu.champ-link a');
@@ -84,10 +86,10 @@ export function tierList(guidesData, champAndIconCost, itemAndIcon, augsAndIconT
     if (!champAndIconCost[mainChampion.apiName]) return acc;
     const iconChamp = champAndIconCost[mainChampion.apiName][0];
     const costChamp = champAndIconCost[mainChampion.apiName][1];
+    const champName = champAndIconCost[mainChampion.apiName][2];
     const itemApiName = mainItem ? mainItem.apiName : null;
     const augsApiName = mainAugment ? mainAugment.apiName : null;
     const hashtag = toHashtag(title);
-    const champName = champAndIconCost[mainChampion.apiName][2];
 
     const html = `
     <div class="tier-list cost-${costChamp}">
@@ -95,7 +97,7 @@ export function tierList(guidesData, champAndIconCost, itemAndIcon, augsAndIconT
       <div class="hexagon-tier-champ">
         <a href="${hashtag}" style="background-image: url(${iconChamp})" title="${title}" data-index="${index}" data-style="${style}" data-name="${champName}"></a>
       </div>
-      ${itemApiName && itemAndIcon[itemApiName][0] ? `<div class="hexagon-item"> 
+      ${itemApiName && itemAndIcon[itemApiName] ? `<div class="hexagon-item"> 
         <div class="hexagon-icon" style="background-image: url(${itemAndIcon[itemApiName][0]})" data-api-name="${itemApiName}"></div>
       </div>` : ""}
       ${augsApiName && augsAndIconTier[augsApiName] ? `<div class="hexagon-item"> 
@@ -237,7 +239,7 @@ export function tierList(guidesData, champAndIconCost, itemAndIcon, augsAndIconT
   }
 }
 
-export function renderPostComp(guideData, champAndIconCost, itemAndIcon, augsAndIconTier, postCompTag, hexIndexData) {
+export function renderPostComp(guideData, champAndIconCost, itemAndIcon, augsAndIconTier, postCompTag, hexIndexData, titleInit) {
   if (!postCompTag || !guideData) return;
 
   const { mainChampion, mainItem, mainAugment, tier, title, style, augments, augmentTypes, augmentsTip, finalComp, earlyComp, carousel, tips, altBuilds } = guideData;
@@ -455,6 +457,7 @@ export function renderPostComp(guideData, champAndIconCost, itemAndIcon, augsAnd
       const tierContainer = postCompTag.closest('.tier-container');
       tierContainer.querySelector('.hexagon-tier-champ a.active')?.classList.remove('active');
       tierContainer.classList.add('hide-post-comp');
+      document.title = titleInit
       history.pushState(null, '', window.location.pathname);
     };
   }
@@ -657,7 +660,7 @@ function toHashtag(str) {
     .trim().replace(/\s+/g, '-');
 }
 
-function handleHashURL(data, guidesData, hexIndexData) {
+function handleHashURL(data, guidesData, hexIndexData, titleInit) {
   if (!data || !guidesData || !guidesData.guides) return;
 
   const hash = window.location.hash;
@@ -686,11 +689,11 @@ function handleHashURL(data, guidesData, hexIndexData) {
   tierContainer.classList.remove("hide-post-comp");
   targetLink.classList.add("active");
 
-  const itemAndIcon = apiNameAndData(data.items.mainItems, ['icon']);
-  const augsAndIconTier = apiNameAndData(data.augments.mainAugs, ['icon', 'tier2']);
-  const champAndIconCost = Object.fromEntries(data.champions.mainChampions.map(obj => [obj.apiName, [obj.icon, obj.cost, obj.name, obj.traits]]));
+  const itemAndIcon = apiNameAndData(data.items?.mainItems ?? data.items, ['icon'], 'items');
+  const augsAndIconTier = apiNameAndData(data.augments?.mainAugs ?? data.augments, ['icon', 'tier2'], 'augments');
+  const champAndIconCost = apiNameAndData(data.champions?.mainChampions ?? data.champions, ['icon',' cost', 'name', 'traits'], 'champions');
 
-  renderPostComp(guidesData.guides[index], champAndIconCost, itemAndIcon, augsAndIconTier, postCompTag, hexIndexData);
+  renderPostComp(guidesData.guides[index], champAndIconCost, itemAndIcon, augsAndIconTier, postCompTag, hexIndexData, titleInit);
 
   requestAnimationFrame(() => {
     scrollToPost(tierContainer, postCompTag);

@@ -46,6 +46,8 @@ const formatDate = (date) => {
 const fetchData = async () => {
   let data = null;
   let guidesData = null;
+  let revivalData = null
+  let revivalGuides = null
   let hexIndexData = null;
 
   // Lấy ngày hiện tại và ngày hôm trước
@@ -92,6 +94,42 @@ const fetchData = async () => {
     }
   }
 
+   // Lấy dữ liệu data revival
+  try {
+    revivalData = await fetchWithTimeout(`/data/auto/set-10-revival-${todayStr}.json`);
+  } catch {
+    try {
+      revivalData = await fetchWithTimeout(`/data/auto/set-10-revival-${yesterdayStr}.json`);
+    } catch {
+      try {
+        revivalData = await fetchWithTimeout(`/data/manual/set-10-revival-original.json`);
+      } catch {
+        const cachedData = localStorage.getItem('revivalData');
+        if (cachedData) {
+          revivalData = JSON.parse(cachedData);
+        }
+      }
+    }
+  }
+
+  // Lấy dữ liệu guides revival
+  try {
+    revivalGuides = await fetchWithTimeout(`/data/auto/revival-guides-${todayStr}.json`);
+  } catch {
+    try {
+      revivalGuides = await fetchWithTimeout(`/data/auto/revival-guides-${yesterdayStr}.json`);
+    } catch {
+      try {
+        revivalGuides = await fetchWithTimeout(`/data/manual/revival-guides-original.json`);
+      } catch {
+        const cachedGuidesData = localStorage.getItem('revivalGuides');
+        if (cachedGuidesData) {
+          revivalGuides = JSON.parse(cachedGuidesData);
+        }
+      }
+    }
+  }
+
   // Lấy dữ liệu hexIndex
   try {
     hexIndexData = await fetchWithTimeout(`/data/manual/hex-index-set14.json`);
@@ -107,6 +145,12 @@ const fetchData = async () => {
     if (guidesData) {
       localStorage.setItem('guidesData', JSON.stringify(guidesData));
     }
+    if(revivalData) {
+      localStorage.setItem('revivalData', JSON.stringify(revivalData));
+    }
+    if(revivalGuides) {
+      localStorage.setItem('revivalGuides', JSON.stringify(revivalGuides));
+    }
     if (hexIndexData) {
       localStorage.setItem('hexIndexData', JSON.stringify(hexIndexData));
     }
@@ -114,13 +158,13 @@ const fetchData = async () => {
     console.warn('localStorage save failed:', e);
   }
 
-  return { data, guidesData, hexIndexData };
+  return { data, guidesData, hexIndexData, revivalData, revivalGuides };
 };
 
 // Hàm xử lý chuyển trang
 async function handleNavigation(page, addToHistory = true) {
-  const { data, guidesData, hexIndexData } = await fetchData();
-  loadPage(page, { data, guidesData, hexIndexData });
+  const { data, guidesData, hexIndexData, revivalData, revivalGuides } = await fetchData();
+  loadPage(page, { data, guidesData, hexIndexData, revivalData, revivalGuides });
   updateActiveLink(page);
 
   if (addToHistory) {

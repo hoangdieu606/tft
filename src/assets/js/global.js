@@ -345,9 +345,18 @@ export function setupStyleMenu(styleBtnSelector, styleMenuSelector, styleOptionS
 }
 
 /* apiNameAndData */
-export function apiNameAndData(dataArray, fields) {
+export function apiNameAndData(dataArray, fields, type) {
     return Object.fromEntries(
-        dataArray.map(obj => [obj.apiName, fields.map(field => obj[field])])
+        dataArray.map(obj => [obj.apiName, fields.map(field => {
+            if(!obj[field]) {
+                const setNumber = 10
+                let iconURL
+
+                iconURL = `/assets/images/set${setNumber}/${type}/${type ==='champions' ? "icon_" + obj.apiName: obj.apiName}.webp`
+                return iconURL
+            }
+            return obj[field]
+        })])
     );
 }
 
