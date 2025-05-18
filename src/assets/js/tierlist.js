@@ -1,4 +1,4 @@
-import { setupTooltips, setupStyleMenu, apiNameAndData, formatDateLocale, initToggle } from '/src/assets/js/global.js';
+import { setupTooltips, setupStyleMenu, apiNameAndData, formatDateLocale, initToggle, singleLoadPage } from '/src/assets/js/global.js';
 
 
 export function renderComp(data, guidesData, hexIndexData) {
@@ -6,6 +6,7 @@ export function renderComp(data, guidesData, hexIndexData) {
   if (!tierCompContainer) return;
 
   const titleInit = document.title
+  const setNumber = data.set ?? 14
   const itemAndIcon = apiNameAndData(data.items?.mainItems ?? data.items, ['icon'], 'items');
   const augsAndIconTier = apiNameAndData(data.augments?.mainAugs ?? data.augments, ['icon', 'tier2'], 'augments');
   const champAndIconCost = apiNameAndData(data.champions?.mainChampions ?? data.champions, ['icon', 'cost', 'name', 'traits'], 'champions');
@@ -45,7 +46,7 @@ export function renderComp(data, guidesData, hexIndexData) {
 
     tierContainer.classList.remove("hide-post-comp");
     clickedLink.classList.add("active");
-    renderPostComp(guidesData.guides[index], champAndIconCost, itemAndIcon, augsAndIconTier, postCompTag, hexIndexData, titleInit);
+    renderPostComp(guidesData.guides[index], champAndIconCost, itemAndIcon, augsAndIconTier, postCompTag, hexIndexData, titleInit, setNumber);
 
     requestAnimationFrame(() => {
       scrollToPost(tierContainer, postCompTag);
@@ -55,10 +56,11 @@ export function renderComp(data, guidesData, hexIndexData) {
   }
 
   // Xử lý hash URL ngay sau khi render xong
-  handleHashURL(data, guidesData, hexIndexData, titleInit);
+  handleHashURL(data, guidesData, hexIndexData, titleInit, setNumber);
 
   // Xử lý sự kiện loadPage khi nhấn vào link
   setupStyleMenu('.style-btn.champ-link', '.style-menu.champ-link', '.style-menu.champ-link a');
+  // singleLoadPage('.revival-link a')
 
 }
 
@@ -239,12 +241,12 @@ export function tierList(guidesData, champAndIconCost, itemAndIcon, augsAndIconT
   }
 }
 
-export function renderPostComp(guideData, champAndIconCost, itemAndIcon, augsAndIconTier, postCompTag, hexIndexData, titleInit) {
+export function renderPostComp(guideData, champAndIconCost, itemAndIcon, augsAndIconTier, postCompTag, hexIndexData, titleInit, setNumber) {
   if (!postCompTag || !guideData) return;
 
   const { mainChampion, mainItem, mainAugment, tier, title, style, augments, augmentTypes, augmentsTip, finalComp, earlyComp, carousel, tips, altBuilds } = guideData;
 
-  const teamCode = generateTeamCode(hexIndexData, finalComp);
+  const teamCode = generateTeamCode(hexIndexData, finalComp, setNumber);
 
   const valueTypes = {
     "ECON": "Kinh Tế",
@@ -660,7 +662,7 @@ function toHashtag(str) {
     .trim().replace(/\s+/g, '-');
 }
 
-function handleHashURL(data, guidesData, hexIndexData, titleInit) {
+function handleHashURL(data, guidesData, hexIndexData, titleInit, setNumber) {
   if (!data || !guidesData || !guidesData.guides) return;
 
   const hash = window.location.hash;
@@ -693,16 +695,16 @@ function handleHashURL(data, guidesData, hexIndexData, titleInit) {
   const augsAndIconTier = apiNameAndData(data.augments?.mainAugs ?? data.augments, ['icon', 'tier2'], 'augments');
   const champAndIconCost = apiNameAndData(data.champions?.mainChampions ?? data.champions, ['icon',' cost', 'name', 'traits'], 'champions');
 
-  renderPostComp(guidesData.guides[index], champAndIconCost, itemAndIcon, augsAndIconTier, postCompTag, hexIndexData, titleInit);
+  renderPostComp(guidesData.guides[index], champAndIconCost, itemAndIcon, augsAndIconTier, postCompTag, hexIndexData, titleInit, setNumber);
 
   requestAnimationFrame(() => {
     scrollToPost(tierContainer, postCompTag);
   });
 }
 
-function generateTeamCode(champHexIndex, finalComp) {
+function generateTeamCode(champHexIndex, finalComp, setNumber) {
   // Chuyển chuỗi thành mảng để thao tác hiệu quả hơn
-  let teamCodeArray = "02000000000000000000000000000000TFTSet14".split('');
+  let teamCodeArray = `02000000000000000000000000000000TFTSet${setNumber}`.split('');
 
   // Tạo Map để tra cứu hexIndex
   const lookupMap = new Map(champHexIndex.map(champ => [champ.apiName, champ.hexIndex]));

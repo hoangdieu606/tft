@@ -344,11 +344,25 @@ export function setupStyleMenu(styleBtnSelector, styleMenuSelector, styleOptionS
     });
 }
 
+/* single LoadPage */
+export function singleLoadPage(aTag) {
+    const link = document.querySelector(aTag)
+    console.log(link)
+    link.addEventListener('click', async (e) =>{
+        e.stopPropagation(); 
+        e.preventDefault();
+        const page = link.getAttribute("data-page");
+        console.log(page)
+        await loadPage(page);
+        history.pushState({ page }, "", `/${page}`);
+    })
+}
+
 /* apiNameAndData */
 export function apiNameAndData(dataArray, fields, type) {
     return Object.fromEntries(
         dataArray.map(obj => [obj.apiName, fields.map(field => {
-            if(!obj[field]) {
+            if(obj[field] === undefined) {
                 const setNumber = 10
                 let iconURL
 
@@ -538,4 +552,9 @@ export function generateStatsHTML(effects) {
     }
 
     return html.trim();
+}
+
+export const Variables = {
+    SET_NUMBER: 14,
+    SET_NUMBER_REVIVAL:10
 }

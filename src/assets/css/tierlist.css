@@ -591,6 +591,7 @@ div.post-comp {
 .tier-head {
   display: flex;
   font-size: 14px;
+  gap: 20px;
   justify-content: space-around;
 }
 
@@ -846,6 +847,7 @@ div.post-comp {
   width: 100%;
   display: flex;
   gap: 15px;
+  position: relative;
 }
 
 .search-input {
@@ -1096,6 +1098,23 @@ button.copy-option>span {
   color: #000;
   padding: 3px 15px;
   font-weight: 600;
+}
+
+/* Revival */
+.revival-link {
+    position: absolute;
+    right: 5px;
+    bottom: -40px;
+}
+.revival-link a {
+    color: #fff;
+    padding: 3px 10px;
+    background: #e12445;
+    border-radius: 2px;
+}
+.revival-link a:hover {
+    color: #fff;
+    text-decoration: underline;
 }
 
 @keyframes fadeOut {
