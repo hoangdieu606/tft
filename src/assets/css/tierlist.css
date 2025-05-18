@@ -864,7 +864,7 @@ div.post-comp {
 
 .style-filter {
   position: relative;
-  min-width: 180px;
+  min-width: 160px;
   user-select: none;
 }
 
@@ -1116,6 +1116,9 @@ button.copy-option>span {
     color: #fff;
     text-decoration: underline;
 }
+.revival-link a.current-link {
+  background: var(--primary-bg-color);
+}
 
 @keyframes fadeOut {
   0% {
@@ -1151,8 +1154,8 @@ button.copy-option>span {
     font-size: 10px;
   }
 
-  .search-container {
-    flex-direction: column;
+  .search-container .search-input {
+    display: none;
   }
 
   .style-filter {

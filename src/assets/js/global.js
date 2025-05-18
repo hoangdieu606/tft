@@ -348,13 +348,14 @@ export function setupStyleMenu(styleBtnSelector, styleMenuSelector, styleOptionS
 export function singleLoadPage(aTag) {
     const link = document.querySelector(aTag)
     console.log(link)
-    link.addEventListener('click', async (e) =>{
-        e.stopPropagation(); 
+    link.addEventListener('click', async (e) => {
+        e.stopPropagation();
         e.preventDefault();
         const page = link.getAttribute("data-page");
-        console.log(page)
-        await loadPage(page);
-        history.pushState({ page }, "", `/${page}`);
+        if (page) {
+            await loadPage(page);
+            history.pushState({ page }, "", `/${page}`);
+        }
     })
 }
 
@@ -362,11 +363,11 @@ export function singleLoadPage(aTag) {
 export function apiNameAndData(dataArray, fields, type) {
     return Object.fromEntries(
         dataArray.map(obj => [obj.apiName, fields.map(field => {
-            if(obj[field] === undefined) {
+            if (obj[field] === undefined) {
                 const setNumber = 10
                 let iconURL
 
-                iconURL = `/assets/images/set${setNumber}/${type}/${type ==='champions' ? "icon_" + obj.apiName: obj.apiName}.webp`
+                iconURL = `/assets/images/set${setNumber}/${type}/${type === 'champions' ? "icon_" + obj.apiName : obj.apiName}.webp`
                 return iconURL
             }
             return obj[field]
@@ -447,67 +448,67 @@ const TOGGLE_CONFIG = {
     DISPLAY_VARIABLE: '--an',
     DISPLAY_VALUES: { active: 'flex', inactive: 'none' },
     LABEL_TEXT: { active: 'Ẩn Tên', inactive: 'Hiện Tên' },
-  };
-  
-  /**
-   * Đồng bộ trạng thái của một nút toggle, cập nhật DOM, CSS variable, và localStorage.
-   * @param {string} toggleId - ID của nút toggle (ví dụ: 'toggle1').
-   * @param {boolean} isActive - Trạng thái hiển thị (true: hiển thị, false: ẩn).
-   * @param {Object} [config=TOGGLE_CONFIG] - Cấu hình tùy chỉnh cho nút toggle.
-   * @returns {void}
-   */
-  export function syncToggleState(toggleId, isActive, config = TOGGLE_CONFIG) {
+};
+
+/**
+ * Đồng bộ trạng thái của một nút toggle, cập nhật DOM, CSS variable, và localStorage.
+ * @param {string} toggleId - ID của nút toggle (ví dụ: 'toggle1').
+ * @param {boolean} isActive - Trạng thái hiển thị (true: hiển thị, false: ẩn).
+ * @param {Object} [config=TOGGLE_CONFIG] - Cấu hình tùy chỉnh cho nút toggle.
+ * @returns {void}
+ */
+export function syncToggleState(toggleId, isActive, config = TOGGLE_CONFIG) {
     const toggleElement = document.querySelector(`#${toggleId}`);
     if (!toggleElement) {
-      console.warn(`Toggle with ID ${toggleId} not found`);
-      return;
+        console.warn(`Toggle with ID ${toggleId} not found`);
+        return;
     }
-  
+
     const labelElement = toggleElement.querySelector('.toggle-label');
     const rootElement = document.documentElement;
     const displayPropertyName = `${config.DISPLAY_VARIABLE}-${toggleId}`;
-  
+
     toggleElement.classList.toggle('active', isActive);
     rootElement.style.setProperty(displayPropertyName, isActive ? config.DISPLAY_VALUES.active : config.DISPLAY_VALUES.inactive);
-  
+
     if (labelElement) {
-      labelElement.textContent = isActive ? config.LABEL_TEXT.active : config.LABEL_TEXT.inactive;
+        labelElement.textContent = isActive ? config.LABEL_TEXT.active : config.LABEL_TEXT.inactive;
     }
-  
+
     localStorage.setItem(`toggle_${toggleId}`, isActive ? config.DISPLAY_VALUES.active : config.DISPLAY_VALUES.inactive);
-  }
-  
-  /**
-   * Khởi tạo một nút toggle, khôi phục trạng thái từ localStorage và gắn sự kiện click.
-   * @param {string} toggleId - ID của nút toggle (ví dụ: 'toggle1').
-   * @param {Object} [config=TOGGLE_CONFIG] - Cấu hình tùy chỉnh cho nút toggle.
-   * @returns {void}
-   */
-  export function initToggle(toggleId, displayDefault = true, config = TOGGLE_CONFIG) {
+}
+
+/**
+ * Khởi tạo một nút toggle, khôi phục trạng thái từ localStorage và gắn sự kiện click.
+ * @param {string} toggleId - ID của nút toggle (ví dụ: 'toggle1').
+ * @param {Object} [config=TOGGLE_CONFIG] - Cấu hình tùy chỉnh cho nút toggle.
+ * @returns {void}
+ */
+export function initToggle(toggleId, displayDefault = true, config = TOGGLE_CONFIG) {
     const toggleElement = document.querySelector(`#${toggleId}`);
     if (!toggleElement) {
-      console.warn(`Toggle with ID ${toggleId} not found`);
-      return;
+        console.warn(`Toggle with ID ${toggleId} not found`);
+        return;
     }
-  
+
     const storedState = localStorage.getItem(`toggle_${toggleId}`);
     let isActive
 
-    if(storedState) {
+    if (storedState) {
         isActive = storedState === config.DISPLAY_VALUES.active;
     } else {
         isActive = displayDefault
     }
-    
-    syncToggleState(toggleId, isActive, config);
-  
-    toggleElement.addEventListener('click', () => {
-      const isCurrentlyActive = localStorage.getItem(`toggle_${toggleId}`) === config.DISPLAY_VALUES.active;
-      syncToggleState(toggleId, !isCurrentlyActive, config);
-    });
-  }
 
-  /*  Render icon AD, AP, AS, ...items đang dùng */
+    syncToggleState(toggleId, isActive, config);
+
+    toggleElement.addEventListener('click', () => {
+        const isCurrentlyActive = localStorage.getItem(`toggle_${toggleId}`) === config.DISPLAY_VALUES.active;
+        syncToggleState(toggleId, !isCurrentlyActive, config);
+    });
+}
+
+/*  Render icon AD, AP, AS, ...items đang dùng */
 export function generateStatsHTML(effects) {
     if (!effects) { return ""; }
     // Định nghĩa mapping giữa key và thông tin hình ảnh
@@ -556,5 +557,5 @@ export function generateStatsHTML(effects) {
 
 export const Variables = {
     SET_NUMBER: 14,
-    SET_NUMBER_REVIVAL:10
+    SET_NUMBER_REVIVAL: 10
 }

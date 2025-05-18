@@ -60,7 +60,7 @@ export function renderComp(data, guidesData, hexIndexData) {
 
   // Xử lý sự kiện loadPage khi nhấn vào link
   setupStyleMenu('.style-btn.champ-link', '.style-menu.champ-link', '.style-menu.champ-link a');
-  // singleLoadPage('.revival-link a')
+  singleLoadPage('.revival-link a')
 
 }
 
