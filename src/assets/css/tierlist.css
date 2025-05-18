@@ -1161,6 +1161,9 @@ button.copy-option>span {
   .style-filter {
     width: 100%;
   }
+  .tier-head {
+   justify-content: flex-start;
+  }
 }
 
 /* min-width: 768px */

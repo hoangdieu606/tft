@@ -347,7 +347,6 @@ export function setupStyleMenu(styleBtnSelector, styleMenuSelector, styleOptionS
 /* single LoadPage */
 export function singleLoadPage(aTag) {
     const link = document.querySelector(aTag)
-    console.log(link)
     link.addEventListener('click', async (e) => {
         e.stopPropagation();
         e.preventDefault();

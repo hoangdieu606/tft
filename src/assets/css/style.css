@@ -216,7 +216,7 @@ main#content {
 
 .title-container>h1 {
     color: #d7d7d7;
-    font: 700 24px 'Dancing Script', sans-serif;
+    font-size: 18px;
     text-transform: capitalize;
 }
 
