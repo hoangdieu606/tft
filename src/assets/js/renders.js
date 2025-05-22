@@ -4,9 +4,11 @@ import { createTierHead } from '/src/assets/js/tierlist.js'
 
 
 // Render danh sách champions
-export function renderChampions(mainChampions, setNumber = 14) {
+export function renderChampions(data, setNumber = 14) {
     const championsContainer = document.querySelector('#champ-container');
     if (!championsContainer) return;
+
+    const { champions, traits } = data
 
     let previousCategory = null;
     const arrCategory = {
@@ -19,10 +21,14 @@ export function renderChampions(mainChampions, setNumber = 14) {
         general: ""
     }
 
-    document.querySelector(".champions-list").innerHTML = mainChampions.map(({ name, cost, icon, traits, skillDesc, skillName, apiName,stats }) => {
-        const champIcon = `/assets/images/set${setNumber}/${apiName}.webp`
-        const skillIcon = `/assets/images/set${setNumber}/ability_${apiName}.webp`
+    document.querySelector(".champions-list").innerHTML = champions.map(({ name, cost, traitsChamp, ability, abilityName, apiName, stats }) => {
+        const champIcon = `/assets/images/set${setNumber}/champions/${apiName}.webp`
+        const skillIcon = `/assets/images/set${setNumber}/champions/ability_${apiName}.webp`
         const mana = stats.initialMana / stats.mana
+        const champTraits = traitsChamp.map(id => {
+            const objTrait = traits.find(trait => trait.id === id)
+            return { name: objTrait.name, icon: `/assets/images/set${setNumber}/traits/${objTrait.apiName}.webp` }
+        })
 
         let categoryHeader = "";
         if (cost !== previousCategory) {
@@ -39,15 +45,15 @@ export function renderChampions(mainChampions, setNumber = 14) {
                         </div>
                         <div>
                             <img src="${champIcon}" alt="${name}">
-                            <div class="traits">${traits.map(obj => `<span class="trait"><img src="${obj.icon}" style="width: 18px; height: 18px;">${obj.name}</span>`).join("")}</div>
+                            <div class="traits">${champTraits.map(obj => `<span class="trait"><img src="${obj.icon}" style="width: 18px; height: 18px;">${obj.name}</span>`).join("")}</div>
                         </div>
                     </div>
                     <div class="skill">
                             <div class="skill-name">
-                                <div><img src="${skillIcon || champIcon}" alt="${skillName}"></div>
-                                <div><h4>${skillName}</h4><p><img src="/assets/images/Mana.png">${mana}</p></div>
+                                <div><img src="${skillIcon || champIcon}" alt="${abilityName}"></div>
+                                <div><h4>${abilityName}</h4><p><img src="/assets/images/Mana.png">${mana}</p></div>
                             </div>
-                            <div class="skill-desc"><p>${skillDesc}</p></div>
+                            <div class="skill-desc"><p>${ability}</p></div>
                     </div>
                 </div>
                 `
@@ -59,45 +65,38 @@ export function renderChampions(mainChampions, setNumber = 14) {
 }
 
 // Render danh sách traits
-export function renderTraits(mainTraits, mainChampions, setNumber = 14) {
+export function renderTraits(data, setNumber = 14) {
     const traitsList = document.querySelector(".traits-list");
     if (!traitsList) return;
-    const champIcons = Object.fromEntries(mainChampions.map(({ name, icon, cost, apiName }) => [name, [icon, cost, apiName]]));
+    const { champions, traits } = data
+
 
     let previousCategory = null;
 
-    traitsList.innerHTML = mainTraits.map(({ name, desc, level, icon, champions, category }) => {
+    traitsList.innerHTML = traits.map(({ apiName, name, id, description, effects, type }) => {
+        const icon = `/assets/images/set${setNumber}/traits/${apiName}.webp`
+        const traitChampions = champions.filter(champ => champ.traits.includes(id))
         let renderChamp;
 
-        if (champions.length) {
-            renderChamp = champions.map(obj =>
-                `<li class="champ-cost-${champIcons[obj.name][1]}">
-                 <img src="${champIcons[obj.name][0]}" alt="${champIcons[obj.name][1]}" data-api-name="${obj.apiName}">
+        if (traitChampions.length) {
+            renderChamp = traitChampions.map(obj =>
+                `<li class="champ-cost-${obj.cost}">
+                 <img src="/assets/images/set${setNumber}/champions/${obj.apiName}.webp" alt="${[obj.name]}" data-api-name="${obj.apiName}">
               </li>`
             ).join("");
         } else {
-            const obj1 = Object.fromEntries(desc?.replace(/[.,!?]/g, "").split(" ").map(word => [word, true]));
-            const setKeys1 = new Set(Object.keys(obj1));
-
-            renderChamp = Object.keys(champIcons)
-                .filter(champion => setKeys1.has(champion))
-                .map(champion =>
-                    `<li class="champ-cost-${champIcons[champion][1]}">
-            <img src="${champIcons[champion][0]}" alt="${champion}" data-api-name="${champIcons[champion][2]}">
-        </li>`
-                )
-                .join("");
+            renderChamp = ''
         }
 
         let categoryHeader = "";
-        if (category !== previousCategory) {
-            categoryHeader = `<div class="category-group trait-${category}">${category}</div>`;
-            previousCategory = category;
+        if (type !== previousCategory) {
+            categoryHeader = `<div class="category-group trait-${type}">${type}</div>`;
+            previousCategory = type;
         }
 
         return `
 ${categoryHeader} 
-<div class="trait-card trait-${category}">
+<div class="trait-card trait-${type}">
     <div class="trait-header">
         <div class="trait-style">
             <img src="${icon}" alt="${name}">
@@ -106,8 +105,8 @@ ${categoryHeader}
         <ul class="champ-list">${renderChamp}</ul>
     </div>
     <div class="trait-desc">
-        <div class="origin-desc"><p>${desc}</p></div>
-        <div class="origin-level"><ul>${level.map(value => `<li>${value}</li>`).join("")}</ul></div>
+        <div class="origin-desc"><p>${description}</p></div>
+        <div class="origin-level"><ul>${effects.map(value => `<li>${value}</li>`).join("")}</ul></div>
     </div>
 </div>
 `;
@@ -119,16 +118,19 @@ ${categoryHeader}
 }
 
 // Render danh sách augments
-export function renderAugments(mainAugs, setNumber = 14) {
+export function renderAugments(data, setNumber = 14) {
     const augmentsList = document.querySelector(".augments-list");
     if (!augmentsList) return;
+
+    const { augments } = data
     let previousCategory = null;
     const arrTier = {
         silver: "Lõi Bạc",
         gold: "Lõi Vàng",
         prism: "Lõi Kim Cương"
     }
-    augmentsList.innerHTML = mainAugs.map(({ name, icon, desc, tier, tier2, apiName }) => {
+    augmentsList.innerHTML = augments.map(({ name, description, tier, tier2, apiName }) => {
+        const icon = `/assets/images/set${setNumber}/augments/${apiName}.webp`
 
         let categoryHeader = "";
         if (tier !== previousCategory) {
@@ -143,7 +145,7 @@ export function renderAugments(mainAugs, setNumber = 14) {
             </div>
             <div class="aug-content">
                 <h3>${name}</h3>
-                <p>${desc}</p>
+                <p>${description}</p>
             </div>
             </div>`}).join('')
 
@@ -153,10 +155,11 @@ export function renderAugments(mainAugs, setNumber = 14) {
 }
 
 // Render danh sách items
-export function renderItems(mainItems, setNumber = 14) {
+export function renderItems(data, setNumber = 14) {
     const itemsList = document.querySelector(".items-list");
     if (!itemsList) return;
-    const apiNameIcon = apiNameAndData(mainItems, ["icon"])
+
+    const { items } = data
     let previousCategory = null;
     const arrCategory = {
         core: "Trang Bị Thường",
@@ -168,18 +171,26 @@ export function renderItems(mainItems, setNumber = 14) {
         component: "Mảnh Trang Bị"
     }
 
-    itemsList.innerHTML = mainItems.map(({ name, icon, category, effects, desc, tier, apiName, composition }) => {
+    itemsList.innerHTML = items.map(({ name, type, rules, description, tier, apiName, composition }) => {
 
-        const iconComp = composition?.length ? `<span class="item-composition"><span><img src="${apiNameIcon[composition[0]][0]}"></span><span>+</span><span><img src="${apiNameIcon[composition[1]][0]}"></span></span>` : "";
+        const icon = `/assets/images/set${setNumber}/items/${apiName}.webp`
+        let iconComp = ''
+        if (composition?.length) {
+            const itemComps = composition.map(compoApi => items.find(item=>item.apiName === compoApi))
+            const icon1 = `/assets/images/set${setNumber}/items/${itemComps[0].apiName}.webp`
+            const icon2 = `/assets/images/set${setNumber}/items/${itemComps[1].apiName}.webp`
+
+            iconComp = `<span class="item-composition"><span><img src="${icon1}"></span><span>+</span><span><img src="${icon2}"></span></span>`
+        }
 
         let categoryHeader = "";
-        if (category !== previousCategory) {
-            categoryHeader = `<div class="category-group item-${category}">${arrCategory[category]}</div>`;
-            previousCategory = category;
+        if (type !== previousCategory) {
+            categoryHeader = `<div class="category-group item-${type}">${arrCategory[type]}</div>`;
+            previousCategory = type;
         }
 
         return `${categoryHeader}
-            <div class="items-item item-${category} tier-${tier}">
+            <div class="items-item item-${type} tier-${tier}">
                <div class="item-icon">
                  <img src="${icon}" alt="${name}">
                  <span>${tier}</span>
@@ -188,9 +199,9 @@ export function renderItems(mainItems, setNumber = 14) {
                 <div class="item-content">
                     <div class="item-title">
                         <div><h3>${name}</h3></div>
-                         <span>${generateStatsHTML(effects)}</span>
+                         <span>${generateStatsHTML(rules)}</span>
                     </div>
-                    <p>${desc}</p>
+                    <p>${description}</p>
                  </div>
             </div>
     `
@@ -202,12 +213,13 @@ export function renderItems(mainItems, setNumber = 14) {
 }
 
 // Render danh sách augments trong tierlist
-export function renderTierlistAugments(mainAugs, setNumber = 14) {
+export function renderTierlistAugments(data, setNumber = 14) {
     const augmentsList = document.querySelector(".tierlist-augments");
     if (!augmentsList) return;
 
-    const tierGroups = mainAugs.reduce((acc, { name, icon, tier, tier2, apiName }) => {
-
+    const { augments } = data
+    const tierGroups = augments.reduce((acc, { name, tier, tier2, apiName }) => {
+        const icon = `/assets/images/set${setNumber}/augments/${apiName}.webp`
         const html = `
         <div class="augments-child augs-tier-${tier} tier-${tier2}">
                  <img src="${icon}" alt="${name}" data-api-name="${apiName}">
@@ -250,7 +262,7 @@ export function renderTierlistAugments(mainAugs, setNumber = 14) {
 
     // Sử dụng hàm createTierHead để thêm nút toggle và last update
     // Sử dụng hàm initToggle để thiết lập trạng thái ẩn hiện tên
-    const { fragment} = createTierHead(formatDateLocale, 'tier-aug');
+    const { fragment } = createTierHead(formatDateLocale, 'tier-aug');
     augmentsList.prepend(fragment);
     initToggle('tier-aug')
 
@@ -260,13 +272,15 @@ export function renderTierlistAugments(mainAugs, setNumber = 14) {
 }
 
 // Render danh sách items trong tierlist
-export function renderTierlistItems(mainItems, setNumber = 14) {
+export function renderTierlistItems(data, setNumber = 14) {
     const itemsList = document.querySelector(".tierlist-items");
     if (!itemsList) return;
 
-    const tierGroups = mainItems.reduce((acc, { name, icon, category, tier, apiName }) => {
+    const { items } = data
+    const tierGroups = items.reduce((acc, { name, type, tier, apiName }) => {
+        const icon = `/assets/images/set${setNumber}/items/${apiName}.webp`
         const html = `
-        <div class="item-child item-${category} tier-${tier}">
+        <div class="item-child item-${type} tier-${tier}">
                  <img src="${icon}" alt="${name}" data-api-name="${apiName}">
                  <span>${name}</span>
         </div>
@@ -308,11 +322,11 @@ export function renderTierlistItems(mainItems, setNumber = 14) {
         createTierTemplate("C", tierGroups.groupC) +
         createTierTemplate("X", tierGroups.groupSynergy);
 
-   // Sử dụng hàm createTierHead để thêm nút toggle và last update
-  // Sử dụng hàm initToggle để thiết lập trạng thái ẩn hiện tên
-   const { fragment} = createTierHead(formatDateLocale, 'tier-item');
-   itemsList.prepend(fragment);
-   initToggle('tier-item')
+    // Sử dụng hàm createTierHead để thêm nút toggle và last update
+    // Sử dụng hàm initToggle để thiết lập trạng thái ẩn hiện tên
+    const { fragment } = createTierHead(formatDateLocale, 'tier-item');
+    itemsList.prepend(fragment);
+    initToggle('tier-item')
 
     setupStyleMenu('.style-btn.champ-link', '.style-menu.champ-link', '.style-menu.champ-link a');
     setupStyleMenu('.style-btn.champ-btn', '.style-menu.champ-btn', '.style-menu.champ-btn button');

@@ -100,16 +100,16 @@ export async function loadPage(page, { data = {}, guidesData = {}, hexIndexData 
 
     switch (page) {
       case 'champions':
-        renderChampions(data.champions);
+        renderChampions(data);
         break;
       case 'items':
-        renderItems(data.items);
+        renderItems(data);
         break;
       case 'augments':
-        renderAugments(data.augments);
+        renderAugments(data);
         break;
       case 'traits':
-        renderTraits(data.traits, data.champions);
+        renderTraits(data);
         break;
       case 'tierlist':
         renderComp(data, guidesData, data.champions, data.set);
@@ -118,10 +118,10 @@ export async function loadPage(page, { data = {}, guidesData = {}, hexIndexData 
         renderComp(revivalData, revivalGuides, revivalData.champions, revivalData.set);
         break;
       case 'tierlist-augments':
-        renderTierlistAugments(data.augments);
+        renderTierlistAugments(data);
         break;
       case 'tierlist-items':
-        renderTierlistItems(data.items);
+        renderTierlistItems(data);
         break;
       case 'builder':
         renderBuilder(data, hexIndexData);
