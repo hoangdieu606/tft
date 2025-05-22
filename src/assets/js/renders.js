@@ -19,9 +19,10 @@ export function renderChampions(mainChampions, setNumber = 14) {
         general: ""
     }
 
-    document.querySelector(".champions-list").innerHTML = mainChampions.map(({ name, cost, icon, traits, skillIcon, skillDesc, skillName, mana, apiName,stats }) => {
-        const champIcon = `/assets/images/set${setNumber}/icon_${obj.apiName}.webp`
-        const skillIcon = `/assets/images/set${setNumber}/ability_${obj.apiName}.webp`
+    document.querySelector(".champions-list").innerHTML = mainChampions.map(({ name, cost, icon, traits, skillDesc, skillName, apiName,stats }) => {
+        const champIcon = `/assets/images/set${setNumber}/${apiName}.webp`
+        const skillIcon = `/assets/images/set${setNumber}/ability_${apiName}.webp`
+        const mana = stats.initialMana / stats.mana
 
         let categoryHeader = "";
         if (cost !== previousCategory) {
@@ -37,13 +38,13 @@ export function renderChampions(mainChampions, setNumber = 14) {
                             <span>${cost}<img src="/assets/images/gold.png" alt="icon-gold"></span>
                         </div>
                         <div>
-                            <img src="${icon}" alt="${name}">
+                            <img src="${champIcon}" alt="${name}">
                             <div class="traits">${traits.map(obj => `<span class="trait"><img src="${obj.icon}" style="width: 18px; height: 18px;">${obj.name}</span>`).join("")}</div>
                         </div>
                     </div>
                     <div class="skill">
                             <div class="skill-name">
-                                <div><img src="${skillIcon || icon}" alt="${skillName}"></div>
+                                <div><img src="${skillIcon || champIcon}" alt="${skillName}"></div>
                                 <div><h4>${skillName}</h4><p><img src="/assets/images/Mana.png">${mana}</p></div>
                             </div>
                             <div class="skill-desc"><p>${skillDesc}</p></div>

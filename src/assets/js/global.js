@@ -363,7 +363,7 @@ export function apiNameAndData(dataArray, fields, type, setNumber) {
     return Object.fromEntries(
         dataArray.map(obj => [obj.apiName, fields.map(field => {
             if (field === 'icon') {
-                return `/assets/images/set${setNumber}/${type}/${type === 'champions' ? "icon_" + obj.apiName : obj.apiName}.webp`
+                return `/assets/images/set${setNumber}/${type}/${obj.apiName}.webp`
             }
             return obj[field]
         })])
