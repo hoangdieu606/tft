@@ -124,7 +124,7 @@ async function main() {
       imageUrlGenerator: (apiName) => [
         {
           url: `https://assets.tftacademy.com/champions/champion_icons/${apiName}.webp`,
-          filename: `icon_${apiName}.webp`
+          filename: `${apiName}.webp`
         },
         {
           url: `https://assets.tftacademy.com/champions/champion_abilities/${apiName}.webp`,
