@@ -838,6 +838,7 @@ div.post-comp {
   height: 80%;
   object-fit: cover;
   background-size: cover;
+  background-color: #1d1d1d;
   aspect-ratio: 1 / 1;
   clip-path: polygon(50% 0%, 95% 25%, 95% 75%, 50% 100%, 5% 75%, 5% 25%);
 }

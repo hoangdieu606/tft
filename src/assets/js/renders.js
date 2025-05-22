@@ -4,7 +4,7 @@ import { createTierHead } from '/src/assets/js/tierlist.js'
 
 
 // Render danh sách champions
-export function renderChampions(mainChampions) {
+export function renderChampions(mainChampions, setNumber = 14) {
     const championsContainer = document.querySelector('#champ-container');
     if (!championsContainer) return;
 
@@ -19,7 +19,9 @@ export function renderChampions(mainChampions) {
         general: ""
     }
 
-    document.querySelector(".champions-list").innerHTML = mainChampions.map(({ name, cost, icon, traits, skillIcon, skillDesc, skillName, mana }) => {
+    document.querySelector(".champions-list").innerHTML = mainChampions.map(({ name, cost, icon, traits, skillIcon, skillDesc, skillName, mana, apiName,stats }) => {
+        const champIcon = `/assets/images/set${setNumber}/icon_${obj.apiName}.webp`
+        const skillIcon = `/assets/images/set${setNumber}/ability_${obj.apiName}.webp`
 
         let categoryHeader = "";
         if (cost !== previousCategory) {
@@ -56,7 +58,7 @@ export function renderChampions(mainChampions) {
 }
 
 // Render danh sách traits
-export function renderTraits(mainTraits, mainChampions) {
+export function renderTraits(mainTraits, mainChampions, setNumber = 14) {
     const traitsList = document.querySelector(".traits-list");
     if (!traitsList) return;
     const champIcons = Object.fromEntries(mainChampions.map(({ name, icon, cost, apiName }) => [name, [icon, cost, apiName]]));
@@ -116,7 +118,7 @@ ${categoryHeader}
 }
 
 // Render danh sách augments
-export function renderAugments(mainAugs) {
+export function renderAugments(mainAugs, setNumber = 14) {
     const augmentsList = document.querySelector(".augments-list");
     if (!augmentsList) return;
     let previousCategory = null;
@@ -150,7 +152,7 @@ export function renderAugments(mainAugs) {
 }
 
 // Render danh sách items
-export function renderItems(mainItems) {
+export function renderItems(mainItems, setNumber = 14) {
     const itemsList = document.querySelector(".items-list");
     if (!itemsList) return;
     const apiNameIcon = apiNameAndData(mainItems, ["icon"])
@@ -199,7 +201,7 @@ export function renderItems(mainItems) {
 }
 
 // Render danh sách augments trong tierlist
-export function renderTierlistAugments(mainAugs) {
+export function renderTierlistAugments(mainAugs, setNumber = 14) {
     const augmentsList = document.querySelector(".tierlist-augments");
     if (!augmentsList) return;
 
@@ -257,7 +259,7 @@ export function renderTierlistAugments(mainAugs) {
 }
 
 // Render danh sách items trong tierlist
-export function renderTierlistItems(mainItems) {
+export function renderTierlistItems(mainItems, setNumber = 14) {
     const itemsList = document.querySelector(".tierlist-items");
     if (!itemsList) return;
 

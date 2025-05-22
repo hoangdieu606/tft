@@ -54,7 +54,7 @@ export async function loadPage(page, { data = {}, guidesData = {}, hexIndexData 
 
     if (!url) {
       if (normalizedPage !== "commingsoon") {
-        return loadPage("commingsoon", { data, guidesData, hexIndexData });
+        return loadPage("commingsoon");
       } else {
         throw new Error(`Page ${normalizedPage} not found and commingsoon route failed`);
       }
@@ -100,28 +100,28 @@ export async function loadPage(page, { data = {}, guidesData = {}, hexIndexData 
 
     switch (page) {
       case 'champions':
-        renderChampions(data.champions.mainChampions);
+        renderChampions(data.champions);
         break;
       case 'items':
-        renderItems(data.items.mainItems);
+        renderItems(data.items);
         break;
       case 'augments':
-        renderAugments(data.augments.mainAugs);
+        renderAugments(data.augments);
         break;
       case 'traits':
-        renderTraits(data.traits.mainTraits, data.champions.mainChampions);
+        renderTraits(data.traits, data.champions);
         break;
       case 'tierlist':
-        renderComp(data, guidesData, hexIndexData);
+        renderComp(data, guidesData, data.champions, data.set);
         break;
         case 'tierlist-revival':
-        renderComp(revivalData, revivalGuides, revivalData.champions);
+        renderComp(revivalData, revivalGuides, revivalData.champions, revivalData.set);
         break;
       case 'tierlist-augments':
-        renderTierlistAugments(data.augments.mainAugs);
+        renderTierlistAugments(data.augments);
         break;
       case 'tierlist-items':
-        renderTierlistItems(data.items.mainItems);
+        renderTierlistItems(data.items);
         break;
       case 'builder':
         renderBuilder(data, hexIndexData);
@@ -144,7 +144,7 @@ export async function loadPage(page, { data = {}, guidesData = {}, hexIndexData 
   } catch (error) {
     console.error("🔥 Error loading page:", error);
     if (normalizedPage !== "commingsoon") {
-      return loadPage("commingsoon", { data, guidesData, hexIndexData });
+      return loadPage("commingsoon");
     } else {
       document.getElementById("content").innerHTML = "<h1>Error: Unable to load page</h1>";
       const meta = metaTags.commingsoon || metaTags.home;

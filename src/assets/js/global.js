@@ -359,15 +359,11 @@ export function singleLoadPage(aTag) {
 }
 
 /* apiNameAndData */
-export function apiNameAndData(dataArray, fields, type) {
+export function apiNameAndData(dataArray, fields, type, setNumber) {
     return Object.fromEntries(
         dataArray.map(obj => [obj.apiName, fields.map(field => {
-            if (obj[field] === undefined) {
-                const setNumber = 10
-                let iconURL
-
-                iconURL = `/assets/images/set${setNumber}/${type}/${type === 'champions' ? "icon_" + obj.apiName : obj.apiName}.webp`
-                return iconURL
+            if (field === 'icon') {
+                return `/assets/images/set${setNumber}/${type}/${type === 'champions' ? "icon_" + obj.apiName : obj.apiName}.webp`
             }
             return obj[field]
         })])

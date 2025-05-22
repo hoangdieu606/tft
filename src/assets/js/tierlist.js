@@ -1,15 +1,14 @@
 import { setupTooltips, setupStyleMenu, apiNameAndData, formatDateLocale, initToggle, singleLoadPage } from '/src/assets/js/global.js';
 
 
-export function renderComp(data, guidesData, hexIndexData) {
+export function renderComp(data, guidesData, hexIndexData, setNumber) {
   const tierCompContainer = document.querySelector(".tier-comp-container");
   if (!tierCompContainer) return;
 
   const titleInit = document.title
-  const setNumber = data.set ?? 14
-  const itemAndIcon = apiNameAndData(data.items?.mainItems ?? data.items, ['icon'], 'items');
-  const augsAndIconTier = apiNameAndData(data.augments?.mainAugs ?? data.augments, ['icon', 'tier2'], 'augments');
-  const champAndIconCost = apiNameAndData(data.champions?.mainChampions ?? data.champions, ['icon', 'cost', 'name', 'traits'], 'champions');
+  const itemAndIcon = apiNameAndData(data.items, ['icon'], 'items', setNumber);
+  const augsAndIconTier = apiNameAndData(data.augments, ['icon', 'tier2'], 'augments', setNumber);
+  const champAndIconCost = apiNameAndData(data.champions, ['icon', 'cost', 'name', 'traits'], 'champions', setNumber);
 
   // tierList
   tierList(guidesData.guides, champAndIconCost, itemAndIcon, augsAndIconTier);
@@ -692,9 +691,9 @@ function handleHashURL(data, guidesData, hexIndexData, titleInit, setNumber) {
   tierContainer.classList.remove("hide-post-comp");
   targetLink.classList.add("active");
 
-  const itemAndIcon = apiNameAndData(data.items?.mainItems ?? data.items, ['icon'], 'items');
-  const augsAndIconTier = apiNameAndData(data.augments?.mainAugs ?? data.augments, ['icon', 'tier2'], 'augments');
-  const champAndIconCost = apiNameAndData(data.champions?.mainChampions ?? data.champions, ['icon',' cost', 'name', 'traits'], 'champions');
+  const itemAndIcon = apiNameAndData(data.items, ['icon'], 'items', setNumber);
+  const augsAndIconTier = apiNameAndData(data.augments, ['icon', 'tier2'], 'augments', setNumber);
+  const champAndIconCost = apiNameAndData(data.champions, ['icon',' cost', 'name', 'traits'], 'champions', setNumber);
 
   renderPostComp(guidesData.guides[index], champAndIconCost, itemAndIcon, augsAndIconTier, postCompTag, hexIndexData, titleInit, setNumber);
 
