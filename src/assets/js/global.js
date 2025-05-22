@@ -80,7 +80,7 @@ export class TooltipDataIndexer {
 export function renderTooltipContent(data) {
     /* Render champions */
     if ("cost" in data) {
-        const { name, cost, icon, traits, skillIcon, skillDesc, skillName, mana } = data;
+        const { name, cost, icon, traits, skillIcon, skillDesc, skillName, mana, apiName } = data;
         return `
             <div class="champ-card champ-cost-${cost}">
                 <div class="champ-header">
@@ -89,7 +89,7 @@ export function renderTooltipContent(data) {
                         <span>${cost}<img src="/assets/images/gold.png" loading="lazy" alt="Gold"></span>
                     </div>
                     <div>
-                        <img src="${icon}" alt="${name}">
+                        <img src="${icon}" alt="${name}" onerror="this.onerror=null; this.src='/assets/images/set10/champions/icon_${apiName}.webp';">
                         <div class="traits">
                             ${traits.map(obj => `<span class="trait"><img src="${obj.icon}">${obj.name}</span>`).join('')}
                         </div>
@@ -97,7 +97,7 @@ export function renderTooltipContent(data) {
                 </div>
                 <div class="skill">
                     <div class="skill-name">
-                        <div><img src="${skillIcon || icon}" alt="${skillName}"></div>
+                        <div><img src="${skillIcon || icon}" alt="${skillName}" onerror="this.onerror=null; this.src='/assets/images/set10/champions/ability_${apiName}.webp';"></div>
                         <div>
                             <h4>${skillName}</h4>
                             <p><img src="/assets/images/Mana.png" loading="lazy" alt="Mana">${mana}</p>

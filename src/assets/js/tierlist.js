@@ -382,7 +382,9 @@ export function renderPostComp(guideData, champAndIconCost, itemAndIcon, augsAnd
       <div class="title-comp">Đội hình đầu trận</div>
       <div class="early-comp">
         ${earlyComp.map(({ apiName, items }) => {
+
     if (!champAndIconCost[apiName]) return '';
+    console.log(champAndIconCost,champAndIconCost[apiName][1])
     return `
             <div class="hexagon-icon champ-cost-${champAndIconCost[apiName][1]}">
               <div class="hexagon-champ">
