@@ -377,14 +377,9 @@ export function singleLoadPage(aTag) {
 }
 
 /* apiNameAndData */
-export function apiNameAndData(dataArray, fields, type, setNumber) {
+export function apiNameAndData(dataArray, fields) {
     return Object.fromEntries(
-        dataArray.map(obj => [obj.apiName, fields.map(field => {
-            if (field === 'icon') {
-                return `/assets/images/set${setNumber}/${type}/${obj.apiName}.webp`
-            }
-            return obj[field]
-        })])
+        dataArray.map(obj => [obj.apiName, fields.map(field => obj[field])])
     );
 }
 

@@ -455,7 +455,7 @@ footer a:hover {
 .item-components {
     display: var(--btn-filter-category-7, none);
 }
-
+.item-customs { display: none;}
 
 /* ======= Hiệu ứng chuyển đổi mượt mà ======= */
 .items-item {

@@ -58,12 +58,7 @@ export function renderBuilder(data) {
         hexagons = document.querySelectorAll('.hexagon');
     }
 
-    const {
-        champions: { mainChampions: champions },
-        items: { mainItems: items },
-        augments: { mainAugs: augments },
-        traits: { mainTraits: traits },
-    } = data;
+    const { champions, items, augments, traits } = data;
 
     if (!champions || !items || !augments || !traits) {
         console.warn('Thiếu dữ liệu cần thiết');
@@ -323,17 +318,20 @@ export function renderBuilder(data) {
 
         const traitCounts = {};
         const processedChampionsForTraits = new Set();
-        const emblemTraitsByApiName = {};
 
+        // Bước 1: Thu thập đặc điểm từ tướng và vật phẩm
         championOrder.forEach(({ apiName, index }) => {
             if (!processedChampionsForTraits.has(apiName)) {
                 const champion = champions.find(c => c.apiName === apiName);
                 if (champion && champion.traits) {
-                    champion.traits.forEach(trait => {
-                        traitCounts[trait.apiName] = (traitCounts[trait.apiName] || 0) + 1;
+                    champion.traits.forEach(traitId => {
+                        const trait = traits.find(t => t.id === traitId);
+                        if (trait) {
+                            traitCounts[trait.apiName] = (traitCounts[trait.apiName] || 0) + 1;
+                        }
                     });
+                    processedChampionsForTraits.add(apiName);
                 }
-                processedChampionsForTraits.add(apiName);
             }
 
             const hexagon = document.querySelector(`.hexagon[data-index="${index}"]`);
@@ -343,112 +341,94 @@ export function renderBuilder(data) {
                     Array.from(hexagonItems.children).forEach(span => {
                         const img = span.querySelector('img');
                         const item = items.find(i => i.apiName === img.dataset.apiName);
-                        if (item?.category === 'emblem' && item.incompatibleTraits?.length > 0) {
-                            const emblemTraitApiName = item.incompatibleTraits[0];
-                            if (!emblemTraitsByApiName[apiName]) {
-                                emblemTraitsByApiName[apiName] = new Set();
-                            }
-                            if (!emblemTraitsByApiName[apiName].has(emblemTraitApiName)) {
-                                emblemTraitsByApiName[apiName].add(emblemTraitApiName);
-                                traitCounts[emblemTraitApiName] =
-                                    (traitCounts[emblemTraitApiName] || 0) + 1;
-                            }
+                        if (item && item.trait) {
+                            traitCounts[item.trait] = (traitCounts[item.trait] || 0) + 1;
                         }
                     });
                 }
             }
         });
 
+        // Bước 2: Xử lý đặc điểm và tính colors
         const traitList = Object.keys(traitCounts)
             .map(traitApiName => {
                 const trait = traits.find(t => t.apiName === traitApiName);
                 if (!trait) return null;
 
                 const count = traitCounts[traitApiName];
-                let style = 0;
-                let maxMinUnits = 0;
-
-                if (trait.effects) {
-                    trait.effects.forEach(effect => {
-                        if (count >= effect.minUnits && effect.minUnits > maxMinUnits) {
-                            style = effect.style;
-                            maxMinUnits = effect.minUnits;
-                        }
-                    });
+                let colorIndex = -1;
+                for (let i = 0; i < trait.breakpoints.length; i++) {
+                    if (count >= trait.breakpoints[i]) {
+                        colorIndex = i;
+                    } else {
+                        break;
+                    }
                 }
+                const colors = colorIndex >= 0 ? trait.colors[colorIndex] : 0;
 
-                let badgeImage = '/assets/images/trait-not.png';
-                if (trait.effects?.length === 1) {
-                    badgeImage = '/assets/images/trait-unique.png';
-                } else {
-                    badgeImage = {
-                        0: '/assets/images/trait-not.png',
-                        1: '/assets/images/trait-bronze.png',
-                        3: '/assets/images/trait-silver.png',
-                        4: '/assets/images/trait-gold.png',
-                        5: '/assets/images/trait-prism.png',
-                    }[style] || '/assets/images/trait-not.png';
-                }
+                // Ánh xạ colors sang badgeImage, ưu tiên isUnique
+                const isUnique = trait.breakpoints.length === 1;
+                const badgeImage = isUnique ? '/assets/images/trait-unique.png' :
+                    colors === 0 ? '/assets/images/trait-not.png' :
+                        colors === 1 ? '/assets/images/trait-bronze.png' :
+                            colors === 3 ? '/assets/images/trait-silver.png' :
+                                colors === 4 ? '/assets/images/trait-gold.png' :
+                                    colors === 5 ? '/assets/images/trait-gold.png' :
+                                        colors >= 6 ? '/assets/images/trait-prism.png' :
+                                            '/assets/images/trait-not.png';
 
                 return {
                     apiName: trait.apiName,
                     name: trait.name,
                     icon: trait.icon,
                     count,
-                    style,
-                    category: trait.category || 'other',
-                    effects: trait.effects || [],
-                    activeMinUnits: maxMinUnits,
+                    colors,
+                    breakpoints: trait.breakpoints,
+                    activeMinUnits: colorIndex >= 0 ? trait.breakpoints[colorIndex] : 0,
                     badgeImage,
-                    isUnique: trait.effects?.length === 1,
+                    isUnique
                 };
             })
-            .filter(t => t !== null);
+            .filter(t => t !== null); // Loại bỏ đặc điểm null hoặc không hoạt động
 
+        // Bước 3: Sắp xếp theo colors giảm dần, nếu colors bằng nhau thì theo count giảm dần
         traitList.sort((a, b) => {
-            if (a.style !== b.style) return b.style - a.style;
-            if (a.isUnique !== b.isUnique) return a.isUnique ? -1 : 1;
-            if (a.category !== b.category) return a.category === 'origin' ? -1 : 1;
+            if (a.colors !== b.colors) return b.colors - a.colors;
             return b.count - a.count;
         });
-
+        // Bước 4: Render HTML
         if (traitList.length === 0) {
             builderTraits.innerHTML = `<span class="builder-title">Traits</span>`;
         } else {
             builderTraits.innerHTML = traitList
-                .map(
-                    ({ apiName, name, icon, count, style, effects, activeMinUnits, badgeImage }) => {
-                        const minUnitsList = effects
-                            .map(effect => effect.minUnits)
-                            .sort((a, b) => a - b);
-                        const traitNumberHTML = minUnitsList
-                            .map(minUnit => {
-                                const isActive = count >= minUnit && minUnit === activeMinUnits;
-                                return `<span style="opacity: ${isActive ? 1 : 0.5
-                                    }">${minUnit}</span>`;
-                            })
-                            .join('<span>|</span>');
+                .map(({ apiName, name, icon, count, colors, breakpoints, activeMinUnits, badgeImage }) => {
+                    const traitNumberHTML = breakpoints
+                        .map(minUnit => {
+                            const isActive = count >= minUnit && minUnit === activeMinUnits;
+                            return `<span style="opacity: ${isActive ? 1 : 0.5}">${minUnit}</span>`;
+                        })
+                        .join('<span>|</span>');
 
-                        return `
-                        <div class="trait-item style-${style}" data-api-name="${apiName}">
-                            <div class="trait-icon">
-                                <img src="${icon}" alt="${name}" class="style-${style}">
-                                <img src="${badgeImage}" alt="huy hiệu đặc điểm">
-                            </div>
-                            <div class="trait-content">
-                                <div class="trait-title">
-                                    <span class="trait-count">${count}</span>
-                                    <span>-</span>
-                                    <span class="trait-name">${name}</span>
-                                </div>
-                                <div class="trait-number">${traitNumberHTML}</div>
-                            </div>
+                    return `
+                    <div class="trait-item style-${colors}" data-api-name="${apiName}">
+                        <div class="trait-icon">
+                            <img src="${icon}" alt="${name}" class="style-${colors}">
+                            <img src="${badgeImage}" alt="huy hiệu đặc điểm">
                         </div>
-                    `;
-                    }
-                )
+                        <div class="trait-content">
+                            <div class="trait-title">
+                                <span class="trait-count">${count}</span>
+                                <span>-</span>
+                                <span class="trait-name">${name}</span>
+                            </div>
+                            <div class="trait-number">${traitNumberHTML}</div>
+                        </div>
+                    </div>
+                `;
+                })
                 .join('');
         }
+
         setupTooltips();
     }
 
@@ -990,7 +970,8 @@ export function renderBuilder(data) {
         let data = label === 'name' ? [...champions].sort((a, b) => a.name.localeCompare(b.name)) : champions;
 
         if (label === 'traits') {
-            const apiNameAndIconCostRange = apiNameAndData(champions, ['icon', 'cost', 'range']);
+            const apiNameAndIconCostRange = apiNameAndData(champions, ['icon', 'cost', 'stats']);
+            const range = apiNameAndIconCostRange[apiName][2].range
             builderChampions.innerHTML = traits
                 .map(
                     ({ name: nameTrait, icon: iconTrait, champions, apiName: apiNameTrait }) => `
@@ -1005,8 +986,7 @@ export function renderBuilder(data) {
                                 ({ apiName, name }) => `
                                     <div class="tier-list cost-${apiNameAndIconCostRange[apiName][1]
                                     }" draggable="true" 
-                                         data-api-name="${apiName}" data-range="${apiNameAndIconCostRange[apiName][2]
-                                    }" 
+                                         data-api-name="${apiName}" data-range="${range}" 
                                          data-icon="${apiNameAndIconCostRange[apiName][0]}" data-name="${name}">
                                         <div class="hexagon-tier-champ">
                                             <span style="background-image: url(${apiNameAndIconCostRange[apiName][0]
@@ -1025,9 +1005,9 @@ export function renderBuilder(data) {
         } else {
             builderChampions.innerHTML = data
                 .map(
-                    ({ apiName, name, icon, cost, range }) => `
+                    ({ apiName, name, icon, cost, stats }) => `
                     <div class="tier-list cost-${cost}" draggable="true" 
-                         data-api-name="${apiName}" data-range="${range}" 
+                         data-api-name="${apiName}" data-range="${stats.range}" 
                          data-icon="${icon}" data-name="${name}">
                         <div class="hexagon-tier-champ">
                             <span style="background-image: url(${icon})" title="${name}"></span>
@@ -1235,8 +1215,8 @@ export function renderBuilder(data) {
 
     builderItems.innerHTML = items
         .map(
-            ({ name, icon, category, tier, apiName }) => `
-            <div class="item-child item-${category} tier-${tier}" draggable="true" data-api-name="${apiName}" data-icon="${icon}" data-name="${name}">
+            ({ name, icon, type, tier, apiName }) => `
+            <div class="item-child item-${type} tier-${tier}" draggable="true" data-api-name="${apiName}" data-icon="${icon}" data-name="${name}">
                 <img src="${icon}" alt="${name}">
                 <span>${name}</span>
             </div>
@@ -1246,7 +1226,6 @@ export function renderBuilder(data) {
 
     document.querySelectorAll('.item-child').forEach(item => {
         let dragPreview = null;
-        let touchStartTime = 0;
 
         item.addEventListener('click', () => {
             const sortedOrder = [...championOrder].sort((a, b) => b.timestamp - a.timestamp);
@@ -1416,12 +1395,11 @@ export function renderBuilder(data) {
         const item = items.find(i => i.apiName === itemData.apiName);
         if (!item) return;
 
-        if (item.category === 'emblem' && item.incompatibleTraits?.length > 0) {
-            const emblemTraitApiName = item.incompatibleTraits[0];
+        if (item.type === 'emblems' && item.trait !== '') {
+            const emblemTraitApiName = item.trait;
             const emblemTrait = traits.find(t => t.apiName === emblemTraitApiName);
             if (!emblemTrait) return;
-
-            if (champion.traits.some(trait => trait.apiName === emblemTraitApiName)) return;
+            if (champion.traits.some(id => traits.find(c => c.id === id)?.apiName === emblemTraitApiName)) return;
 
             const existingItems = Array.from(hexagonItems.children).map(span => {
                 const img = span.querySelector('img');
@@ -1429,7 +1407,7 @@ export function renderBuilder(data) {
             });
             if (
                 existingItems.some(
-                    ei => ei?.category === 'emblem' && ei.incompatibleTraits?.[0] === emblemTraitApiName
+                    ei => ei?.type === 'emblems' && ei.trait === emblemTraitApiName
                 )
             )
                 return;

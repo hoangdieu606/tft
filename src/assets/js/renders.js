@@ -1,10 +1,10 @@
 import { generateStatsHTML } from '/src/assets/js/global.js';
-import { setupStyleMenu, formatDateLocale, apiNameAndData, filterInput, initToggle } from '/src/assets/js/global.js'
+import { setupStyleMenu, formatDateLocale, filterInput, initToggle } from '/src/assets/js/global.js'
 import { createTierHead } from '/src/assets/js/tierlist.js'
 
 
 // Render danh sách champions
-export function renderChampions(data, setNumber = 14) {
+export function renderChampions(data) {
     const championsContainer = document.querySelector('#champ-container');
     if (!championsContainer) return;
 
@@ -21,13 +21,11 @@ export function renderChampions(data, setNumber = 14) {
         general: ""
     }
 
-    document.querySelector(".champions-list").innerHTML = champions.map(({ name, cost, traits: traitChamps, ability, abilityName, apiName, stats }) => {
-        const champIcon = `/assets/images/set${setNumber}/champions/${apiName}.webp`
-        const skillIcon = `/assets/images/set${setNumber}/champions/ability_${apiName}.webp`
+    document.querySelector(".champions-list").innerHTML = champions.map(({ name, icon, abilityIcon, cost, traits: traitChamps, ability, abilityName, apiName, stats }) => {
         const mana = `${stats.initialMana} / ${stats.mana}`
         const champTraits = traitChamps.map(id => {
             const objTrait = traits.find(trait => trait.id === id)
-            return { name: objTrait.name, icon: `/assets/images/set${setNumber}/traits/${objTrait.apiName}.webp` }
+            return { name: objTrait.name, icon: objTrait.icon }
         })
 
         let categoryHeader = "";
@@ -44,13 +42,13 @@ export function renderChampions(data, setNumber = 14) {
                             <span>${cost}<img src="/assets/images/gold.png" alt="icon-gold"></span>
                         </div>
                         <div>
-                            <img src="${champIcon}" alt="${name}">
+                            <img src="${icon}" alt="${name}">
                             <div class="traits">${champTraits.map(obj => `<span class="trait"><img src="${obj.icon}" style="width: 18px; height: 18px;">${obj.name}</span>`).join("")}</div>
                         </div>
                     </div>
                     <div class="skill">
                             <div class="skill-name">
-                                <div><img src="${skillIcon || champIcon}" alt="${abilityName}"></div>
+                                <div><img src="${abilityIcon || icon}" alt="${abilityName}"></div>
                                 <div><h4>${abilityName}</h4><p><img src="/assets/images/Mana.png">${mana}</p></div>
                             </div>
                             <div class="skill-desc"><p>${ability}</p></div>
@@ -65,7 +63,7 @@ export function renderChampions(data, setNumber = 14) {
 }
 
 // Render danh sách traits
-export function renderTraits(data, setNumber = 14) {
+export function renderTraits(data) {
     const traitsList = document.querySelector(".traits-list");
     if (!traitsList) return;
     const { champions, traits } = data
@@ -73,8 +71,7 @@ export function renderTraits(data, setNumber = 14) {
 
     let previousCategory = null;
 
-    traitsList.innerHTML = traits.map(({ apiName, name, id, description, effects, type }) => {
-        const icon = `/assets/images/set${setNumber}/traits/${apiName}.webp`
+    traitsList.innerHTML = traits.map(({ icon, name, id, description, effects, type }) => {
         const traitChampions = champions.filter(champ => champ.traits.includes(id))
         let renderChamp = ''
         let renderEffects = ''
@@ -82,7 +79,7 @@ export function renderTraits(data, setNumber = 14) {
         if (traitChampions.length) {
             renderChamp = traitChampions.map(obj =>
                 `<li class="champ-cost-${obj.cost}">
-                 <img src="/assets/images/set${setNumber}/champions/${obj.apiName}.webp" alt="${[obj.name]}" data-api-name="${obj.apiName}">
+                 <img src="${obj.icon}" alt="${obj.name}" data-api-name="${obj.apiName}">
               </li>`
             ).join("");
         }
@@ -123,7 +120,7 @@ export function renderTraits(data, setNumber = 14) {
 }
 
 // Render danh sách augments
-export function renderAugments(data, setNumber = 14) {
+export function renderAugments(data) {
     const augmentsList = document.querySelector(".augments-list");
     if (!augmentsList) return;
 
@@ -134,8 +131,7 @@ export function renderAugments(data, setNumber = 14) {
         gold: "Lõi Vàng",
         prism: "Lõi Kim Cương"
     }
-    augmentsList.innerHTML = augments.map(({ name, description, tier, tier2, apiName }) => {
-        const icon = `/assets/images/set${setNumber}/augments/${apiName}.webp`
+    augmentsList.innerHTML = augments.map(({ icon, name, description, tier, tier2 }) => {
 
         let categoryHeader = "";
         if (tier !== previousCategory) {
@@ -160,7 +156,7 @@ export function renderAugments(data, setNumber = 14) {
 }
 
 // Render danh sách items
-export function renderItems(data, setNumber = 14) {
+export function renderItems(data) {
     const itemsList = document.querySelector(".items-list");
     if (!itemsList) return;
 
@@ -176,16 +172,12 @@ export function renderItems(data, setNumber = 14) {
         components: "Mảnh Trang Bị"
     }
 
-    itemsList.innerHTML = items.map(({ name, type, stats, description, tier, apiName, composition }) => {
+    itemsList.innerHTML = items.map(({ name, icon, type, stats, description, tier, composition }) => {
 
-        const icon = `/assets/images/set${setNumber}/items/${apiName}.webp`
         let iconComp = ''
         if (composition?.length) {
             const itemComps = composition.map(compoApi => items.find(item => item.apiName === compoApi))
-            const icon1 = `/assets/images/set${setNumber}/items/${itemComps[0].apiName}.webp`
-            const icon2 = `/assets/images/set${setNumber}/items/${itemComps[1].apiName}.webp`
-
-            iconComp = `<span class="item-composition"><span><img src="${icon1}"></span><span>+</span><span><img src="${icon2}"></span></span>`
+            iconComp = `<span class="item-composition"><span><img src="${itemComps[0].icon}"></span><span>+</span><span><img src="${itemComps[1].icon}"></span></span>`
         }
 
         let categoryHeader = "";
@@ -218,13 +210,12 @@ export function renderItems(data, setNumber = 14) {
 }
 
 // Render danh sách augments trong tierlist
-export function renderTierlistAugments(data, setNumber = 14) {
+export function renderTierlistAugments(data) {
     const augmentsList = document.querySelector(".tierlist-augments");
     if (!augmentsList) return;
 
     const { augments } = data
-    const tierGroups = augments.reduce((acc, { name, tier, tier2, apiName }) => {
-        const icon = `/assets/images/set${setNumber}/augments/${apiName}.webp`
+    const tierGroups = augments.reduce((acc, { name, icon, tier, tier2, apiName }) => {
         const html = `
         <div class="augments-child augs-tier-${tier} tier-${tier2}">
                  <img src="${icon}" alt="${name}" data-api-name="${apiName}">
@@ -277,13 +268,12 @@ export function renderTierlistAugments(data, setNumber = 14) {
 }
 
 // Render danh sách items trong tierlist
-export function renderTierlistItems(data, setNumber = 14) {
+export function renderTierlistItems(data) {
     const itemsList = document.querySelector(".tierlist-items");
     if (!itemsList) return;
 
     const { items } = data
-    const tierGroups = items.reduce((acc, { name, type, tier, apiName }) => {
-        const icon = `/assets/images/set${setNumber}/items/${apiName}.webp`
+    const tierGroups = items.reduce((acc, { name, icon, type, tier, apiName }) => {
         const html = `
         <div class="item-child item-${type} tier-${tier}">
                  <img src="${icon}" alt="${name}" data-api-name="${apiName}">

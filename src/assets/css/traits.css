@@ -119,7 +119,8 @@ ul.champ-list {
     background: var(--trait-teamup-color);
 }
 
-.trait-origin .trait-style {
+.trait-origin .trait-style,
+.trait- .trait-style {
     background: var(--trait-origin-color);
 }
 

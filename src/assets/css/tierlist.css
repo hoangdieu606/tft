@@ -176,7 +176,7 @@ div.post-comp {
   bottom: 20px;
   right: 0px;
   border: 4px solid var(--tier-text-color);
-  ;
+  background: #1e1e1e;
   filter: drop-shadow(var(--tier-text-color) 0px 0px 10px);
   overflow: hidden;
 }
@@ -634,11 +634,11 @@ div.post-comp {
   transition: transform 0.3s, background 0.3s;
 }
 
-.toggle-container.active > .toggle {
+.toggle-container.active>.toggle {
   background: var(--button-color)
 }
 
-.toggle-container.active > .toggle::before {
+.toggle-container.active>.toggle::before {
   transform: translateX(20px);
 }
 
@@ -978,6 +978,7 @@ div.post-comp {
   display: var(--an-tier-item, flex);
   font-size: 10px;
 }
+
 .tierlist-augments .augments-child>span {
   display: var(--an-tier-aug, flex);
   font-size: 10px;
@@ -994,7 +995,7 @@ div.post-comp {
 }
 
 .comp-tier-X .hexagon-item .hexagon-icon {
-  filter: brightness(0.7) contrast(1.5);
+  filter: brightness(0.9) contrast(1.1);
 }
 
 
@@ -1103,20 +1104,23 @@ button.copy-option>span {
 
 /* Revival */
 .revival-link {
-    position: absolute;
-    right: 5px;
-    bottom: -40px;
+  position: absolute;
+  right: 5px;
+  bottom: -40px;
 }
+
 .revival-link a {
-    color: #fff;
-    padding: 3px 10px;
-    background: #e12445;
-    border-radius: 2px;
+  color: #fff;
+  padding: 3px 10px;
+  background: #e12445;
+  border-radius: 2px;
 }
+
 .revival-link a:hover {
-    color: #fff;
-    text-decoration: underline;
+  color: #fff;
+  text-decoration: underline;
 }
+
 .revival-link a.current-link {
   background: var(--primary-bg-color);
 }
@@ -1162,8 +1166,9 @@ button.copy-option>span {
   .style-filter {
     width: 100%;
   }
+
   .tier-head {
-   justify-content: flex-start;
+    justify-content: flex-start;
   }
 }
 

@@ -8,9 +8,9 @@ export function renderComp(data, guidesData) {
   const hexIndexData = data.champions
   const setNumber = data.set
   const titleInit = document.title
-  const itemAndIcon = apiNameAndData(data.items, ['icon'], 'items', setNumber);
-  const augsAndIconTier = apiNameAndData(data.augments, ['icon', 'tier2'], 'augments', setNumber);
-  const champAndIconCost = apiNameAndData(data.champions, ['icon', 'cost', 'name', 'traits'], 'champions', setNumber);
+  const itemAndIcon = apiNameAndData(data.items, ['icon']);
+  const augsAndIconTier = apiNameAndData(data.augments, ['icon', 'tier2']);
+  const champAndIconCost = apiNameAndData(data.champions, ['icon', 'cost', 'name', 'traits']);
 
   // tierList
   tierList(guidesData.guides, champAndIconCost, itemAndIcon, augsAndIconTier);
@@ -163,7 +163,7 @@ export function tierList(guidesData, champAndIconCost, itemAndIcon, augsAndIconT
 
   // Sử dụng hàm createTierHead để thêm nút toggle và last update
   // Sử dụng hàm initToggle để thiết lập trạng thái ẩn hiện tên
-  const { fragment} = createTierHead(formatDateLocale, 'tierlist');
+  const { fragment } = createTierHead(formatDateLocale, 'tierlist');
   tierContainer.prepend(fragment);
   initToggle('tierlist')
 
@@ -262,7 +262,7 @@ export function renderPostComp(guideData, champAndIconCost, itemAndIcon, augsAnd
     "HERO-URL": "/assets/images/hero.png",
   };
 
-  const finalEmblem = [];
+  const TraitList = calculateTraits(finalComp, data)
 
   if (!champAndIconCost[mainChampion.apiName]) {
     postCompTag.innerHTML = '<div class="error">Không tìm thấy dữ liệu tướng</div>';
@@ -272,10 +272,6 @@ export function renderPostComp(guideData, champAndIconCost, itemAndIcon, augsAnd
   const finalCompHTML = finalComp.map(({ apiName, items, stars }) => {
     if (!champAndIconCost[apiName]) return '';
 
-    if (champAndIconCost[apiName][3]) {
-      finalEmblem.push(...champAndIconCost[apiName][3]);
-    }
-
     let starHTML = "";
     if (stars === 3) {
       starHTML = `<div class="star-champ three-stars"><span><i class="fa-solid fa-star"></i></span><span><i class="fa-solid fa-star"></i></span><span><i class="fa-solid fa-star"></i></span></div>`;
@@ -284,9 +280,6 @@ export function renderPostComp(guideData, champAndIconCost, itemAndIcon, augsAnd
     }
 
     const itemsHTML = (items || []).map(item => {
-      if (item.includes("Emblem")) {
-        finalEmblem.push({ "apiName": item });
-      }
       return `<span><img src="${itemAndIcon[item][0]}" width="24" height="24" data-api-name="${item}"></span>`;
     }).join('');
 
@@ -304,7 +297,6 @@ export function renderPostComp(guideData, champAndIconCost, itemAndIcon, augsAnd
     `;
   }).join("");
 
-  const traitsEmblem = processTraits(finalEmblem);
 
   postCompTag.innerHTML = `
     <div class="row-comp row-1-comp comp-tier-${tier}">
@@ -326,7 +318,7 @@ export function renderPostComp(guideData, champAndIconCost, itemAndIcon, augsAnd
           Phong Cách: ${style}
         </div>
         <div class="comp-traits">
-          ${traitsEmblem.map(({ apiName, icon, maxTraits }) => `<div data-api-name="${apiName}"><img src="${icon}"><span>${maxTraits}</span></div>`).join("")}
+          ${TraitList.map(({ apiName, icon, maxTraits, colors }) => `<div data-api-name="${apiName}" class="style-colors-${colors}"><img src="${icon}"><span>${maxTraits}</span></div>`).join("")}
         </div>
       </div>
       <div class="right-one">
@@ -512,7 +504,7 @@ export function renderPostComp(guideData, champAndIconCost, itemAndIcon, augsAnd
     });
   });
 
-  initToggle('tier-post',false);
+  initToggle('tier-post', false);
   setupTooltips();
   document.title = title;
 }
@@ -583,74 +575,68 @@ function placeChampions(finalCompData, champAndIconCost, itemAndIcon, board) {
   });
 }
 
-/**
- * Xử lý mảng traits, đếm số lần xuất hiện và xử lý emblem items.
- * Emblem items được nhận diện bằng "Emblem" trong apiName, phần trước "Emblem"
- * khớp với một trait. Nếu không ánh xạ được, cộng vào trait có số lượng cao nhất.
- * Trả về mảng traits đạt minUnits, sắp xếp theo maxTraits giảm dần.
- * @param {Array} traits - Mảng các trait với apiName, name, icon, minUnits
- * @returns {Array} - Mảng traits đã lọc và sắp xếp
- */
-function processTraits(traits) {
-  if (!Array.isArray(traits) || !traits.length) return [];
 
-  const traitMap = {};
-  const countMap = {};
-  const traitNameMap = {};
+// calculateTraits
+function calculateTraits(finalComp, data) {
+  // Bước 1: Thu thập tất cả ID đặc điểm từ tướng và vật phẩm
+  const traitCounts = {};
 
-  traits.forEach(trait => {
-    if (!trait?.apiName || typeof trait.apiName !== 'string') return;
+  finalComp.forEach(comp => {
+    // Tìm tướng trong data.champions
+    const champion = data.champions.find(champ => champ.apiName === comp.apiName);
+    if (champion) {
+      // Thêm đặc điểm của tướng
+      champion.traits.forEach(traitId => {
+        const trait = data.traits.find(t => t.id === traitId);
+        if (trait) {
+          traitCounts[trait.apiName] = (traitCounts[trait.apiName] || 0) + 1;
+        }
+      });
+    }
 
-    const { apiName } = trait;
-    if (apiName.includes('Emblem') && apiName.endsWith('EmblemItem')) return;
-
-    countMap[apiName] = (countMap[apiName] || 0) + 1;
-    traitMap[apiName] = traitMap[apiName] || {
-      apiName,
-      name: trait.name,
-      icon: trait.icon,
-      minUnits: trait.minUnits
-    };
-
-    traitNameMap[apiName.split('_').pop()] = apiName;
+    // Thêm đặc điểm từ vật phẩm
+    comp.items.forEach(itemApiName => {
+      const item = data.items.find(i => i.apiName === itemApiName);
+      if (item && item.trait) {
+        traitCounts[item.trait] = (traitCounts[item.trait] || 0) + 1;
+      }
+    });
   });
 
-  const emblemCounts = {};
-  traits.forEach(trait => {
-    if (!trait?.apiName || typeof trait.apiName !== 'string') return;
+  // Bước 2: Ánh xạ đặc điểm sang định dạng kết quả
+  const result = Object.keys(traitCounts).map(traitApiName => {
+    const trait = data.traits.find(t => t.apiName === traitApiName);
+    if (!trait) return null;
 
-    const { apiName } = trait;
-    if (apiName.includes('Emblem') && apiName.endsWith('EmblemItem')) {
-      let targetTrait;
-      const match = apiName.match(/(.+)Emblem/);
-      if (match) {
-        const traitName = match[1].split('_').pop();
-        targetTrait = traitNameMap[traitName];
-      }
-
-      if (!targetTrait) {
-        targetTrait = Object.keys(countMap).reduce((maxTrait, trait) =>
-          countMap[trait] > (countMap[maxTrait] || 0) ? trait : maxTrait
-          , null);
-      }
-
-      if (targetTrait) {
-        emblemCounts[targetTrait] = (emblemCounts[targetTrait] || 0) + 1;
+    const maxTraits = traitCounts[traitApiName];
+    // Tìm breakpoint cao nhất <= maxTraits
+    let colorIndex = -1;
+    for (let i = 0; i < trait.breakpoints.length; i++) {
+      if (maxTraits >= trait.breakpoints[i]) {
+        colorIndex = i;
+      } else {
+        break;
       }
     }
+    const colors = colorIndex >= 0 ? trait.colors[colorIndex] : 0;
+
+    return {
+      apiName: trait.apiName,
+      name: trait.name,
+      icon: trait.icon,
+      maxTraits,
+      colors
+    };
+  }).filter(trait => trait !== null && trait.colors > 0); // Loại bỏ đặc điểm null hoặc không hoạt động
+
+  // Bước 3: Sắp xếp theo colors giảm dần, nếu colors bằng nhau thì theo maxTraits giảm dần
+  result.sort((a, b) => {
+    if (b.colors !== a.colors) {
+      return b.colors - a.colors; // Sắp xếp theo colors giảm dần
+    }
+    return b.maxTraits - a.maxTraits; // Nếu colors bằng nhau, sắp xếp theo maxTraits giảm dần
   });
-
-  for (const trait in emblemCounts) {
-    if (countMap[trait]) countMap[trait] += emblemCounts[trait];
-  }
-
-  return Object.keys(traitMap)
-    .map(apiName => ({
-      ...traitMap[apiName],
-      maxTraits: countMap[apiName] || 0
-    }))
-    .filter(trait => trait.maxTraits >= trait.minUnits)
-    .sort((a, b) => b.maxTraits - a.maxTraits);
+  return result;
 }
 
 function toHashtag(str) {
@@ -692,9 +678,9 @@ function handleHashURL(data, guidesData, hexIndexData, titleInit, setNumber) {
   tierContainer.classList.remove("hide-post-comp");
   targetLink.classList.add("active");
 
-  const itemAndIcon = apiNameAndData(data.items, ['icon'], 'items', setNumber);
-  const augsAndIconTier = apiNameAndData(data.augments, ['icon', 'tier2'], 'augments', setNumber);
-  const champAndIconCost = apiNameAndData(data.champions, ['icon','cost', 'name', 'traits'], 'champions', setNumber);
+  const itemAndIcon = apiNameAndData(data.items, ['icon']);
+  const augsAndIconTier = apiNameAndData(data.augments, ['icon', 'tier2']);
+  const champAndIconCost = apiNameAndData(data.champions, ['icon', 'cost', 'name', 'traits']);
 
   renderPostComp(guidesData.guides[index], champAndIconCost, itemAndIcon, augsAndIconTier, postCompTag, hexIndexData, titleInit, setNumber, data);
 
@@ -744,7 +730,7 @@ function showTooltip(message, element) {
 }
 
 
-export function createTierHead(dateFormatter, toggleId='toggleId') {
+export function createTierHead(dateFormatter, toggleId = 'toggleId') {
   const fragment = document.createDocumentFragment();
   const tierHead = document.createElement("div");
   tierHead.className = "tier-head";
