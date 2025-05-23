@@ -418,41 +418,41 @@ footer a:hover {
 .champ-cost-1,
 .trait-origin,
 .augs-tier-silver,
-.item-core {
+.item-craftables {
     display: var(--btn-filter-category-1, none);
 }
 
 .champ-cost-2,
 .trait-class,
 .augs-tier-gold,
-.item-radiant {
+.item-radiants {
     display: var(--btn-filter-category-2, none);
 }
 
 .champ-cost-3,
 .trait-teamup,
 .augs-tier-prism,
-.item-artifact {
+.item-ornns {
     display: var(--btn-filter-category-3, none);
 }
 
 .champ-cost-4,
-.item-support {
+.item-supports {
     display: var(--btn-filter-category-4, none);
 }
 
 .champ-cost-5,
-.item-emblem {
+.item-emblems {
     display: var(--btn-filter-category-5, none);
 }
 
 .champ-cost-6,
-.item-synergy {
+.item-set_items {
     display: var(--btn-filter-category-6, none);
 }
 
 .champ-cost-0,
-.item-component {
+.item-components {
     display: var(--btn-filter-category-7, none);
 }
 

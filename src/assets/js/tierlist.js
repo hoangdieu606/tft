@@ -47,7 +47,7 @@ export function renderComp(data, guidesData) {
 
     tierContainer.classList.remove("hide-post-comp");
     clickedLink.classList.add("active");
-    renderPostComp(guidesData.guides[index], champAndIconCost, itemAndIcon, augsAndIconTier, postCompTag, hexIndexData, titleInit, setNumber);
+    renderPostComp(guidesData.guides[index], champAndIconCost, itemAndIcon, augsAndIconTier, postCompTag, hexIndexData, titleInit, setNumber, data);
 
     requestAnimationFrame(() => {
       scrollToPost(tierContainer, postCompTag);
@@ -242,7 +242,7 @@ export function tierList(guidesData, champAndIconCost, itemAndIcon, augsAndIconT
   }
 }
 
-export function renderPostComp(guideData, champAndIconCost, itemAndIcon, augsAndIconTier, postCompTag, hexIndexData, titleInit, setNumber) {
+export function renderPostComp(guideData, champAndIconCost, itemAndIcon, augsAndIconTier, postCompTag, hexIndexData, titleInit, setNumber, data) {
   if (!postCompTag || !guideData) return;
 
   const { mainChampion, mainItem, mainAugment, tier, title, style, augments, augmentTypes, augmentsTip, finalComp, earlyComp, carousel, tips, altBuilds } = guideData;
@@ -696,7 +696,7 @@ function handleHashURL(data, guidesData, hexIndexData, titleInit, setNumber) {
   const augsAndIconTier = apiNameAndData(data.augments, ['icon', 'tier2'], 'augments', setNumber);
   const champAndIconCost = apiNameAndData(data.champions, ['icon','cost', 'name', 'traits'], 'champions', setNumber);
 
-  renderPostComp(guidesData.guides[index], champAndIconCost, itemAndIcon, augsAndIconTier, postCompTag, hexIndexData, titleInit, setNumber);
+  renderPostComp(guidesData.guides[index], champAndIconCost, itemAndIcon, augsAndIconTier, postCompTag, hexIndexData, titleInit, setNumber, data);
 
   requestAnimationFrame(() => {
     scrollToPost(tierContainer, postCompTag);

@@ -167,13 +167,13 @@ export function renderItems(data, setNumber = 14) {
     const { items } = data
     let previousCategory = null;
     const arrCategory = {
-        core: "Trang Bị Thường",
-        radiant: "Trang Bị Ánh Sáng",
-        artifact: "Trang Bị Tạo Tác",
-        support: "Trang Bị Hỗ Trợ",
-        emblem: "Ấn",
-        synergy: "Trang Bị Khác",
-        component: "Mảnh Trang Bị"
+        craftables: "Trang Bị Thường",
+        radiants: "Trang Bị Ánh Sáng",
+        ornns: "Trang Bị Tạo Tác",
+        supports: "Trang Bị Hỗ Trợ",
+        emblems: "Ấn",
+        set_items: "Trang Bị Độc Nhất",
+        components: "Mảnh Trang Bị"
     }
 
     itemsList.innerHTML = items.map(({ name, type, stats, description, tier, apiName, composition }) => {
