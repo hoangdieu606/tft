@@ -1,10 +1,12 @@
 import { setupTooltips, setupStyleMenu, apiNameAndData, formatDateLocale, initToggle, singleLoadPage } from '/src/assets/js/global.js';
 
 
-export function renderComp(data, guidesData, hexIndexData, setNumber) {
+export function renderComp(data, guidesData) {
   const tierCompContainer = document.querySelector(".tier-comp-container");
   if (!tierCompContainer) return;
 
+  const hexIndexData = data.champions
+  const setNumber = data.set
   const titleInit = document.title
   const itemAndIcon = apiNameAndData(data.items, ['icon'], 'items', setNumber);
   const augsAndIconTier = apiNameAndData(data.augments, ['icon', 'tier2'], 'augments', setNumber);
@@ -381,7 +383,6 @@ export function renderPostComp(guideData, champAndIconCost, itemAndIcon, augsAnd
       <div class="title-comp">Đội hình đầu trận</div>
       <div class="early-comp">
         ${earlyComp.map(({ apiName, items }) => {
-
     if (!champAndIconCost[apiName]) return '';
     return `
             <div class="hexagon-icon champ-cost-${champAndIconCost[apiName][1]}">
@@ -693,7 +694,7 @@ function handleHashURL(data, guidesData, hexIndexData, titleInit, setNumber) {
 
   const itemAndIcon = apiNameAndData(data.items, ['icon'], 'items', setNumber);
   const augsAndIconTier = apiNameAndData(data.augments, ['icon', 'tier2'], 'augments', setNumber);
-  const champAndIconCost = apiNameAndData(data.champions, ['icon',' cost', 'name', 'traits'], 'champions', setNumber);
+  const champAndIconCost = apiNameAndData(data.champions, ['icon','cost', 'name', 'traits'], 'champions', setNumber);
 
   renderPostComp(guidesData.guides[index], champAndIconCost, itemAndIcon, augsAndIconTier, postCompTag, hexIndexData, titleInit, setNumber);
 

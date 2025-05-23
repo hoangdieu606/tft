@@ -25,10 +25,10 @@ export async function loadPage(page, { data = {}, guidesData = {}, hexIndexData 
   try {
     // Nếu data hoặc guidesData rỗng, thử lấy từ localStorage
     if (Object.keys(data).length === 0 || Object.keys(guidesData).length === 0) {
-      const storedData = localStorage.getItem("postData");
+      const storedData = localStorage.getItem("set-14-data");
       const storedGuidesData = localStorage.getItem("guidesData");
       const storedHexIndexData = localStorage.getItem("hexIndexData");
-      const storedRevivalData = localStorage.getItem("revivalData");
+      const storedRevivalData = localStorage.getItem("set-10-data");
       const storedRevivalGuides = localStorage.getItem("revivalGuides");
 
 
@@ -112,10 +112,10 @@ export async function loadPage(page, { data = {}, guidesData = {}, hexIndexData 
         renderTraits(data);
         break;
       case 'tierlist':
-        renderComp(data, guidesData, data.champions, data.set);
+        renderComp(data, guidesData);
         break;
-        case 'tierlist-revival':
-        renderComp(revivalData, revivalGuides, revivalData.champions, revivalData.set);
+      case 'tierlist-revival':
+        renderComp(revivalData, revivalGuides);
         break;
       case 'tierlist-augments':
         renderTierlistAugments(data);
@@ -124,7 +124,7 @@ export async function loadPage(page, { data = {}, guidesData = {}, hexIndexData 
         renderTierlistItems(data);
         break;
       case 'builder':
-        renderBuilder(data, hexIndexData);
+        renderBuilder(data);
         break;
       case 'home':
         break;
@@ -139,8 +139,14 @@ export async function loadPage(page, { data = {}, guidesData = {}, hexIndexData 
       document.body.setAttribute("btn-filter", `category-0-active`);
     }
 
-    setIndexer(data || {});
-    setupTooltips();
+    if (page === "tierlist-revival") {
+      setIndexer(revivalData || {});
+      setupTooltips();
+    } else {
+      setIndexer(data || {});
+      setupTooltips();
+    }
+
   } catch (error) {
     console.error("🔥 Error loading page:", error);
     if (normalizedPage !== "commingsoon") {

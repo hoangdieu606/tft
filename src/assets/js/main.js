@@ -68,7 +68,7 @@ const fetchData = async () => {
       try {
         data = await fetchWithTimeout(`/data/manual/data-original.json`);
       } catch {
-        const cachedData = localStorage.getItem('postData');
+        const cachedData = localStorage.getItem(`set-${data.set}-data`);
         if (cachedData) {
           data = JSON.parse(cachedData);
         }
@@ -104,7 +104,7 @@ const fetchData = async () => {
       try {
         revivalData = await fetchWithTimeout(`/data/manual/set-10-revival-original.json`);
       } catch {
-        const cachedData = localStorage.getItem('revivalData');
+        const cachedData = localStorage.getItem(`set-${revivalData.set}-data`);
         if (cachedData) {
           revivalData = JSON.parse(cachedData);
         }
@@ -140,13 +140,13 @@ const fetchData = async () => {
   // Lưu dữ liệu vào localStorage (nếu có)
   try {
     if (data) {
-      localStorage.setItem('postData', JSON.stringify(data));
+      localStorage.setItem(`set-${data.set}-data`, JSON.stringify(data));
     }
     if (guidesData) {
       localStorage.setItem('guidesData', JSON.stringify(guidesData));
     }
     if(revivalData) {
-      localStorage.setItem('revivalData', JSON.stringify(revivalData));
+      localStorage.setItem(`set-${revivalData.set}-data`, JSON.stringify(revivalData));
     }
     if(revivalGuides) {
       localStorage.setItem('revivalGuides', JSON.stringify(revivalGuides));

@@ -45,26 +45,23 @@ export let indexer;
 export class TooltipDataIndexer {
     constructor(transformedData) {
         this.index = new Map();
+        this.set = transformedData?.set || 14;
         this.buildIndex(transformedData);
     }
 
     buildIndex(transformedData) {
         if (!transformedData) { return; }
         const arrays = [
-            transformedData.champions?.mainChampions,
-            transformedData.champions?.revivalChampions,
-            transformedData.traits?.mainTraits,
-            transformedData.traits?.revivalTraits,
-            transformedData.augments?.mainAugs,
-            transformedData.augments?.revivalAugs,
-            transformedData.items?.mainItems,
-            transformedData.items?.revivalItems
+            transformedData.champions,
+            transformedData.traits,
+            transformedData.augments,
+            transformedData.items
         ];
         for (const array of arrays) {
             if (!Array.isArray(array)) { continue; }
             for (const obj of array) {
                 if (obj && obj.apiName) {
-                    this.index.set(obj.apiName, obj);
+                    this.index.set(obj.apiName, { ...obj, setNumber: this.set });
                 }
             }
         }
@@ -78,9 +75,21 @@ export class TooltipDataIndexer {
 /*  Hàm render nội dung tooltip */
 
 export function renderTooltipContent(data) {
+    const cachedData = localStorage.getItem(`set-${data.setNumber}-data`);
+    const { champions, traits, items } = cachedData ? JSON.parse(cachedData) : {};
+
     /* Render champions */
     if ("cost" in data) {
-        const { name, cost, icon, traits, skillIcon, skillDesc, skillName, mana, apiName } = data;
+        const { name, cost, traits: traitChamps, ability, abilityName, stats, apiName, setNumber } = data;
+        const icon = `/assets/images/set${setNumber}/champions/${apiName}.webp`
+        const abilityIcon = `/assets/images/set${setNumber}/champions/ability_${apiName}.webp`
+
+        const mana = `${stats.initialMana} / ${stats.mana}`
+        const champTraits = traitChamps.map(id => {
+            const objTrait = traits.find(trait => trait.id === id)
+            return { name: objTrait.name, icon: `/assets/images/set${setNumber}/traits/${objTrait.apiName}.webp` }
+        })
+
         return `
             <div class="champ-card champ-cost-${cost}">
                 <div class="champ-header">
@@ -89,41 +98,51 @@ export function renderTooltipContent(data) {
                         <span>${cost}<img src="/assets/images/gold.png" loading="lazy" alt="Gold"></span>
                     </div>
                     <div>
-                        <img src="${icon}" alt="${name}" onerror="this.onerror=null; this.src='/assets/images/set10/champions/icon_${apiName}.webp';">
+                        <img src="${icon}" alt="${name}">
                         <div class="traits">
-                            ${traits.map(obj => `<span class="trait"><img src="${obj.icon}">${obj.name}</span>`).join('')}
+                            ${champTraits.map(obj => `<span class="trait"><img src="${obj.icon}">${obj.name}</span>`).join('')}
                         </div>
                     </div>
                 </div>
                 <div class="skill">
                     <div class="skill-name">
-                        <div><img src="${skillIcon || icon}" alt="${skillName}" onerror="this.onerror=null; this.src='/assets/images/set10/champions/ability_${apiName}.webp';"></div>
+                        <div><img src="${abilityIcon || icon}" alt="${abilityName}"></div>
                         <div>
-                            <h4>${skillName}</h4>
+                            <h4>${abilityName}</h4>
                             <p><img src="/assets/images/Mana.png" loading="lazy" alt="Mana">${mana}</p>
                         </div>
                     </div>
-                    <div class="skill-desc"><p>${skillDesc}</p></div>
+                    <div class="skill-desc"><p>${ability}</p></div>
                 </div>
             </div>`;
     }
 
     /* Render traits */
-    if ("level" in data) {
-        const { name, desc, level, icon, champions, category } = data;
-        let renderChamp = "";
+    if ("effects" in data) {
+        const { apiName, name, id, description, effects, type, setNumber } = data;
+        const icon = `/assets/images/set${setNumber}/traits/${apiName}.webp`
 
-        const cachedData = localStorage.getItem('postData');
-        if (cachedData) {
-            const parsedData = JSON.parse(cachedData);
-            const apiNameIconCost = Object.fromEntries(parsedData.champions.mainChampions.map(({ apiName, icon, cost }) => [apiName, [icon, cost]]));
-            renderChamp = champions.map(({ apiName }) =>
-                `<li class="champ-cost-${apiNameIconCost[apiName][1]}"><img src="${apiNameIconCost[apiName][0]}"></li>`
+        let renderChamp = "";
+        let renderEffects = ''
+
+
+        const traitChampions = champions.filter(champ => champ.traits.includes(id))
+        if (traitChampions.length) {
+            renderChamp = traitChampions.map(obj =>
+                `<li class="champ-cost-${obj.cost}">
+                 <img src="/assets/images/set${setNumber}/champions/${obj.apiName}.webp" alt="${[obj.name]}" data-api-name="${obj.apiName}">
+              </li>`
             ).join("");
         }
 
+        if (effects) {
+            for (const key in effects) {
+                renderEffects += `<li>${key}: ${effects[key]}</li>`;
+            }
+        }
+
         return `
-            <div class="trait-card trait-${category}">
+            <div class="trait-card trait-${type}">
                 <div class="trait-header">
                     <div class="trait-style">
                         <img src="${icon}" alt="${name}">
@@ -132,49 +151,48 @@ export function renderTooltipContent(data) {
                     <ul class="champ-list">${renderChamp}</ul>
                 </div>
                 <div class="trait-desc">
-                    <div class="origin-desc"><p>${desc}</p></div>
-                    <div class="origin-level"><ul>${level.map(value => `<li>${value}</li>`).join("")}</ul></div>
+                    <div class="origin-desc"><p>${description}</p></div>
+                    <div class="origin-level"><ul>${renderEffects}</ul></div>
                 </div>
             </div>`;
     }
 
     /* Render items */
-    if ("effects" in data) {
-        const { name, icon, desc, tier, effects, category, composition } = data;
-        let iconComp = "";
-        const cachedData = localStorage.getItem('postData');
+    if ("composition" in data) {
+        const { apiName, name, description, tier, stats, type, composition, setNumber } = data;
+        const icon = `/assets/images/set${setNumber}/items/${apiName}.webp`
 
-        if (cachedData) {
-            const parsedData = JSON.parse(cachedData);
-            const itemAndIcon = apiNameAndData(parsedData.items.mainItems, ['icon']);
-            iconComp = composition?.length ?
-                `<span class="item-composition">
-                    <span><img src="${itemAndIcon[composition[0]][0]}"></span>
-                    <span>+</span>
-                    <span><img src="${itemAndIcon[composition[1]][0]}"></span>
-                </span>` : "";
+        let iconComp = "";
+        if (composition?.length) {
+            const itemComps = composition.map(compoApi => items.find(item => item.apiName === compoApi))
+            const icon1 = `/assets/images/set${setNumber}/items/${itemComps[0].apiName}.webp`
+            const icon2 = `/assets/images/set${setNumber}/items/${itemComps[1].apiName}.webp`
+
+            iconComp = `<span class="item-composition"><span><img src="${icon1}"></span><span>+</span><span><img src="${icon2}"></span></span>`
         }
 
         return `
-            <div class="items-item item-${category} tier-${tier}">
+            <div class="items-item item-${type} tier-${tier}">
                 <div class="item-icon">
                     <img src="${icon}" alt="${name}">
-                    <span>${tier}</span>
+                    <span>${tier || ''}</span>
                     ${iconComp}
                 </div>
                 <div class="item-content">
                     <div class="item-title">
                         <div><h3>${name}</h3></div>
-                        <span>${generateStatsHTML(effects)}</span>
+                        <span>${generateStatsHTML(stats)}</span>
                     </div>
-                    <p>${desc}</p>
+                    <p>${description}</p>
                 </div>
             </div>`;
     }
 
     /* Render augments */
     if ("tier2" in data) {
-        const { name, icon, desc, tier, tier2 } = data;
+        const { apiName, name, description, tier, tier2, setNumber } = data;
+        const icon = `/assets/images/set${setNumber}/augments/${apiName}.webp`
+
         return `
             <div class="aug-item augs-tier-${tier} tier-${tier2}">
                 <div class="aug-icon">
@@ -183,7 +201,7 @@ export function renderTooltipContent(data) {
                 </div>
                 <div class="aug-content">
                     <h3>${name}</h3>
-                    <p>${desc}</p>
+                    <p>${description}</p>
                 </div>
             </div>`;
     }
@@ -508,17 +526,17 @@ export function generateStatsHTML(effects) {
     if (!effects) { return ""; }
     // Định nghĩa mapping giữa key và thông tin hình ảnh
     const statIcons = {
-        "AD": { url: "/assets/images/AD.png", isPercent: true },
-        "AP": { url: "/assets/images/AP.png", isPercent: false },
-        "Mana": { url: "/assets/images/Mana.png", isPercent: false },
-        "Armor": { url: "/assets/images/Armor.png", isPercent: false },
-        "MagicResist": { url: "/assets/images/MR.png", isPercent: false },
-        "Health": { url: "/assets/images/Health.png", isPercent: false },
-        "AS": { url: "/assets/images/AS.png", isPercent: true },
-        "CritChance": { url: "/assets/images/Crit.png", isPercent: true },
-        "{1543aa48}": { url: "/assets/images/DA.png", isPercent: true },
-        "PercentDR": { url: "/assets/images/DR.png", isPercent: true },
-        "StatOmnivamp": { url: "/assets/images/SV.png", isPercent: true }
+        "ad": { url: "/assets/images/AD.png", isPercent: true },
+        "ap": { url: "/assets/images/AP.png", isPercent: false },
+        "mana": { url: "/assets/images/Mana.png", isPercent: false },
+        "ar": { url: "/assets/images/Armor.png", isPercent: false },
+        "mr": { url: "/assets/images/MR.png", isPercent: false },
+        "hp": { url: "/assets/images/Health.png", isPercent: false },
+        "as": { url: "/assets/images/AS.png", isPercent: true },
+        "crit": { url: "/assets/images/Crit.png", isPercent: true },
+        "da": { url: "/assets/images/DA.png", isPercent: true },
+        "dr": { url: "/assets/images/DR.png", isPercent: true },
+        "ov": { url: "/assets/images/SV.png", isPercent: true }
     };
 
     let html = "";

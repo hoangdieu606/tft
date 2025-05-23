@@ -1,6 +1,6 @@
 import { apiNameAndData, filterInput, setupTooltips, customTooltip, initToggle } from '/src/assets/js/global.js';
 
-export function renderBuilder(data, hexIndexData) {
+export function renderBuilder(data) {
     const builderChampions = document.querySelector('.builder-champions .builder-list');
     const builderItems = document.querySelector('.builder-items .builder-list');
     const builderTraits = document.querySelector('.builder-traits');
@@ -16,6 +16,7 @@ export function renderBuilder(data, hexIndexData) {
     const teamCodeButton = document.querySelector('.builder-copy');
     const positionComp = document.querySelector('.position-comp');
     const chessboard = document.querySelector('.builder-chessboard');
+    const hexIndexData = data.champions
 
     if (
         !builderChampions ||

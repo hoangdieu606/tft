@@ -21,11 +21,11 @@ export function renderChampions(data, setNumber = 14) {
         general: ""
     }
 
-    document.querySelector(".champions-list").innerHTML = champions.map(({ name, cost, traitsChamp, ability, abilityName, apiName, stats }) => {
+    document.querySelector(".champions-list").innerHTML = champions.map(({ name, cost, traits: traitChamps, ability, abilityName, apiName, stats }) => {
         const champIcon = `/assets/images/set${setNumber}/champions/${apiName}.webp`
         const skillIcon = `/assets/images/set${setNumber}/champions/ability_${apiName}.webp`
-        const mana = stats.initialMana / stats.mana
-        const champTraits = traitsChamp.map(id => {
+        const mana = `${stats.initialMana} / ${stats.mana}`
+        const champTraits = traitChamps.map(id => {
             const objTrait = traits.find(trait => trait.id === id)
             return { name: objTrait.name, icon: `/assets/images/set${setNumber}/traits/${objTrait.apiName}.webp` }
         })
@@ -76,7 +76,8 @@ export function renderTraits(data, setNumber = 14) {
     traitsList.innerHTML = traits.map(({ apiName, name, id, description, effects, type }) => {
         const icon = `/assets/images/set${setNumber}/traits/${apiName}.webp`
         const traitChampions = champions.filter(champ => champ.traits.includes(id))
-        let renderChamp;
+        let renderChamp = ''
+        let renderEffects = ''
 
         if (traitChampions.length) {
             renderChamp = traitChampions.map(obj =>
@@ -84,8 +85,12 @@ export function renderTraits(data, setNumber = 14) {
                  <img src="/assets/images/set${setNumber}/champions/${obj.apiName}.webp" alt="${[obj.name]}" data-api-name="${obj.apiName}">
               </li>`
             ).join("");
-        } else {
-            renderChamp = ''
+        }
+
+        if (effects) {
+            for (const key in effects) {
+                renderEffects += `<li>${key}: ${effects[key]}</li>`;
+            }
         }
 
         let categoryHeader = "";
@@ -95,20 +100,20 @@ export function renderTraits(data, setNumber = 14) {
         }
 
         return `
-${categoryHeader} 
-<div class="trait-card trait-${type}">
-    <div class="trait-header">
-        <div class="trait-style">
-            <img src="${icon}" alt="${name}">
-            <h3>${name}</h3>
-        </div>
-        <ul class="champ-list">${renderChamp}</ul>
-    </div>
-    <div class="trait-desc">
-        <div class="origin-desc"><p>${description}</p></div>
-        <div class="origin-level"><ul>${effects.map(value => `<li>${value}</li>`).join("")}</ul></div>
-    </div>
-</div>
+                ${categoryHeader} 
+                <div class="trait-card trait-${type}">
+                    <div class="trait-header">
+                        <div class="trait-style">
+                            <img src="${icon}" alt="${name}">
+                            <h3>${name}</h3>
+                        </div>
+                        <ul class="champ-list">${renderChamp}</ul>
+                    </div>
+                    <div class="trait-desc">
+                        <div class="origin-desc"><p>${description}</p></div>
+                        <div class="origin-level"><ul>${renderEffects}</ul></div>
+                    </div>
+                </div>
 `;
     }).join("");
 
@@ -171,12 +176,12 @@ export function renderItems(data, setNumber = 14) {
         component: "Mảnh Trang Bị"
     }
 
-    itemsList.innerHTML = items.map(({ name, type, rules, description, tier, apiName, composition }) => {
+    itemsList.innerHTML = items.map(({ name, type, stats, description, tier, apiName, composition }) => {
 
         const icon = `/assets/images/set${setNumber}/items/${apiName}.webp`
         let iconComp = ''
         if (composition?.length) {
-            const itemComps = composition.map(compoApi => items.find(item=>item.apiName === compoApi))
+            const itemComps = composition.map(compoApi => items.find(item => item.apiName === compoApi))
             const icon1 = `/assets/images/set${setNumber}/items/${itemComps[0].apiName}.webp`
             const icon2 = `/assets/images/set${setNumber}/items/${itemComps[1].apiName}.webp`
 
@@ -199,7 +204,7 @@ export function renderItems(data, setNumber = 14) {
                 <div class="item-content">
                     <div class="item-title">
                         <div><h3>${name}</h3></div>
-                         <span>${generateStatsHTML(rules)}</span>
+                         <span>${generateStatsHTML(stats)}</span>
                     </div>
                     <p>${description}</p>
                  </div>
