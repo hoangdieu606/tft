@@ -804,6 +804,7 @@ button#name-chessboard.active .fa-eye-slash {
     pointer-events: none;
 }
 
+
 /* Media min-width 768px */
 @media (min-width: 768px) {
     .builder-chessboard .position-comp {

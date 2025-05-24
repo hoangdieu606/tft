@@ -1226,6 +1226,8 @@ export function renderBuilder(data) {
 
     document.querySelectorAll('.item-child').forEach(item => {
         let dragPreview = null;
+        item.dataset.touchStartTime = '0'; // Khởi tạo touchStartTime
+        item.dataset.isDragging = 'false'; // Khởi tạo trạng thái kéo
 
         item.addEventListener('click', () => {
             const sortedOrder = [...championOrder].sort((a, b) => b.timestamp - a.timestamp);
@@ -1283,7 +1285,8 @@ export function renderBuilder(data) {
         });
 
         item.addEventListener('touchstart', e => {
-            touchStartTime = Date.now();
+            if (item.dataset.isDragging === 'true') return;
+            item.dataset.touchStartTime = Date.now().toString();
             item.dataset.touchData = JSON.stringify({
                 type: 'item',
                 apiName: item.dataset.apiName,
@@ -1291,12 +1294,17 @@ export function renderBuilder(data) {
                 name: item.dataset.name,
             });
             item.classList.add('dragging');
+            item.dataset.isDragging = 'true';
             dragPreview = createDragPreview(item, 'item');
             const touch = e.touches[0];
             updateDragPreview(dragPreview, touch.clientX, touch.clientY);
         }, { passive: true });
 
         item.addEventListener('touchend', e => {
+            const touchStartTime = item.dataset.touchStartTime && item.dataset.touchStartTime !== '0'
+                ? parseInt(item.dataset.touchStartTime, 10)
+                : Date.now(); // Giá trị mặc định
+            const touchDuration = Date.now() - touchStartTime;
             const touch = e.changedTouches[0];
             const targetElement = document.elementFromPoint(touch.clientX, touch.clientY);
             const targetHexagon = targetElement?.closest('.hexagon');
@@ -1309,12 +1317,26 @@ export function renderBuilder(data) {
 
             if (item.dataset.touchData) {
                 delete item.dataset.touchData;
+                delete item.dataset.touchStartTime;
                 item.classList.remove('dragging');
+                item.dataset.isDragging = 'false';
                 removeDragPreview(dragPreview);
                 dragPreview = null;
                 hexagons.forEach(h => h.classList.remove('drag-over'));
             }
-        });
+        }, { passive: true });
+
+        item.addEventListener('touchcancel', e => {
+            if (item.dataset.touchData) {
+                delete item.dataset.touchData;
+                delete item.dataset.touchStartTime;
+                item.classList.remove('dragging');
+                item.dataset.isDragging = 'false';
+                removeDragPreview(dragPreview);
+                dragPreview = null;
+                hexagons.forEach(h => h.classList.remove('drag-over'));
+            }
+        }, { passive: true });
     });
 
     builderItems.addEventListener(
@@ -1424,8 +1446,7 @@ export function renderBuilder(data) {
         hexagonItems.appendChild(itemSpan);
 
         let dragPreview = null;
-        let touchStartTime = 0;
-        let isDragging = false;
+        itemSpan.dataset.touchStartTime = '0'; // Khởi tạo touchStartTime
 
         itemSpan.setAttribute('draggable', 'true');
         itemSpan.addEventListener('dragstart', e => {
@@ -1458,20 +1479,22 @@ export function renderBuilder(data) {
         });
 
         itemSpan.addEventListener('touchstart', e => {
-            if (isDragging) return;
-            touchStartTime = Date.now();
+            if (itemSpan.dataset.isDragging === 'true') return;
+            itemSpan.dataset.touchStartTime = Date.now().toString(); // Lưu thời gian bắt đầu
             itemSpan.dataset.touchData = JSON.stringify({
                 type: 'remove-item',
                 apiName: itemData.apiName,
                 hexagonIndex: hexagon.dataset.index,
             });
             itemSpan.classList.add('dragging');
+            itemSpan.dataset.isDragging = 'true';
             dragPreview = createDragPreview(itemSpan, 'item-span');
             const touch = e.touches[0];
             updateDragPreview(dragPreview, touch.clientX, touch.clientY);
         }, { passive: true });
 
         itemSpan.addEventListener('touchend', e => {
+            const touchStartTime = parseInt(itemSpan.dataset.touchStartTime, 10); // Lấy từ dataset
             const touchDuration = Date.now() - touchStartTime;
             const touch = e.changedTouches[0];
             const targetElement = document.elementFromPoint(touch.clientX, touch.clientY);
@@ -1496,7 +1519,9 @@ export function renderBuilder(data) {
 
             if (itemSpan.dataset.touchData) {
                 delete itemSpan.dataset.touchData;
+                delete itemSpan.dataset.touchStartTime; // Dọn dẹp
                 itemSpan.classList.remove('dragging');
+                itemSpan.dataset.isDragging = 'false';
                 removeDragPreview(dragPreview);
                 dragPreview = null;
             }
