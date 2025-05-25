@@ -216,7 +216,7 @@ export function tierList(guidesData, champAndIconCost, itemAndIcon, augsAndIconT
   // Hàm lọc danh sách
   function filterTierLists() {
     const searchText = searchInput?.value.toLowerCase() || '';
-    const selectedStyle = document.querySelector('.style-option.active')?.dataset.style || 'Show All';
+    const selectedStyle = document.querySelector('.tierlist-menu .style-option.active')?.dataset.style || 'Show All';
 
     tierLists.forEach(tierList => {
       const link = tierList.querySelector('.hexagon-tier-champ a');
