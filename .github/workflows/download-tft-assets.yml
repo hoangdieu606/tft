@@ -1,8 +1,8 @@
 name: Download TFT Assets
 
 on:
-  schedule:
-    - cron: '0 00 * * *' # Chạy lúc 00:00 UTC
+  # schedule:
+  #   - cron: '0 00 * * *' # Chạy lúc 00:00 UTC
   workflow_dispatch:
 
 concurrency:
