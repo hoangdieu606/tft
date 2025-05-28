@@ -1,2 +1,2 @@
-/public/assets/images/*
+/assets/images/*
   Cache-Control: public, max-age=0, no-cache
