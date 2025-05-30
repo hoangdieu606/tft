@@ -465,12 +465,7 @@ const TOGGLE_CONFIG = {
  * @param {Object} [config=TOGGLE_CONFIG] - Cấu hình tùy chỉnh cho nút toggle.
  * @returns {void}
  */
-export function syncToggleState(toggleId, isActive, config = TOGGLE_CONFIG) {
-    const toggleElement = document.querySelector(`#${toggleId}`);
-    if (!toggleElement) {
-        console.warn(`Toggle with ID ${toggleId} not found`);
-        return;
-    }
+export function syncToggleState(toggleElement, toggleId, isActive, config = TOGGLE_CONFIG) {
 
     const labelElement = toggleElement.querySelector('.toggle-label');
     const rootElement = document.documentElement;
@@ -492,8 +487,8 @@ export function syncToggleState(toggleId, isActive, config = TOGGLE_CONFIG) {
  * @param {Object} [config=TOGGLE_CONFIG] - Cấu hình tùy chỉnh cho nút toggle.
  * @returns {void}
  */
-export function initToggle(toggleId, displayDefault = true, config = TOGGLE_CONFIG) {
-    const toggleElement = document.querySelector(`#${toggleId}`);
+export function initToggle(toggleId, displayDefault = true, config = TOGGLE_CONFIG, postCompTag = false) {
+    const toggleElement = !postCompTag ? document.querySelector(`#${toggleId}`) : postCompTag.querySelector(`#${toggleId}`);
     if (!toggleElement) {
         console.warn(`Toggle with ID ${toggleId} not found`);
         return;
@@ -508,11 +503,11 @@ export function initToggle(toggleId, displayDefault = true, config = TOGGLE_CONF
         isActive = displayDefault
     }
 
-    syncToggleState(toggleId, isActive, config);
+    syncToggleState(toggleElement, toggleId, isActive, config);
 
     toggleElement.addEventListener('click', () => {
         const isCurrentlyActive = localStorage.getItem(`toggle_${toggleId}`) === config.DISPLAY_VALUES.active;
-        syncToggleState(toggleId, !isCurrentlyActive, config);
+        syncToggleState(toggleElement, toggleId, !isCurrentlyActive, config);
     });
 }
 

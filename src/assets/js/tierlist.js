@@ -446,7 +446,7 @@ export function renderPostComp(guideData, champAndIconCost, itemAndIcon, augsAnd
   const copyMenu = postCompTag.querySelector('.copy-menu');
   const copyButton = copyMenu.querySelector('.comp-copy-link');
   const copyOptions = copyMenu.querySelectorAll('.copy-option');
-
+  
   if (closeButton) {
     closeButton.onclick = () => {
       const tierContainer = postCompTag.closest('.tier-container');
@@ -497,14 +497,14 @@ export function renderPostComp(guideData, champAndIconCost, itemAndIcon, augsAnd
         const augmentsData = augments.map(({ apiName }) => ({ apiName })); // Lưu apiName của augments
         localStorage.setItem('builderCompData', JSON.stringify(compData));
         localStorage.setItem('builderAugmentsData', JSON.stringify(augmentsData));
-        window.location.href = '/builder';
+        window.location.href = !data.setStyle ? '/builder' : '/builder-revival';
       }
 
       copyMenu.classList.remove('active');
     });
   });
 
-  initToggle('tier-post', false);
+  initToggle('tier-post', false,  undefined, postCompTag);
   setupTooltips();
   document.title = title;
 }

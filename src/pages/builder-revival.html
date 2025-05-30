@@ -1,0 +1,141 @@
+<div class="builder-container">
+    <div class="builder-section">
+        <div class="builder-traits">
+            <span class="builder-title">traits</span>
+        </div>
+        <div class="builder-chessboard">
+            <div class="position-comp">
+                <div class="row">
+                    <div class="hexagon" data-index="0"></div>
+                    <div class="hexagon" data-index="1"></div>
+                    <div class="hexagon" data-index="2"></div>
+                    <div class="hexagon" data-index="3"></div>
+                    <div class="hexagon" data-index="4"></div>
+                    <div class="hexagon" data-index="5"></div>
+                    <div class="hexagon" data-index="6"></div>
+                </div>
+                <div class="row">
+                    <div class="hexagon" data-index="7"></div>
+                    <div class="hexagon" data-index="8"></div>
+                    <div class="hexagon" data-index="9"></div>
+                    <div class="hexagon" data-index="10"></div>
+                    <div class="hexagon" data-index="11"></div>
+                    <div class="hexagon" data-index="12"></div>
+                    <div class="hexagon" data-index="13"></div>
+                </div>
+                <div class="row">
+                    <div class="hexagon" data-index="14"></div>
+                    <div class="hexagon" data-index="15"></div>
+                    <div class="hexagon" data-index="16"></div>
+                    <div class="hexagon" data-index="17"></div>
+                    <div class="hexagon" data-index="18"></div>
+                    <div class="hexagon" data-index="19"></div>
+                    <div class="hexagon" data-index="20"></div>
+                </div>
+                <div class="row">
+                    <div class="hexagon" data-index="21"></div>
+                    <div class="hexagon" data-index="22"></div>
+                    <div class="hexagon" data-index="23"></div>
+                    <div class="hexagon" data-index="24"></div>
+                    <div class="hexagon" data-index="25"></div>
+                    <div class="hexagon" data-index="26"></div>
+                    <div class="hexagon" data-index="27"></div>
+                </div>
+            </div>
+            <div class="builder-extension">
+                <button class="builder-clear" data-action="clear">
+                    <i class="fa-solid fa-broom"></i>
+                    <span>Clear</span>
+                </button>
+                <button id="name-chessboard" data-action="showname">
+                    <i class="fa-regular fa-eye-slash"></i>
+                    <i class="fa-regular fa-eye"></i>
+                    <span class="show-text">Show Name</span>
+                    <span class="hide-text">Hide Name</span>
+                </button>
+
+                <button class="builder-copy" data-action="teamCode">
+                    <i class="fa-solid fa-copy"></i>
+                    <span>Copy Team Code</span>
+                </button>
+
+                <div class="save-comp-wrapper">
+                    <button class="builder-save-comp">
+                        <i class="fa-solid fa-save"></i>
+                        <span>Save Comp</span>
+                    </button>
+                    <div class="save-comp-menu">
+                        <button class="save-comp-option" data-action="copy-url"><i class="fa-solid fa-link"></i>Copy
+                            URL</button>
+                        <button class="save-comp-option" data-action="add-bookmark"><i
+                                class="fa-solid fa-bookmark"></i>Add To Bookmarks</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <div class="builder-augments">
+        </div>
+    </div>
+
+    <div class="builder-section">
+        <div class="builder-options">
+            <button class="active">Champions</button>
+            <button>Items</button>
+        </div>
+        <div class="builder-champions">
+            <div class="builder-head">
+                <div class="builder-search">
+                    <input type="text" placeholder="Search Champions">
+                </div>
+                <div class="builder-filter">
+                    <button class="active" data-label="cost">Cost</button><button data-label="name">Name</button><button
+                        data-label="traits">Traits</button>
+                </div>
+            </div>
+
+            <div class="builder-list">champions</div>
+
+        </div>
+        <div class="builder-items">
+            <div class="builder-head">
+                <div class="builder-search">
+                    <input type="text" placeholder="Search Items">
+                </div>
+                <div class="builder-filter">
+                    <button data-category="1">Thường</button>
+                    <button data-category="2">Ánh Sáng</button>
+                    <button data-category="3">Tạo Tác</button>
+                    <button data-category="5">Ấn</button>
+                    <button data-category="other">Khác</button>
+                </div>
+            </div>
+            <div class="builder-list">items</div>
+
+        </div>
+    </div>
+    <div class="builder-list-augments">
+        <div class="builder-head">
+            <div class="builder-search">
+                <input type="text" placeholder="Search Augments">
+            </div>
+            <div class="builder-filter">
+                <button data-augs-category="0">All</button>
+                <button data-augs-category="3">Kim Cương</button>
+                <button data-augs-category="2">Vàng</button>
+                <button data-augs-category="1">Bạc</button>
+            </div>
+        </div>
+        <div class="selected-augs-wrapper">
+            <div class="selected-augs"></div>
+            <div class="selected-action">
+                <span class="selected-augs-count"><span class="count-augments">8 </span>I 8 Selected</span>
+                <button class="selected-augs-clear">Clear</button>
+                <button class="selected-augs-ok">OK</button>
+            </div>
+        </div>
+        <div class="builder-render-augs">
+
+        </div>
+    </div>
+</div>

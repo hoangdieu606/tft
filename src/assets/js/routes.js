@@ -15,6 +15,7 @@ export const routes = {
   items: import.meta.env.DEV ? "src/pages/items.html" : "/pages/items.html",
   traits: import.meta.env.DEV ? "src/pages/traits.html" : "/pages/traits.html",
   builder: import.meta.env.DEV ? "src/pages/builder.html" : "/pages/builder.html",
+  'builder-revival': import.meta.env.DEV ? "src/pages/builder-revival.html" : "/pages/builder-revival.html",
   home: import.meta.env.DEV ? "src/pages/home.html" : "/pages/home.html",
   commingsoon: import.meta.env.DEV ? "src/pages/commingsoon.html" : "/pages/commingsoon.html",
 };
@@ -126,6 +127,9 @@ export async function loadPage(page, { data = {}, guidesData = {}, hexIndexData 
       case 'builder':
         renderBuilder(data);
         break;
+      case 'builder-revival':
+        renderBuilder(revivalData);
+        break;
       case 'home':
         break;
       default:
@@ -139,7 +143,7 @@ export async function loadPage(page, { data = {}, guidesData = {}, hexIndexData 
       document.body.setAttribute("btn-filter", `category-0-active`);
     }
 
-    if (page === "tierlist-revival") {
+    if (page === "tierlist-revival" || page === "builder-revival") {
       setIndexer(revivalData || {});
       setupTooltips();
     } else {

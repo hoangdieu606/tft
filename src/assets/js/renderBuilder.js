@@ -970,36 +970,36 @@ export function renderBuilder(data) {
         let data = label === 'name' ? [...champions].sort((a, b) => a.name.localeCompare(b.name)) : champions;
 
         if (label === 'traits') {
-            const apiNameAndIconCostRange = apiNameAndData(champions, ['icon', 'cost', 'stats']);
-            const range = apiNameAndIconCostRange[apiName][2].range
             builderChampions.innerHTML = traits
                 .map(
-                    ({ name: nameTrait, icon: iconTrait, champions, apiName: apiNameTrait }) => `
+                    ({ apiName: apiNameTrait, icon: iconTrait, name: nameTrait, id }) => {
+                        const traitChampions = champions.filter(champ => champ.traits.includes(id))
+
+                        return `
                     <div class="builder-list-traits">
                         <div class="list-traits-title" draggable="false">
                             <span><img src="${iconTrait}" alt="${nameTrait}" data-api-name="${apiNameTrait}"></span>
                             <span>${nameTrait}</span>
                         </div>
                         <div class="list-traits-champions">
-                            ${champions
-                            .map(
-                                ({ apiName, name }) => `
-                                    <div class="tier-list cost-${apiNameAndIconCostRange[apiName][1]
-                                    }" draggable="true" 
-                                         data-api-name="${apiName}" data-range="${range}" 
-                                         data-icon="${apiNameAndIconCostRange[apiName][0]}" data-name="${name}">
+                            ${traitChampions
+                                .map(
+                                    ({ apiName, name, icon, cost, stats }) => `
+                                    <div class="tier-list cost-${cost}" draggable="true" 
+                                         data-api-name="${apiName}" data-range="${stats.range}" 
+                                         data-icon="${icon}" data-name="${name}">
                                         <div class="hexagon-tier-champ">
-                                            <span style="background-image: url(${apiNameAndIconCostRange[apiName][0]
-                                    })" title="${name}"></span>
+                                            <span style="background-image: url(${icon})" title="${name}"></span>
                                         </div>
                                         <div class="hexagon-title">${name}</div>
                                     </div>
                                 `
-                            )
-                            .join('')}
+                                )
+                                .join('')}
                         </div>
                     </div>
                 `
+                    }
                 )
                 .join('');
         } else {
