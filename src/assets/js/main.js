@@ -172,7 +172,7 @@ async function handleNavigation(page, addToHistory = true) {
     const newUrl = new URL(`/${page}`, window.location.origin);
     
     // Chỉ giữ query parameter 'comp' cho trang builder
-    if (page === 'builder') {
+    if (page === 'builder' || page === "builder-revival") {
       newUrl.search = currentUrl.search; // Giữ nguyên query string
     } else {
       // Xóa 'comp' cho các trang khác, giữ các query parameter khác
@@ -206,7 +206,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const newUrl = new URL(`/${initialPage}`, window.location.origin);
     
     // Chỉ giữ query parameter 'comp' cho trang builder
-    if (initialPage === 'builder') {
+    if (initialPage === 'builder' || initialPage === "builder-revival") {
       newUrl.search = currentUrl.search; // Giữ nguyên query string
     } else {
       // Xóa 'comp' cho các trang khác

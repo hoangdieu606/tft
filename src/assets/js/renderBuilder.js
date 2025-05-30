@@ -17,6 +17,7 @@ export function renderBuilder(data) {
     const positionComp = document.querySelector('.position-comp');
     const chessboard = document.querySelector('.builder-chessboard');
     const hexIndexData = data.champions
+    const setNumber = data.set
 
     if (
         !builderChampions ||
@@ -309,7 +310,7 @@ export function renderBuilder(data) {
                 hexIndexes[i] = hexIndexEntry.hexIndex;
             }
         });
-        return `02${hexIndexes.join('')}TFTSet14`;
+        return `02${hexIndexes.join('')}TFTSet${setNumber}`;
     }
 
     function renderBuilderTraits() {

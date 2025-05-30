@@ -136,7 +136,7 @@ export async function loadPage(page, { data = {}, guidesData = {}, hexIndexData 
         console.warn(`⚠️ No render function for page: ${page}`);
     }
 
-    if (page === "builder") {
+    if (page === "builder" || page === "builder-revival") {
       document.body.setAttribute("btn-filter", `category-1-active`);
       document.body.setAttribute("augs-btn-filter", "category-0-active");
     } else {
