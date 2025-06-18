@@ -29,14 +29,20 @@ export async function generateMetadata({ params }: TierDetailPageProps) {
 }
 
 export async function generateStaticParams() {
-  const guidesData = (await DataFetcher(
-    "guides"
-  )) as GuidesDataResponse<Guide> | null;
-  return (
-    guidesData?.guides.map((guide) => ({
-      compSlug: encodeURIComponent(guide.compSlug),
-    })) || []
-  );
+  try {
+    const guidesData = (await DataFetcher("guides")) as GuidesDataResponse<Guide> | null;
+    if (!guidesData || !guidesData.guides) {
+      console.error("Failed to fetch guides data for generateStaticParams");
+      return [];
+    }
+    console.log("Generated compSlugs:", guidesData.guides.length);
+    return guidesData.guides.map((guide) => ({
+      compSlug: guide.compSlug, 
+    }));
+  } catch (error) {
+    console.error("Error in generateStaticParams:", error);
+    return [];
+  }
 }
 
 interface TierDetailPageProps {
