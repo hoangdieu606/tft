@@ -1,0 +1,619 @@
+{
+  "set": 10,
+  "setStyle": "revival",
+  "version": "14.6",
+  "data": [
+    {
+      "apiName": "TFT10_8Bit",
+      "name": "8-bit",
+      "id": "swp9w2cdgzkpn6w",
+      "icon": "/assets/images/set10/traits/TFT10_8Bit.webp",
+      "description": "Tính điểm cho lượng sát thương đội của bạn gây ra. Với mỗi điểm cao bạn vượt qua, tướng 8-bit nhận Sức Mạnh&nbsp;Công Kích.<br>",
+      "effects": {
+        "2": "5% <img src=\"/assets/images/AD.webp\" class=\"icon-stat\" alt=\"AD\" />",
+        "4": "9% <img src=\"/assets/images/AD.webp\" class=\"icon-stat\" alt=\"AD\" />",
+        "6": "14% <img src=\"/assets/images/AD.webp\" class=\"icon-stat\" alt=\"AD\" /> và mở khóa điểm cao cuối cùng. Bạn sẽ nhận được một phần thưởng đặc biệt khi vượt qua điểm số này."
+      },
+      "breakpoints": [2, 4, 6],
+      "colors": [1, 5, 5],
+      "rules": [],
+      "champions": [
+        "TFT10_Caitlyn",
+        "TFT10_Corki",
+        "TFT10_Garen",
+        "TFT10_Riven"
+      ],
+      "type": "origin"
+    },
+    {
+      "apiName": "TFT10_Funk",
+      "name": "Disco",
+      "id": "tc07vocedu1a9zr",
+      "icon": "/assets/images/set10/traits/TFT10_Funk.webp",
+      "description": "Triệu hồi một Quả Cầu Disco di động. <br><br>Bắt Đầu Giao Tranh: Các đồng minh đứng cạnh quả cầu này nhận thêm Tốc Độ Đánh, hồi máu ngay lập tức và mỗi 3 giây.<br>",
+      "effects": {
+        "3": "5% <img src=\"/assets/images/AS.webp\" class=\"icon-stat\" alt=\"AS\" /> và tối đa 2% <img src=\"/assets/images/Health.webp\" class=\"icon-stat\" alt=\"Health\" />",
+        "4": "8% <img src=\"/assets/images/AS.webp\" class=\"icon-stat\" alt=\"AS\" /> và tối đa 3% <img src=\"/assets/images/Health.webp\" class=\"icon-stat\" alt=\"Health\" />",
+        "5": "2 Quả Cầu Disco, 12% <img src=\"/assets/images/AS.webp\" class=\"icon-stat\" alt=\"AS\" /> và tối đa 4.5% <img src=\"/assets/images/Health.webp\" class=\"icon-stat\" alt=\"Health\" />",
+        "6": "20% <img src=\"/assets/images/AS.webp\" class=\"icon-stat\" alt=\"AS\" /> và tối đa 5% <img src=\"/assets/images/Health.webp\" class=\"icon-stat\" alt=\"Health\" />"
+      },
+      "breakpoints": [3, 4, 5, 6],
+      "colors": [1, 3, 5, 5],
+      "rules": [],
+      "champions": [
+        "TFT10_Blitzcrank",
+        "TFT10_Gragas",
+        "TFT10_Nami",
+        "TFT10_Taric",
+        "TFT10_TwistedFate"
+      ],
+      "type": "origin"
+    },
+    {
+      "apiName": "TFT10_Country",
+      "name": "Đồng Quê",
+      "id": "la1m8kt6b21d3yt",
+      "icon": "/assets/images/set10/traits/TFT10_Country.webp",
+      "description": "Khi đội của bạn mất đi 30% Máu, triệu hồi Chiến Mã để cường hóa cho cả đội. Mỗi cấp&nbsp;sao của tướng Đồng Quê tăng Máu và Sức Mạnh&nbsp;Công Kích cho Chiến Mã.<br>",
+      "effects": {
+        "3": "Chiến Mã",
+        "5": "Chiến Mã Nửa Đêm",
+        "7": "Chiến Mã Khẩn Cầu Địa Ngục"
+      },
+      "breakpoints": [3, 5, 7],
+      "colors": [1, 5, 5],
+      "rules": [],
+      "champions": [
+        "TFT10_Katarina",
+        "TFT10_Samira",
+        "TFT10_TahmKench",
+        "TFT10_Thresh",
+        "TFT10_Urgot"
+      ],
+      "type": "origin"
+    },
+    {
+      "apiName": "TFT10_EDM",
+      "name": "EDM",
+      "id": "hz9ww4ez90e7juf",
+      "icon": "/assets/images/set10/traits/TFT10_EDM.webp",
+      "description": "Sử dụng bộ chọn EDM để chọn một tướng EDM và xem tần số của mỗi tướng.<br><br>Tại tần số của tướng được chọn, tướng EDM của bạn sẽ thi triển Kỹ Năng được chọn với hiệu quả được sửa đổi.<br>",
+      "effects": {
+        "2": "90% hiệu quả",
+        "3": "110% hiệu quả",
+        "4": "125% hiệu quả, -1 giây",
+        "5": "145% hiệu quả, -1 giây"
+      },
+      "breakpoints": [2, 3, 4, 5],
+      "colors": [1, 1, 3, 5],
+      "rules": [],
+      "champions": ["TFT10_Jax", "TFT10_Lux", "TFT10_Zac", "TFT10_Zed"],
+      "type": "origin"
+    },
+    {
+      "apiName": "TFT10_Emo",
+      "name": "Emo",
+      "id": "z7mqyjvpmq8fi5c",
+      "icon": "/assets/images/set10/traits/TFT10_Emo.webp",
+      "description": "Kỹ Năng của tướng Emo tiêu hao ít Năng Lượng hơn để thi triển và họ nhận thêm Năng Lượng mỗi khi tướng đồng minh bị hạ gục.<br>",
+      "effects": {
+        "2": "giảm 20%&nbsp;, nhận 20 &nbsp;<img src=\"/assets/images/Mana.webp\" class=\"icon-stat\" alt=\"Mana\" />",
+        "4": "giảm 30%, nhận 30 &nbsp;<img src=\"/assets/images/Mana.webp\" class=\"icon-stat\" alt=\"Mana\" />",
+        "6": "15 &nbsp;<img src=\"/assets/images/AP.webp\" class=\"icon-stat\" alt=\"AP\" />; giảm 35%, nhận 35&nbsp;<img src=\"/assets/images/Mana.webp\" class=\"icon-stat\" alt=\"Mana\" />"
+      },
+      "breakpoints": [2, 4, 6],
+      "colors": [1, 5, 5],
+      "rules": [],
+      "champions": ["TFT10_Amumu", "TFT10_Annie", "TFT10_Poppy", "TFT10_Vex"],
+      "type": "origin"
+    },
+    {
+      "apiName": "TFT10_PopBand",
+      "name": "Heartsteel",
+      "id": "21a93eq4v9pqx32",
+      "icon": "/assets/images/set10/traits/TFT10_PopBand.webp",
+      "description": "Thu thập Trái Tim khi tiêu diệt kẻ địch. Nhận nhiều hơn nữa khi thua giao tranh với người chơi. Sau mỗi 4 vòng giao tranh người chơi, chuyển đổi số Trái Tim thành những phần thưởng đầy uy lực! <br>",
+      "effects": {
+        "3": "1x Trái Tim",
+        "5": "2x Trái Tim",
+        "7": "5.5x Trái Tim",
+        "10": "20x Trái Tim, Nhận phần thưởng mỗi vòng đấu và giữ 80% Trái Tim của bạn!"
+      },
+      "breakpoints": [3, 5, 7, 10],
+      "colors": [1, 3, 5, 6],
+      "rules": [],
+      "champions": [
+        "TFT10_Aphelios",
+        "TFT10_Ezreal",
+        "TFT10_Kayn",
+        "TFT10_KSante",
+        "TFT10_Sett",
+        "TFT10_Yone"
+      ],
+      "type": "origin"
+    },
+    {
+      "apiName": "TFT10_Hyperpop",
+      "name": "Hyperpop",
+      "id": "1xzf3vgaj73icq4",
+      "icon": "/assets/images/set10/traits/TFT10_Hyperpop.webp",
+      "description": "Khi sử dụng Kỹ Năng, tướng Hyperpop ban Năng Lượng và Tốc Độ Đánh trong 4 giây cho 2 đồng minh gần nhất.<br>",
+      "effects": {
+        "1": "5 <img src=\"/assets/images/Mana.webp\" class=\"icon-stat\" alt=\"Mana\" /> và 8% <img src=\"/assets/images/AS.webp\" class=\"icon-stat\" alt=\"AS\" />",
+        "2": "10 <img src=\"/assets/images/Mana.webp\" class=\"icon-stat\" alt=\"Mana\" /> và 15% <img src=\"/assets/images/AS.webp\" class=\"icon-stat\" alt=\"AS\" />",
+        "3": "15 <img src=\"/assets/images/Mana.webp\" class=\"icon-stat\" alt=\"Mana\" /> và 30% <img src=\"/assets/images/AS.webp\" class=\"icon-stat\" alt=\"AS\" />",
+        "4": "20 <img src=\"/assets/images/Mana.webp\" class=\"icon-stat\" alt=\"Mana\" /> và 50% <img src=\"/assets/images/AS.webp\" class=\"icon-stat\" alt=\"AS\" />"
+      },
+      "breakpoints": [1, 2, 3, 4],
+      "colors": [1, 5, 5, 5],
+      "rules": [],
+      "champions": ["TFT10_Lulu", "TFT10_Ziggs"],
+      "type": "origin"
+    },
+    {
+      "apiName": "TFT10_Jazz",
+      "name": "Jazz",
+      "id": "xjs7bvrvxhdxih1",
+      "icon": "/assets/images/set10/traits/TFT10_Jazz.webp",
+      "description": "Với mỗi tộc/hệ đang kích hoạt (trừ những tộc hệ độc nhất), đội của bạn nhận thêm Máu và Khuếch Đại Sát Thương.<br>",
+      "effects": {
+        "2": "1.5% <img src=\"/assets/images/Health.webp\" class=\"icon-stat\" alt=\"Health\" />, 1% <img src=\"/assets/images/DA.webp\" class=\"icon-stat\" alt=\"DA\" />",
+        "3": "2.5% <img src=\"/assets/images/Health.webp\" class=\"icon-stat\" alt=\"Health\" />, 1.5% <img src=\"/assets/images/DA.webp\" class=\"icon-stat\" alt=\"DA\" />",
+        "4": "4% <img src=\"/assets/images/Health.webp\" class=\"icon-stat\" alt=\"Health\" />, 2% <img src=\"/assets/images/DA.webp\" class=\"icon-stat\" alt=\"DA\" />"
+      },
+      "breakpoints": [2, 3, 4],
+      "colors": [1, 3, 5],
+      "rules": [],
+      "champions": ["TFT10_Bard", "TFT10_Lucian", "TFT10_MissFortune"],
+      "type": "origin"
+    },
+    {
+      "apiName": "TFT10_KDA",
+      "name": "K/DA",
+      "id": "rg26rqojwbhoyk8",
+      "icon": "/assets/images/set10/traits/TFT10_KDA.webp",
+      "description": "Đội của bạn nhận Máu tối đa, Sức Mạnh Phép Thuật và Sức Mạnh Công Kích nếu họ đứng trên ô phát sáng. Tướng K/DA nhận được gấp đôi!<br>",
+      "effects": {
+        "3": "9% tối đa <img src=\"/assets/images/Health.webp\" class=\"icon-stat\" alt=\"Health\" />, 9%&nbsp;<img src=\"/assets/images/AP.webp\" class=\"icon-stat\" alt=\"AP\" /><img src=\"/assets/images/AD.webp\" class=\"icon-stat\" alt=\"AD\" />",
+        "5": "15% tối đa <img src=\"/assets/images/Health.webp\" class=\"icon-stat\" alt=\"Health\" />, 15%&nbsp;<img src=\"/assets/images/AP.webp\" class=\"icon-stat\" alt=\"AP\" /><img src=\"/assets/images/AD.webp\" class=\"icon-stat\" alt=\"AD\" />",
+        "7": "23% tối đa <img src=\"/assets/images/Health.webp\" class=\"icon-stat\" alt=\"Health\" />, 23%&nbsp;<img src=\"/assets/images/AP.webp\" class=\"icon-stat\" alt=\"AP\" /><img src=\"/assets/images/AD.webp\" class=\"icon-stat\" alt=\"AD\" />",
+        "10": "45% tối đa <img src=\"/assets/images/Health.webp\" class=\"icon-stat\" alt=\"Health\" />, 45%&nbsp;<img src=\"/assets/images/AP.webp\" class=\"icon-stat\" alt=\"AP\" /><img src=\"/assets/images/AD.webp\" class=\"icon-stat\" alt=\"AD\" />, 10 năng lượng mỗi giây"
+      },
+      "breakpoints": [3, 5, 7, 10],
+      "colors": [1, 3, 5, 6],
+      "rules": [],
+      "champions": [
+        "TFT10_Ahri",
+        "TFT10_Akali",
+        "TFT10_Evelynn",
+        "TFT10_Kaisa",
+        "TFT10_Lillia",
+        "TFT10_Neeko",
+        "TFT10_Seraphine"
+      ],
+      "type": "origin"
+    },
+    {
+      "apiName": "TFT10_Pentakill",
+      "name": "Pentakill",
+      "id": "kuezugz7igvlav1",
+      "icon": "/assets/images/set10/traits/TFT10_Pentakill.webp",
+      "description": "Tướng Pentakill nhận thêm 15% Chống Chịu và Khuếch Đại Sát Thương. Với mỗi mạng hạ gục, tướng Pentakill sẽ ăn mừng và tăng thêm 25% Khuếch Đại Sát Thương.<br><br>Khi đạt mạng hạ gục thứ 5, tất cả tướng Pentakill sẽ cùng nhau ăn mừng và đội của bạn nhận 50% Tốc Độ Đánh.<br>",
+      "effects": {
+        "3": "15% <img src=\"/assets/images/DA.webp\" class=\"icon-stat\" alt=\"DA\" />",
+        "5": "33% <img src=\"/assets/images/DA.webp\" class=\"icon-stat\" alt=\"DA\" />",
+        "7": "50% <img src=\"/assets/images/DA.webp\" class=\"icon-stat\" alt=\"DA\" />",
+        "10": "50% <img src=\"/assets/images/DR.webp\" class=\"icon-stat\" alt=\"DR\" /> và 99% <img src=\"/assets/images/DA.webp\" class=\"icon-stat\" alt=\"DA\" />"
+      },
+      "breakpoints": [3, 5, 7, 10],
+      "colors": [1, 3, 5, 6],
+      "rules": [],
+      "champions": [
+        "TFT10_Gnar",
+        "TFT10_Karthus",
+        "TFT10_Kayle",
+        "TFT10_Mordekaiser",
+        "TFT10_Olaf",
+        "TFT10_Viego",
+        "TFT10_Yorick",
+        "TFT10_YorickGhoulMelee"
+      ],
+      "type": "origin"
+    },
+    {
+      "apiName": "TFT10_PunkRock",
+      "name": "Punk",
+      "id": "d4myaa4nf8dlavw",
+      "icon": "/assets/images/set10/traits/TFT10_PunkRock.webp",
+      "description": "Tướng Punk nhận thêm Máu và Sức Mạnh Công Kích, tăng thêm 1% mỗi khi bạn dùng vàng để làm mới Cửa Hàng.<br><br>Sau khi tướng Punk tham gia giao tranh, nhận 1 Lượt Đổi trị giá 1 vàng cho vòng đấu đó. Lượt đổi đầu tiên mỗi vòng của bạn thưởng thêm 3%!<br>",
+      "effects": {
+        "2": "200 <img src=\"/assets/images/Health.webp\" class=\"icon-stat\" alt=\"Health\" /> và 20% <img src=\"/assets/images/AD.webp\" class=\"icon-stat\" alt=\"AD\" />",
+        "4": "350 <img src=\"/assets/images/Health.webp\" class=\"icon-stat\" alt=\"Health\" /> và 35% <img src=\"/assets/images/AD.webp\" class=\"icon-stat\" alt=\"AD\" />",
+        "6": "420 <img src=\"/assets/images/Health.webp\" class=\"icon-stat\" alt=\"Health\" /> và 42% <img src=\"/assets/images/AD.webp\" class=\"icon-stat\" alt=\"AD\" />"
+      },
+      "breakpoints": [2, 4, 6],
+      "colors": [1, 5, 5],
+      "rules": [],
+      "champions": ["TFT10_Jinx", "TFT10_Pantheon", "TFT10_Twitch", "TFT10_Vi"],
+      "type": "origin"
+    },
+    {
+      "apiName": "TFT10_TrueDamage",
+      "name": "True Damage",
+      "id": "db1et9fjqzmov82",
+      "icon": "/assets/images/set10/traits/TFT10_TrueDamage.webp",
+      "description": "Tướng True Damage gây thêm sát thương chuẩn. Nếu đang sở hữu trang bị, họ sẽ nhận được một Hiệu Ứng Hào Nhoáng độc nhất cho Kỹ Năng của họ.<br>",
+      "effects": {
+        "2": "<span class=\"truedamage\">15%</span> sát thương",
+        "4": "<span class=\"truedamage\">33%</span> sát thương",
+        "6": "<span class=\"truedamage\">55%</span> sát thương",
+        "9": "<span class=\"truedamage\">99%</span> sát thương, Hiệu Ứng Hào Nhoáng đạt&nbsp;Bạch Kim!"
+      },
+      "breakpoints": [2, 4, 6, 9],
+      "colors": [1, 3, 5, 6],
+      "rules": [],
+      "champions": [
+        "TFT10_Akali_TrueDamage",
+        "TFT10_Ekko",
+        "TFT10_Kennen",
+        "TFT10_Qiyana",
+        "TFT10_Senna",
+        "TFT10_Yasuo"
+      ],
+      "type": "origin"
+    },
+    {
+      "apiName": "TFT10_TwoSides",
+      "name": "Biến Số",
+      "id": "kk4evi69qqez7lp",
+      "icon": "/assets/images/set10/traits/TFT10_TwoSides.webp",
+      "description": "(duy nhất) Nếu bạn chiến thắng giao tranh với người chơi, Kayn sẽ biến thành Sát Thủ Bóng Tối. Nếu không, hắn sẽ trở thành Rhaast. Bạn nhận được một phần thưởng dựa trên dạng của hắn mỗi khi hắn hạ gục 2 tướng địch. <br><br>Sát Thủ Bóng Tối: 5 vàng",
+      "effects": [],
+      "breakpoints": [1],
+      "colors": [4],
+      "rules": [],
+      "champions": ["TFT10_Kayn"],
+      "type": "class"
+    },
+    {
+      "apiName": "TFT10_CrowdDive",
+      "name": "Cuồng Nhiệt",
+      "id": "na79atlgz4i70kl",
+      "icon": "/assets/images/set10/traits/TFT10_CrowdDive.webp",
+      "description": "Sau khi bị hạ gục, tướng Cuồng Nhiệt sẽ nhảy lên kẻ địch ở xa nhất, gây <span class=\"magicdamage\">300</span> sát thương phép. Các kẻ địch trong phạm vi 1 ô bị Choáng trong 1.5 giây.<br><br>Họ còn nhận thêm Khuếch Đại Sát Thương, tăng 1% mỗi giây.<br>",
+      "effects": {
+        "2": "12% <img src=\"/assets/images/DA.webp\" class=\"icon-stat\" alt=\"DA\" />",
+        "4": "30% <img src=\"/assets/images/DA.webp\" class=\"icon-stat\" alt=\"DA\" />",
+        "6": "45% <img src=\"/assets/images/DA.webp\" class=\"icon-stat\" alt=\"DA\" />"
+      },
+      "breakpoints": [2, 4, 6],
+      "colors": [1, 5, 5],
+      "rules": [],
+      "champions": [
+        "TFT10_Evelynn",
+        "TFT10_Katarina",
+        "TFT10_Qiyana",
+        "TFT10_Yone",
+        "TFT10_Zed"
+      ],
+      "type": "class"
+    },
+    {
+      "apiName": "TFT10_Executioner",
+      "name": "Đao Phủ",
+      "id": "t3t6vju6udd3ny9",
+      "icon": "/assets/images/set10/traits/TFT10_Executioner.webp",
+      "description": "Kỹ Năng của Đao Phủ có thể gây chí mạng và họ nhận thêm Sát Thương Chí Mạng. Tỉ Lệ Chí Mạng tăng theo lượng Máu đã mất của mục tiêu.<br>",
+      "effects": {
+        "2": "5% <img src=\"/assets/images/Crit.webp\" class=\"icon-stat\" alt=\"CritMult\" />. Tối đa 25% <img src=\"/assets/images/Crit.webp\" class=\"icon-stat\" alt=\"Crit\" />",
+        "4": "15% <img src=\"/assets/images/Crit.webp\" class=\"icon-stat\" alt=\"CritMult\" />. Tối đa 80% <img src=\"/assets/images/Crit.webp\" class=\"icon-stat\" alt=\"Crit\" />",
+        "6": "30% <img src=\"/assets/images/Crit.webp\" class=\"icon-stat\" alt=\"CritMult\" />. Tối đa 160% <img src=\"/assets/images/Crit.webp\" class=\"icon-stat\" alt=\"Crit\" />"
+      },
+      "breakpoints": [2, 4, 6],
+      "colors": [1, 3, 5],
+      "rules": [],
+      "champions": [
+        "TFT10_Akali_TrueDamage",
+        "TFT10_Akali",
+        "TFT10_Karthus",
+        "TFT10_Samira",
+        "TFT10_Twitch",
+        "TFT10_Vex"
+      ],
+      "type": "class"
+    },
+    {
+      "apiName": "TFT10_Brawler",
+      "name": "Đấu Sĩ",
+      "id": "t1n5hng3u7s4nju",
+      "icon": "/assets/images/set10/traits/TFT10_Brawler.webp",
+      "description": "Đội của bạn nhận 100 Máu. Tướng Đấu Sĩ nhận thêm Máu tối đa.<br>",
+      "effects": {
+        "2": "20% tối đa <img src=\"/assets/images/Health.webp\" class=\"icon-stat\" alt=\"Health\" />",
+        "4": "45% tối đa <img src=\"/assets/images/Health.webp\" class=\"icon-stat\" alt=\"Health\" />",
+        "6": "90% tối đa <img src=\"/assets/images/Health.webp\" class=\"icon-stat\" alt=\"Health\" />"
+      },
+      "breakpoints": [2, 4, 6],
+      "colors": [1, 3, 5],
+      "rules": [],
+      "champions": [
+        "TFT10_Gragas",
+        "TFT10_Illaoi",
+        "TFT10_Olaf",
+        "TFT10_Sett",
+        "TFT10_TahmKench",
+        "TFT10_Zac"
+      ],
+      "type": "class"
+    },
+    {
+      "apiName": "TFT10_Breakout",
+      "name": "Đột Phá",
+      "id": "asdzjk7j6jgkokz",
+      "icon": "/assets/images/set10/traits/TFT10_Breakout.webp",
+      "description": "(duy nhất) Akali tham gia ban nhạc K/DA hoặc True Damage tùy theo tộc/hệ có nhiều tướng xuất trận hơn trên sàn đấu. Cô nhận được một Kỹ Năng khác nhau tùy theo ban nhạc cô tham gia. ",
+      "effects": [],
+      "breakpoints": [1],
+      "colors": [4],
+      "rules": [],
+      "champions": ["TFT10_Akali_TrueDamage", "TFT10_Akali"],
+      "type": "class"
+    },
+    {
+      "apiName": "TFT10_Guardian",
+      "name": "Hộ Pháp",
+      "id": "8xlrybd88mlmgbm",
+      "icon": "/assets/images/set10/traits/TFT10_Guardian.webp",
+      "description": "Một lần mỗi giao tranh, khi xuống dưới 50% Máu, Hộ Pháp tạo một lá chắn theo Máu tối đa của bản thân cho mình và đồng minh gần nhất.<br>",
+      "effects": {
+        "2": "25%",
+        "4": "45%",
+        "6": "70%"
+      },
+      "breakpoints": [2, 4, 6],
+      "colors": [1, 3, 5],
+      "rules": [],
+      "champions": [
+        "TFT10_Amumu",
+        "TFT10_Kennen",
+        "TFT10_Neeko",
+        "TFT10_Pantheon",
+        "TFT10_Taric",
+        "TFT10_Thresh",
+        "TFT10_Yorick"
+      ],
+      "type": "class"
+    },
+    {
+      "apiName": "TFT10_IllBeats",
+      "name": "ILLBEATS",
+      "id": "cjinip13vqsx70a",
+      "icon": "/assets/images/set10/traits/TFT10_IllBeats.webp",
+      "description": "(duy nhất) Nhận 2/2/8 Xúc Tu Linh Hồn có thể di chuyển, dựa trên cấp sao của Illaoi. Các Xúc Tu nhận được Giáp và Kháng Phép cộng thêm của Illaoi.",
+      "effects": [],
+      "breakpoints": [1],
+      "colors": [4],
+      "rules": [],
+      "champions": ["TFT10_Illaoi"],
+      "type": "class"
+    },
+    {
+      "apiName": "TFT10_Quickshot",
+      "name": "Liên Kích",
+      "id": "8p9enqxjhd7c95u",
+      "icon": "/assets/images/set10/traits/TFT10_Quickshot.webp",
+      "description": "Đội của bạn nhận 10% Tốc Độ Đánh.<br><br>Tướng Liên Kích nhận thêm trên mỗi đòn đánh, tối đa 10 cộng dồn.<br>",
+      "effects": {
+        "2": "4% <img src=\"/assets/images/AS.webp\" class=\"icon-stat\" alt=\"AS\" />",
+        "4": "9% <img src=\"/assets/images/AS.webp\" class=\"icon-stat\" alt=\"AS\" />",
+        "6": "16% <img src=\"/assets/images/AS.webp\" class=\"icon-stat\" alt=\"AS\" />"
+      },
+      "breakpoints": [2, 4, 6],
+      "colors": [1, 3, 5],
+      "rules": [],
+      "champions": [
+        "TFT10_Aphelios",
+        "TFT10_Caitlyn",
+        "TFT10_Jinx",
+        "TFT10_Lucian",
+        "TFT10_Senna"
+      ],
+      "type": "class"
+    },
+    {
+      "apiName": "TFT10_Classical",
+      "name": "Nhạc Trưởng",
+      "id": "w35wa6eros5a135",
+      "icon": "/assets/images/set10/traits/TFT10_Classical.webp",
+      "description": "(duy nhất) Nhạc Trưởng luôn tấn công với nhịp độ cố định, chuyển 1% Tốc Độ Đánh cộng thêm thành 0.800000011920929% Sức Mạnh Công Kích. ",
+      "effects": [],
+      "breakpoints": [1],
+      "colors": [4],
+      "rules": [],
+      "champions": ["TFT10_Jhin"],
+      "type": "class"
+    },
+    {
+      "apiName": "TFT10_DJ",
+      "name": "Phù Thủy Âm Nhạc",
+      "id": "wgwdgbpf295lz1u",
+      "icon": "/assets/images/set10/traits/TFT10_DJ.webp",
+      "description": "(duy nhất) Lựa chọn một chế độ để biến đổi đòn đánh và Kỹ Năng của Phù Thủy Âm Nhạc!",
+      "effects": [],
+      "breakpoints": [1],
+      "colors": [4],
+      "rules": [],
+      "champions": ["TFT10_Sona"],
+      "type": "class"
+    },
+    {
+      "apiName": "TFT10_Fighter",
+      "name": "Siêu Quẩy",
+      "id": "gvsyq0zzk58ebtu",
+      "icon": "/assets/images/set10/traits/TFT10_Fighter.webp",
+      "description": "Tướng Siêu Quẩy nhận Tốc Độ Đánh và Hút Máu Toàn Phần, tăng thêm tối đa 100% dựa trên lượng Máu đã mất của họ. <br>",
+      "effects": {
+        "2": "20% <img src=\"/assets/images/AS.webp\" class=\"icon-stat\" alt=\"AS\" />, 10% <img src=\"/assets/images/SV.webp\" class=\"icon-stat\" alt=\"SV\" />",
+        "4": "40% <img src=\"/assets/images/AS.webp\" class=\"icon-stat\" alt=\"AS\" />, 15% <img src=\"/assets/images/SV.webp\" class=\"icon-stat\" alt=\"SV\" />",
+        "6": "80% <img src=\"/assets/images/AS.webp\" class=\"icon-stat\" alt=\"AS\" />, 20% <img src=\"/assets/images/SV.webp\" class=\"icon-stat\" alt=\"SV\" />",
+        "8": "135% <img src=\"/assets/images/AS.webp\" class=\"icon-stat\" alt=\"AS\" />, 30% <img src=\"/assets/images/SV.webp\" class=\"icon-stat\" alt=\"SV\" />"
+      },
+      "breakpoints": [2, 4, 6, 8],
+      "colors": [1, 3, 5, 5],
+      "rules": [],
+      "champions": [
+        "TFT10_Gnar",
+        "TFT10_Jax",
+        "TFT10_Poppy",
+        "TFT10_Sett",
+        "TFT10_Urgot",
+        "TFT10_Vi",
+        "TFT10_Yorick"
+      ],
+      "type": "class"
+    },
+    {
+      "apiName": "TFT10_Deadeye",
+      "name": "Tai To Mặt Lớn",
+      "id": "afermrap271xg5r",
+      "icon": "/assets/images/set10/traits/TFT10_Deadeye.webp",
+      "description": "Tướng Tai To Mặt Lớn nhận Sức Mạnh Công Kích, tăng thêm trong 3 giây khi họ sử dụng Kỹ Năng.<br>",
+      "effects": {
+        "2": "10% <img src=\"/assets/images/AD.webp\" class=\"icon-stat\" alt=\"AD\" />, 40% sau khi thi triển kỹ năng",
+        "4": "20% <img src=\"/assets/images/AD.webp\" class=\"icon-stat\" alt=\"AD\" />, 80% sau khi thi triển kỹ năng",
+        "6": "40% <img src=\"/assets/images/AD.webp\" class=\"icon-stat\" alt=\"AD\" />, 160% sau khi thi triển kỹ năng"
+      },
+      "breakpoints": [2, 4, 6],
+      "colors": [1, 5, 5],
+      "rules": [],
+      "champions": [
+        "TFT10_Corki",
+        "TFT10_Ezreal",
+        "TFT10_Jhin",
+        "TFT10_Kaisa",
+        "TFT10_MissFortune"
+      ],
+      "type": "class"
+    },
+    {
+      "apiName": "TFT10_Edgelord",
+      "name": "Thánh Ra Vẻ",
+      "id": "4czie66uwya814z",
+      "icon": "/assets/images/set10/traits/TFT10_Edgelord.webp",
+      "description": "Tướng Thánh Ra Vẻ nhận Tốc Độ Đánh, tăng thêm gấp đôi khi mục tiêu của họ còn dưới 50% Máu. Tướng Thánh Ra Vẻ trong phạm vi 1 ô sẽ lướt xuyên qua mục tiêu bằng đòn đánh&nbsp;tiếp theo. <br>",
+      "effects": {
+        "3": "30% <img src=\"/assets/images/AS.webp\" class=\"icon-stat\" alt=\"AS\" />",
+        "5": "55% <img src=\"/assets/images/AS.webp\" class=\"icon-stat\" alt=\"AS\" />",
+        "7": "90% <img src=\"/assets/images/AS.webp\" class=\"icon-stat\" alt=\"AS\" />"
+      },
+      "breakpoints": [3, 5, 7],
+      "colors": [1, 3, 5],
+      "rules": [],
+      "champions": [
+        "TFT10_Kayle",
+        "TFT10_Kayn",
+        "TFT10_Riven",
+        "TFT10_Viego",
+        "TFT10_Yasuo",
+        "TFT10_Yone"
+      ],
+      "type": "class"
+    },
+    {
+      "apiName": "TFT10_Spellweaver",
+      "name": "Thuật Sư",
+      "id": "oat4ru0efhiqsi8",
+      "icon": "/assets/images/set10/traits/TFT10_Spellweaver.webp",
+      "description": "Đội của bạn nhận 15 Sức Mạnh Phép Thuật. Các tướng Thuật Sư nhận được nhiều hơn, và nhận thêm Sức Mạnh Phép Thuật mỗi khi một tướng Thuật Sư thi triển kỹ năng.<br>",
+      "effects": {
+        "3": "15 <img src=\"/assets/images/AP.webp\" class=\"icon-stat\" alt=\"AP\" />, +1 <img src=\"/assets/images/AP.webp\" class=\"icon-stat\" alt=\"AP\" /> mỗi lần thi triển kỹ năng",
+        "5": "30 <img src=\"/assets/images/AP.webp\" class=\"icon-stat\" alt=\"AP\" />, +2 <img src=\"/assets/images/AP.webp\" class=\"icon-stat\" alt=\"AP\" /> mỗi lần thi triển kỹ năng",
+        "7": "75 <img src=\"/assets/images/AP.webp\" class=\"icon-stat\" alt=\"AP\" />, +4 <img src=\"/assets/images/AP.webp\" class=\"icon-stat\" alt=\"AP\" /> mỗi lần thi triển kỹ năng",
+        "9": "140 <img src=\"/assets/images/AP.webp\" class=\"icon-stat\" alt=\"AP\" />, +6 <img src=\"/assets/images/AP.webp\" class=\"icon-stat\" alt=\"AP\" /> mỗi lần thi triển kỹ năng"
+      },
+      "breakpoints": [3, 5, 7, 9],
+      "colors": [1, 3, 5, 5],
+      "rules": [],
+      "champions": [
+        "TFT10_Ahri",
+        "TFT10_Annie",
+        "TFT10_Ekko",
+        "TFT10_Gragas",
+        "TFT10_Lulu",
+        "TFT10_Seraphine",
+        "TFT10_Sona"
+      ],
+      "type": "class"
+    },
+    {
+      "apiName": "TFT10_Dazzler",
+      "name": "Tuyệt Sắc",
+      "id": "iv7fzp6zg49dzxe",
+      "icon": "/assets/images/set10/traits/TFT10_Dazzler.webp",
+      "description": "Các Kỹ Năng của tướng Tuyệt Sắc làm giảm 10% sát thương của mục tiêu và gây thêm sát thương phép trong 2 giây.<br>",
+      "effects": {
+        "2": "<span class=\"magicdamage\">20%</span> sát thương phép",
+        "4": "<span class=\"magicdamage\">60%</span> sát thương phép",
+        "6": "<span class=\"magicdamage\">110%</span> sát thương phép"
+      },
+      "breakpoints": [2, 4, 6],
+      "colors": [1, 5, 5],
+      "rules": [],
+      "champions": [
+        "TFT10_Bard",
+        "TFT10_Lux",
+        "TFT10_Nami",
+        "TFT10_TwistedFate",
+        "TFT10_Ziggs"
+      ],
+      "type": "class"
+    },
+    {
+      "apiName": "TFT10_Sentinel",
+      "name": "Vệ Binh",
+      "id": "dnl5t3331thq3lr",
+      "icon": "/assets/images/set10/traits/TFT10_Sentinel.webp",
+      "description": "Đội của bạn nhận Giáp và Kháng Phép. Tướng Vệ Binh nhận được gấp đôi.<br>",
+      "effects": {
+        "2": "16 <img src=\"/assets/images/Armor.webp\" class=\"icon-stat\" alt=\"Armor\" />, 16 <img src=\"/assets/images/MR.webp\" class=\"icon-stat\" alt=\"MR\" />",
+        "4": "36 <img src=\"/assets/images/Armor.webp\" class=\"icon-stat\" alt=\"Armor\" />, 36 <img src=\"/assets/images/MR.webp\" class=\"icon-stat\" alt=\"MR\" />",
+        "6": "60 <img src=\"/assets/images/Armor.webp\" class=\"icon-stat\" alt=\"Armor\" />, 60 <img src=\"/assets/images/MR.webp\" class=\"icon-stat\" alt=\"MR\" />",
+        "8": "100 <img src=\"/assets/images/Armor.webp\" class=\"icon-stat\" alt=\"Armor\" />, 100 <img src=\"/assets/images/MR.webp\" class=\"icon-stat\" alt=\"MR\" />"
+      },
+      "breakpoints": [2, 4, 6, 8],
+      "colors": [1, 3, 5, 5],
+      "rules": [],
+      "champions": [
+        "TFT10_Blitzcrank",
+        "TFT10_Ekko",
+        "TFT10_Garen",
+        "TFT10_KSante",
+        "TFT10_Lillia",
+        "TFT10_Mordekaiser"
+      ],
+      "type": "class"
+    },
+    {
+      "apiName": "TFT10_Superfan",
+      "name": "Fan Cứng",
+      "id": "25995hlecyzbm1e",
+      "icon": "/assets/images/set10/traits/TFT10_Superfan.webp",
+      "description": "Tướng Fan Cứng tăng sức mạnh cho Siêu Sao của bạn!<br>",
+      "effects": {
+        "3": "Siêu Sao nhận được 1 trang bị hoàn chỉnh",
+        "4": "Siêu Sao nhận 300 <img src=\"/assets/images/Health.webp\" class=\"icon-stat\" alt=\"Health\" /> và 15% <img src=\"/assets/images/SV.webp\" class=\"icon-stat\" alt=\"SV\" />",
+        "5": "Trang bị được nâng cấp lên ánh sáng"
+      },
+      "breakpoints": [3, 4, 5],
+      "colors": [1, 3, 5],
+      "rules": [],
+      "champions": [
+        "TFT10_Gnar",
+        "TFT10_Kennen",
+        "TFT10_Lillia",
+        "TFT10_Neeko"
+      ],
+      "type": ""
+    }
+  ]
+}
