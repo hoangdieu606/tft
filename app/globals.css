@@ -40,6 +40,26 @@
     --champion-border-color: var(--color-indigo-400);
     --champion-cost-background: linear-gradient(162.51deg, #4c55db 23.73%, #43a5d7 61.57%, #a761df 99.42%);
   }
+  .post-cost-1 {
+    --border-color-cost: #acacac;
+    order: 1;
+  }
+  .post-cost-2 {
+    --border-color-cost: #22c55e;
+    order: 2;
+  }
+  .post-cost-3 {
+    --border-color-cost: #0090ff;
+    order: 3;
+  }
+  .post-cost-4 {
+    --border-color-cost: #a855f7;
+    order: 4;
+  }
+  .post-cost-5 {
+    --border-color-cost: #eab308;
+    order: 5;
+  }
 
   .tier-S {
     --tier-color: var(--color-red-500);

@@ -52,20 +52,34 @@ export default function PageMenu({ page, filterType = "Show All" }: Props) {
       : pageSet;
 
   return (
-    <div className="flex justify-between items-center gap-2 md:gap-4 w-full">
-      <Dropdown
-        label={mapping[page]}
-        options={linkList.map((option) => ({
-          text: option.text,
-          href: option.href,
-        }))}
-        selectedOption={page}
-        type="link"
-      />
-      <div className="flex flex-col md:flex-row">
+    <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
+      <div className="flex">
+        <Dropdown
+          label={mapping[page]}
+          options={linkList.map((option) => ({
+            text: option.text,
+            href: option.href,
+          }))}
+          selectedOption={page}
+          type="link"
+        />
+      </div>
+      <div className="flex justify-end">
+        <Dropdown
+          label={filterType}
+          options={filterList.map((text) => ({
+            text,
+            onClick: () => handleFilterClick(text),
+          }))}
+          selectedOption={filterType}
+          type="filter"
+        />
+      </div>
+
+      <div className="col-span-2 md:col-start-2 md:col-end-3 md:row-start-1 flex items-center gap-4 justify-end md:justify-center uppercase">
         <Link
           className={clsx(
-            "flex items-center bg-rose-700 h-7 px-2 active:bg-rose-900 rounded-t-[3px] md:rounded-none md:rounded-l-[3px]",
+            "flex items-center bg-[linear-gradient(90deg,_#657FFF,_#906EFF)] h-7 px-2 active:bg-purple-900 rounded-[3px]",
             pageSet === page ? "opacity-100" : "opacity-50"
           )}
           href={`/${pageSet}`}
@@ -74,7 +88,7 @@ export default function PageMenu({ page, filterType = "Show All" }: Props) {
         </Link>
         <Link
           className={clsx(
-            "flex items-center bg-purple-700 h-7 px-2 active:bg-purple-900 rounded-b-[3px] md:rounded-none md:rounded-r-[3px]",
+            "flex items-center bg-[#e12445] h-7 px-2 active:bg-rose-900 rounded-[3px]",
             pageRevival === page ? "opacity-100" : "opacity-50"
           )}
           href={`/${pageRevival}`}
@@ -82,15 +96,6 @@ export default function PageMenu({ page, filterType = "Show All" }: Props) {
           Revival
         </Link>
       </div>
-      <Dropdown
-        label={filterType}
-        options={filterList.map((text) => ({
-          text,
-          onClick: () => handleFilterClick(text),
-        }))}
-        selectedOption={filterType}
-        type="filter"
-      />
     </div>
   );
 }

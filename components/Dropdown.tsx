@@ -23,7 +23,7 @@ export default function Dropdown({
   type,
 }: DropdownProps) {
   return (
-    <Menu as="div" className="relative min-w-[144px] md:min-w-[160px] text-left text-sm">
+    <Menu as="div" className="relative min-w-[144px] md:min-w-[160px] max-w-[160px] text-sm">
       {({ open }) => (
         <>
           <div>

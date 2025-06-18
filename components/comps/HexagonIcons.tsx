@@ -32,7 +32,7 @@ function HexagonIcons({
   const champ = championsMap[apiName] ?? {};
   const itemLength = items.length;
   return (
-    <div className={`flex relative champ-cost-${champ.cost}`}>
+    <div className={`flex relative post-cost-${champ.cost}`}>
       {(stars === 3 || stars === 4) && (
         <div
           className={clsx(
