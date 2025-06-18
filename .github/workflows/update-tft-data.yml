@@ -6,6 +6,9 @@ on:
     - cron: '30 12 * * *' # 12:30 UTC mỗi ngày
   workflow_dispatch:
 
+permissions:
+  contents: write # Quyền đọc và ghi nội dung repository
+  
 jobs:
   update-data:
     runs-on: ubuntu-latest
@@ -14,38 +17,16 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Fetch Data from Workers
+      - name: Fetch Data from Worker
         run: |
           mkdir -p public/data/auto
-          TODAY=$(date +%Y-%m-%d)
           
-          DATA_FILES=("data-${TODAY}.json")
-          GUIDES_FILES=("guides-${TODAY}.json")
-          REVIVAL_FILES=("set-10-revival-${TODAY}.json")
-          REVIVAL_GUIDES_FILES=("revival-guides-${TODAY}.json")
+          DATA_FILES=("champions.json" "traits.json" "augments.json" "items.json" "guides.json" "guides-revival.json" "champions-revival.json" "traits-revival.json" "augments-revival.json" "items-revival.json")
 
-          # Tải file từ Worker 1 (tftdata)
+          # Tải file từ Worker (tftdata)
           for filename in "${DATA_FILES[@]}"; do
             echo "Attempting to download $filename from tftdata..."
             curl -X GET "https://tftdata.hoquocdieu.workers.dev/?file=$filename" -o "public/data/auto/$filename" || echo "File $filename not found in tftdata, skipping..."
-          done
-
-          # Tải file từ Worker 2 (tftguides)
-          for filename in "${GUIDES_FILES[@]}"; do
-            echo "Attempting to download $filename from tftguides..."
-            curl -X GET "https://tftguides.hoquocdieu.workers.dev/?file=$filename" -o "public/data/auto/$filename" || echo "File $filename not found in tftguides, skipping..."
-          done
-
-          # Tải file từ Worker 3 (tft-data-revival)
-          for filename in "${REVIVAL_FILES[@]}"; do
-            echo "Attempting to download $filename from tft-data-revival..."
-            curl -X GET "https://tft-data-revival.hoquocdieu.workers.dev/?file=$filename" -o "public/data/auto/$filename" || echo "File $filename not found in tft-data-revival, skipping..."
-          done
-
-          # Tải file từ Worker 4 (tft-guides-revival)
-          for filename in "${REVIVAL_GUIDES_FILES[@]}"; do
-            echo "Attempting to download $filename from tft-guides-revival..."
-            curl -X GET "https://tft-guides-revival.hoquocdieu.workers.dev/?file=$filename" -o "public/data/auto/$filename" || echo "File $filename not found in tft-guides-revival, skipping..."
           done
 
       - name: Validate JSON Files
@@ -57,7 +38,7 @@ jobs:
                 rm "$file"
                 continue
               fi
-              jq . "$file" > /dev/null || { echo "Invalid JSON in $file"; exit 1; }
+              jq . "$file" > /dev/null || { echo "Invalid JSON in $file, removing..."; rm "$file"; continue; }
               if jq -e '.error' "$file" > /dev/null; then
                 echo "File $file contains an error, removing..."
                 rm "$file"
@@ -66,26 +47,6 @@ jobs:
               fi
             fi
           done
-
-      - name: Clean Old Files in public/data/auto
-        run: |
-          echo "Files before cleanup:"
-          ls -l public/data/auto/
-
-          echo "Cleaning old data-*.json files..."
-          ls public/data/auto/data-*.json 2>/dev/null | sort -r | tail -n +3 | xargs -I {} rm -v {}
-
-          echo "Cleaning old guides-*.json files..."
-          ls public/data/auto/guides-*.json 2>/dev/null | sort -r | tail -n +3 | xargs -I {} rm -v {}
-
-          echo "Cleaning old set-10-revival-*.json files..."
-          ls public/data/auto/set-10-revival-*.json 2>/dev/null | sort -r | tail -n +3 | xargs -I {} rm -v {}
-
-          echo "Cleaning old revival-guides-*.json files..."
-          ls public/data/auto/revival-guides-*.json 2>/dev/null | sort -r | tail -n +3 | xargs -I {} rm -v {}
-
-          echo "Files after cleanup:"
-          ls -l public/data/auto/
 
       - name: Commit Changes
         run: |
@@ -123,7 +84,7 @@ jobs:
           git commit -m "Update TFT data on $(date +'%Y-%m-%d')"
           git push
 
-          echo "Files remaining in public/data/auto after commit:"
+          echo "Files in public/data/auto after commit:"
           ls -l public/data/auto/
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
