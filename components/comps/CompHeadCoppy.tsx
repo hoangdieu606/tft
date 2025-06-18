@@ -9,7 +9,7 @@ import {
   WrenchScrewdriverIcon,
 } from "@heroicons/react/16/solid";
 import { FinalComp, Champion } from "@/lib/types";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { toast } from "react-toastify";
 import Link from "next/link";
 
@@ -26,6 +26,8 @@ export default function CompHeadCoppy({
   filterType,
 }: CompHeadCoppyProps) {
   const router = useRouter();
+  const pathname = usePathname();
+  console.log(pathname);
 
   // handleCopyToClipboard
   const handleCopyToClipboard = async (
@@ -66,11 +68,12 @@ export default function CompHeadCoppy({
     router.push("/builder");
   };
   const createHref = () => {
-    const baseUrl = `/tierlist`;
+    const firstSegment = "/" + pathname.split("/")[1];
+
     if (filterType && filterType !== "Show All") {
-      return `${baseUrl}?type=${encodeURIComponent(filterType)}`;
+      return `${firstSegment}?type=${encodeURIComponent(filterType)}`;
     }
-    return baseUrl;
+    return firstSegment;
   };
 
   return (
