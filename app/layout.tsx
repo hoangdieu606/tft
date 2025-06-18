@@ -4,6 +4,7 @@ import Nav from "@/components/Nav";
 import "./globals.css";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { GoogleAnalytics } from '@next/third-parties/google'
 
 const nunitoSans = Nunito_Sans({
   subsets: ["latin"],
@@ -46,6 +47,7 @@ export default function RootLayout({
         </footer>
         <ToastContainer position="bottom-left" autoClose={2000} theme="dark" />
       </body>
+      <GoogleAnalytics gaId="G-FE7ZMBTWRP" />
     </html>
   );
 }

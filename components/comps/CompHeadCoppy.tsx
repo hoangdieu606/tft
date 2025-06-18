@@ -27,7 +27,6 @@ export default function CompHeadCoppy({
 }: CompHeadCoppyProps) {
   const router = useRouter();
   const pathname = usePathname();
-  console.log(pathname);
 
   // handleCopyToClipboard
   const handleCopyToClipboard = async (
