@@ -1,8 +1,8 @@
 name: Download Assets Revival
 
 on:
-  schedule:
-    - cron: '0 00 * * *' # Chạy lúc 00:00 UTC (07:00 +7)
+  # schedule:
+  #   - cron: '0 00 * * *' # Chạy lúc 00:00 UTC (07:00 +7)
   workflow_dispatch:
 
 permissions:

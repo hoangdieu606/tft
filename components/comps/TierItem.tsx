@@ -34,7 +34,7 @@ export default function TierItem({
   const iconAugment = augmentsMap[mainAugment?.apiName]?.icon;
   const tierAugment = augmentsMap[mainAugment?.apiName]?.tier2;
   const nameAugment = augmentsMap[mainAugment?.apiName]?.name;
-
+// console.log(iconChamp, championsMap, mainChampion)
   const isDetailPage = pathname === `/${page}/${compSlug}`;
   // Tạo URL với query parameter type
   const createHref = () => {
