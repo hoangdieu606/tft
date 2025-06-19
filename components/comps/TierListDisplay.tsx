@@ -13,6 +13,10 @@ import {
 import { Guide, Champion, Trait, Augment, Item, TierGroup } from "@/lib/types";
 import TierSection from "./TierSection";
 
+// Add this export to ensure proper static generation
+export const dynamic = "force-static";
+export const dynamicParams = true; // Allow dynamic params not in generateStaticParams
+
 interface TierListDisplayProps {
   guides: Guide[];
   championsMap: Record<string, Champion>;
