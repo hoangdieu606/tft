@@ -62,7 +62,7 @@ export default async function TierListRevivalPage() {
 
   const set = dataChampions.set;
   const patch = dataChampions.version;
-console.log(championsMap)
+
   return (
     <>
       <Title page="tierlist" set={set} patch={patch} />

@@ -1,20 +1,124 @@
 "use client";
 
-import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
 import { Guide, Champion, Item, Augment } from "@/lib/types";
 import Hexagon from "@/components/comps/Hexagon";
 import clsx from "clsx";
 import { DataPageKeys } from "@/lib/dataFilter";
+import { useCallback, useMemo } from "react";
+
+// Constants
+const FILTER_TYPES = {
+  SHOW_ALL: "Show All",
+} as const;
+
+const TIER_TYPES = {
+  X: "X",
+} as const;
 
 interface TierItemProps {
   guide: Guide;
   championsMap: Record<string, Champion>;
   itemsMap: Record<string, Item>;
   augmentsMap: Record<string, Augment>;
-  filterType: string;
+  filterType?: string;
   page: DataPageKeys;
 }
+
+// Custom hook for navigation logic
+const useNavigationLogic = (
+  page: DataPageKeys,
+  compSlug: string,
+  filterType?: string
+) => {
+  const router = useRouter();
+  const pathname = usePathname();
+
+  const isDetailPage = useMemo(
+    () => pathname === `/${page}/${compSlug}`,
+    [pathname, page, compSlug]
+  );
+
+  const createHref = useCallback(() => {
+    const baseUrl = `/${page}/${compSlug}`;
+    if (filterType && filterType !== FILTER_TYPES.SHOW_ALL) {
+      return `${baseUrl}?type=${encodeURIComponent(filterType)}`;
+    }
+    return baseUrl;
+  }, [page, compSlug, filterType]);
+
+  const handleNavigation = useCallback(
+    (e: React.MouseEvent) => {
+      // Prevent any default behavior
+      e.preventDefault();
+      e.stopPropagation();
+
+      if (isDetailPage) {
+        // Navigate back to tier list
+        const baseUrl = `/${page}`;
+        const targetUrl =
+          filterType && filterType !== FILTER_TYPES.SHOW_ALL
+            ? `${baseUrl}?type=${encodeURIComponent(filterType)}`
+            : baseUrl;
+        router.push(targetUrl);
+      } else {
+        // Navigate to detail page
+        router.push(createHref());
+      }
+    },
+    [isDetailPage, page, filterType, router, createHref]
+  );
+
+  return {
+    isDetailPage,
+    createHref,
+    handleNavigation,
+  };
+};
+
+// Sub-components
+interface TierBadgeProps {
+  tier: string;
+  tierAugment?: string;
+}
+
+const TierBadge = ({ tier, tierAugment }: TierBadgeProps) => {
+  if (tier !== TIER_TYPES.X || !tierAugment) return null;
+
+  return (
+    <div
+      className={clsx(
+        `tier-${tierAugment}`,
+        "absolute w-[30px] h-[30px] z-20 right-[10px] -top-[5px]",
+        "flex justify-center items-center bg-[var(--tier-color)] rounded-[50%]"
+      )}
+    >
+      {tierAugment}
+    </div>
+  );
+};
+
+interface SubItemProps {
+  iconSrc?: string;
+  name?: string;
+  isItem?: boolean;
+}
+
+const SubItem = ({ iconSrc, name, isItem = false }: SubItemProps) => {
+  if (!iconSrc || !name) return null;
+
+  return (
+    <div className="flex absolute top-[70px] left-2/4 -translate-x-1/2 m-auto">
+      <Hexagon
+        iconSize={27}
+        imageSrc={iconSrc}
+        name={name}
+        classNameImage={isItem ? undefined : "bg-black"}
+      />
+    </div>
+  );
+};
+
 export default function TierItem({
   guide,
   championsMap,
@@ -24,83 +128,84 @@ export default function TierItem({
   page,
 }: TierItemProps) {
   const { mainChampion, mainItem, mainAugment, tier, title, compSlug } = guide;
-  const router = useRouter();
-  const pathname = usePathname();
 
-  const iconChamp = championsMap[mainChampion?.apiName]?.icon;
-  const costChamp = championsMap[mainChampion?.apiName]?.cost;
-  const iconItem = itemsMap[mainItem?.apiName]?.icon;
-  const nameItem = itemsMap[mainItem?.apiName]?.name;
-  const iconAugment = augmentsMap[mainAugment?.apiName]?.icon;
-  const tierAugment = augmentsMap[mainAugment?.apiName]?.tier2;
-  const nameAugment = augmentsMap[mainAugment?.apiName]?.name;
-// console.log(iconChamp, championsMap, mainChampion)
-  const isDetailPage = pathname === `/${page}/${compSlug}`;
-  // Tạo URL với query parameter type
-  const createHref = () => {
-    const baseUrl = `/${page}/${compSlug}`;
-    if (filterType && filterType !== "Show All") {
-      return `${baseUrl}?type=${encodeURIComponent(filterType)}`;
-    }
-    return baseUrl;
-  };
-  const handleClick = (e: React.MouseEvent) => {
-    if (isDetailPage) {
-      e.preventDefault();
-      const baseUrl = `/${page}`;
-      const targetUrl =
-        filterType && filterType !== "Show All"
-          ? `${baseUrl}?type=${encodeURIComponent(filterType)}`
-          : baseUrl;
-      router.push(targetUrl); // Quay về trang tier list với query parameter
-    }
-    // Nếu không phải trang chi tiết, <Link> sẽ xử lý điều hướng bình thường
-  };
+  // Memoized data extraction
+  const championData = useMemo(() => {
+    const champion = championsMap[mainChampion?.apiName];
+    return {
+      icon: champion?.icon,
+      cost: champion?.cost,
+    };
+  }, [championsMap, mainChampion?.apiName]);
+
+  const itemData = useMemo(() => {
+    const item = itemsMap[mainItem?.apiName];
+    return {
+      icon: item?.icon,
+      name: item?.name,
+    };
+  }, [itemsMap, mainItem?.apiName]);
+
+  const augmentData = useMemo(() => {
+    const augment = augmentsMap[mainAugment?.apiName];
+    return {
+      icon: augment?.icon,
+      tier: augment?.tier2,
+      name: augment?.name,
+    };
+  }, [augmentsMap, mainAugment?.apiName]);
+
+  const { isDetailPage, handleNavigation } = useNavigationLogic(
+    page,
+    compSlug,
+    filterType
+  );
+
+  // Memoized CSS classes
+  const containerClasses = useMemo(
+    () =>
+      clsx(
+        "w-[90px] transition-transform duration-300 hover:-translate-y-2",
+        championData.cost && `champ-cost-${championData.cost}`,
+        "relative cursor-pointer",
+        isDetailPage && [
+          "[filter:drop-shadow(0_0_10px_var(--border-color-cost))_drop-shadow(0_0_20px_var(--border-color-cost))]",
+          "order-first",
+        ]
+      ),
+    [championData.cost, isDetailPage]
+  );
 
   return (
-    <div
-      className={clsx(
-        "w-[90px] transition-transform duration-300 hover:-translate-y-2",
-        `champ-cost-${costChamp}`,
-        "relative",
-        isDetailPage &&
-          "[filter:drop-shadow(0_0_10px_var(--border-color-cost))_drop-shadow(0_0_20px_var(--border-color-cost))] order-first"
-      )}
-    >
-      {tier === "X" && tierAugment && (
-        <div
-          className={`tier-${tierAugment} absolute w-[30px] h-[30px] z-20 right-[10px] -top-[5px] flex justify-center items-center bg-[var(--tier-color)] rounded-[50%]`}
-        >
-          {tierAugment}
-        </div>
-      )}
-      <div className={`flex relative w-[90px]`}>
+    <div className={containerClasses} onClick={handleNavigation}>
+      <TierBadge tier={tier} tierAugment={augmentData.tier} />
+      
+      <div className="flex relative w-[90px]">
         <div>
-          <Link
-            href={createHref()}
-            aria-label={`View details for ${title}`}
-            onClick={handleClick}
-          >
-            <Hexagon iconSize={90} imageSrc={iconChamp} name={title} />
-          </Link>
+          <Hexagon
+            iconSize={90}
+            imageSrc={championData.icon}
+            name={title}
+          />
         </div>
-        {iconAugment && nameAugment && (
-          <div className="flex absolute top-[70px] left-2/4 -translate-x-1/2 m-auto">
-            <Hexagon
-              iconSize={27}
-              imageSrc={iconAugment}
-              name={nameAugment}
-              classNameImage="bg-black"
-            />
-          </div>
-        )}
-        {iconItem && nameItem && (
-          <div className="flex absolute top-[70px] left-2/4 -translate-x-1/2 m-auto">
-            <Hexagon iconSize={27} imageSrc={iconItem} name={nameItem} />
-          </div>
+        
+        {/* Render augment or item, prioritize augment */}
+        {augmentData.icon && augmentData.name ? (
+          <SubItem
+            iconSrc={augmentData.icon}
+            name={augmentData.name}
+            isItem={false}
+          />
+        ) : (
+          <SubItem
+            iconSrc={itemData.icon}
+            name={itemData.name}
+            isItem={true}
+          />
         )}
       </div>
-      <div className="hexagon-title flex justify-center text-center text-xs mt-2.5">
+      
+      <div className="hexagon-title flex justify-center text-center text-xs mt-2.5 pointer-events-none">
         {title}
       </div>
     </div>
